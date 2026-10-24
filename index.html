@@ -97,7 +97,7 @@
         </div>
 
         <button type="submit" class="btn-hex-submit" id="btnLogin">
-          <span>ENTRAR AL SISTEMA</span>
+          <span>INGRESAR</span>
           <i class="fa-solid fa-arrow-right-to-bracket"></i>
         </button>
       </form>
@@ -171,22 +171,22 @@
     <!-- NAVEGACIÓN POR PESTAÑAS SECCIONALES -->
     <nav class="nav-sections-bar">
       <button class="nav-sec-btn active" id="sec-btn-sensors" onclick="mostrarSeccion('sensors')">
-        <i class="fa-solid fa-chart-pie"></i> Monitoreo & Sensores
+        <i class="fa-solid fa-chart-pie"></i> Monitoreo
       </button>
       <button class="nav-sec-btn" id="sec-btn-cuadrillas" onclick="mostrarSeccion('cuadrillas')">
-        <i class="fa-solid fa-users-rectangle"></i> Cuadrillas & Reportes
+        <i class="fa-solid fa-users-rectangle"></i> Reportes
       </button>
       <button class="nav-sec-btn" id="sec-btn-actuators" onclick="mostrarSeccion('actuators')">
-        <i class="fa-solid fa-toggle-on"></i> Control & Bypass
+        <i class="fa-solid fa-toggle-on"></i> Sistema de Control
       </button>
       <button class="nav-sec-btn" id="sec-btn-thresholds" onclick="mostrarSeccion('thresholds')">
-        <i class="fa-solid fa-sliders"></i> Umbrales & Alertas
+        <i class="fa-solid fa-sliders"></i> Alertas
       </button>
       <button class="nav-sec-btn" id="sec-btn-crops" onclick="mostrarSeccion('crops')">
-        <i class="fa-solid fa-leaf"></i> Trackers & Tareas
+        <i class="fa-solid fa-leaf"></i> Trackers
       </button>
       <button class="nav-sec-btn" id="sec-btn-history" onclick="mostrarSeccion('history')">
-        <i class="fa-solid fa-database"></i> Bitácora & Calibración
+        <i class="fa-solid fa-database"></i> Bitácora
       </button>
     </nav>
 
@@ -221,7 +221,7 @@
 
           <div class="card metric-card card-temp">
             <div class="card-header">
-              <span>Temperatura Agua (DS18B20)</span>
+              <span>Temperatura Agua </span>
               <i class="fa-solid fa-temperature-half icon-temp thermal-glow"></i>
             </div>
             <div class="metric-value"><span id="tempValue">--</span> <small>°C</small></div>
@@ -231,7 +231,7 @@
 
           <div class="card metric-card card-hum">
             <div class="card-header">
-              <span>Humedad Ambiente (BME280)</span>
+              <span>Humedad Ambiente</span>
               <i class="fa-solid fa-droplet icon-hum water-drop-anim"></i>
             </div>
             <div class="metric-value"><span id="humValue">--</span> <small>%</small></div>
@@ -243,7 +243,7 @@
         <div class="grid-2-cols" style="margin-top: 20px;">
           <div class="card chart-card">
             <div class="chart-header">
-              <h3><i class="fa-solid fa-chart-line"></i> Gráfica Analítica (Dual / Individual)</h3>
+              <h3><i class="fa-solid fa-chart-line"></i> Gráficas</h3>
               <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                 <select id="chartSelectY1" class="select-metric" title="Eje Y1 (Izquierda)">
                   <option value="ph">Y1: pH del Agua</option>
@@ -270,7 +270,7 @@
           </div>
 
           <div class="card diagnostics-card">
-            <h3><i class="fa-solid fa-microchip"></i> Telemetría del Hardware ESP32</h3>
+            <h3><i class="fa-solid fa-microchip"></i> Telemetría ESP32</h3>
             <p class="card-subtitle">Diagnóstico del microcontrolador y conectividad</p>
             <div class="diag-list">
               <div class="diag-row">
@@ -311,8 +311,8 @@
           
           <div class="tracker-inputs-form" style="margin-top: 15px;">
             <div class="tracker-inputs-row">
-              <input type="text" id="inputNombreCuadrilla" placeholder="Ej. Cuadrilla 1 - Mantenimiento NFT">
-              <input type="text" id="inputIntegrantes" placeholder="Ej. Alan Hussein, Juan Pérez, María López">
+              <input type="text" id="inputNombreCuadrilla" placeholder="Ej. Cuadrilla 1">
+              <input type="text" id="inputIntegrantes" placeholder="Ej. Integrante 1, 2, 3...">
             </div>
             <div class="tracker-inputs-row">
               <input type="date" id="inputFechaCuadrilla" title="Fecha exacta de asistencia">
@@ -364,7 +364,7 @@
 
         <div class="card hydraulic-card" style="margin-bottom: 20px;">
           <div class="hydraulic-title-box">
-            <h3><i class="fa-solid fa-project-diagram"></i> Diagrama de Flujo e Hidráulica Interactiva</h3>
+            <h3><i class="fa-solid fa-project-diagram"></i> Diagrama de Flujo</h3>
             <span class="hydraulic-badge"><i class="fa-solid fa-circle-nodes"></i> Circuito Activo</span>
           </div>
 
@@ -432,7 +432,7 @@
                 <div class="actuator-icon-wrapper"><i class="fa-solid fa-snowflake actuator-icon icon-peltier snowflake-spin"></i></div>
                 <div>
                   <strong>Celda Peltier</strong>
-                  <span>Modo Manual / Auto-Termostato</span>
+                  <span>Modo Manual</span>
                   <div class="actuator-status" id="statusPeltier"><span class="status-dot"></span> APAGADA</div>
                 </div>
               </div>
@@ -443,8 +443,8 @@
               <div class="actuator-info">
                 <div class="actuator-icon-wrapper"><i class="fa-solid fa-code-branch actuator-icon" style="color: var(--warning);"></i></div>
                 <div>
-                  <strong>Válvula Bypass / Desvío</strong>
-                  <span>Retorno Directo Tanque</span>
+                  <strong>Válvula Bypass</strong>
+                  <span>Retorno Directo</span>
                   <div class="actuator-status" id="statusBypass"><span class="status-dot"></span> APAGADA</div>
                 </div>
               </div>
@@ -492,7 +492,7 @@
           <!-- MÓDULO DE CONTROL PID Y DOSIFICACIÓN -->
           <div class="card" style="margin-top: 25px;">
             <div class="chart-header">
-              <h3><i class="fa-solid fa-microchip"></i> Simulación & Lazo de Control PID (Dosificación)</h3>
+              <h3><i class="fa-solid fa-microchip"></i> Lazo de Control PID (Dosificación)</h3>
               <span class="hydraulic-badge"><i class="fa-solid fa-wave-square"></i> Algoritmo Activo</span>
             </div>
             <p class="card-subtitle">Monitoreo de error en tiempo real para corrección automática de pH y CE.</p>
@@ -517,7 +517,7 @@
             <div class="sched-header">
               <i class="fa-solid fa-clock-rotate-left"></i>
               <div>
-                <h4>Programador Automático (Cloud Scheduler)</h4>
+                <h4>Programador Automático</h4>
                 <p>Define horarios automatizados para los componentes del huerto</p>
               </div>
             </div>
@@ -558,7 +558,7 @@
 
         <div class="grid-2-cols">
           <div class="card threshold-card">
-            <h3><i class="fa-solid fa-sliders"></i> Definir Rangos Aceptables (Admin)</h3>
+            <h3><i class="fa-solid fa-sliders"></i> Definir Rangos Aceptables</h3>
             <p class="card-subtitle">Ajuste los límites seguros. Se emitirá una alerta si el agua sale de este rango.</p>
             
             <div class="tracker-inputs-form admin-only" style="margin-top: 15px;">
@@ -594,7 +594,7 @@
 
           <div class="card">
             <h3><i class="fa-solid fa-shield-halved"></i> Estado Global de Alertas</h3>
-            <p class="card-subtitle">Monitoreo activo de anomalías en el sistema.</p>
+            <p class="card-subtitle">Monitoreo de anomalías en el sistema.</p>
             <div id="alertStatusBox" class="alert-status-card">
               <i class="fa-solid fa-circle-check" style="color: var(--green-bright); font-size: 1.2rem;"></i>
               <span>Todos los parámetros se encuentran dentro de los rangos óptimos.</span>
@@ -611,7 +611,7 @@
 
         <div class="bottom-grid">
           <div class="card tracker-card">
-            <h3><i class="fa-solid fa-leaf"></i> Trackers de Cultivo (Fases Proporcionales)</h3>
+            <h3><i class="fa-solid fa-leaf"></i> Trackers de Cultivo</h3>
             <p class="card-subtitle">Fase 1: Agua (7d) | Fase 2: Solución 50% (7d) | Fase 3: Solución 100% (Resto)</p>
             
             <div class="tracker-inputs-form admin-only">
@@ -626,8 +626,8 @@
           </div>
 
           <div class="card checklist-card">
-            <h3><i class="fa-solid fa-list-check"></i> Checklist del Huerto</h3>
-            <p class="card-subtitle">Tareas operativas de mantenimiento diario</p>
+            <h3><i class="fa-solid fa-list-check"></i> Checklist</h3>
+            <p class="card-subtitle">Tareas de mantenimiento</p>
             <div class="input-group-add admin-only">
               <input type="text" id="task-input" placeholder="Ej: Revisar nivel de solución A+B...">
               <button class="btn-add" onclick="addTask()"><i class="fa-solid fa-plus"></i></button>
@@ -701,13 +701,13 @@
 
         <div class="card" style="margin-top: 20px;">
           <div class="chart-header">
-            <h3><i class="fa-solid fa-bell" style="color: var(--warning);"></i> Historial de Alertas Push & Anomalías Recientes</h3>
+            <h3><i class="fa-solid fa-bell" style="color: var(--warning);"></i> Historial de Alertas & Anomalías Recientes</h3>
             <div style="display: flex; gap: 8px;">
               <button class="btn-action" onclick="cargarHistorialAlertasFirebase()" title="Recargar Alertas"><i class="fa-solid fa-rotate"></i></button>
               <button class="btn-danger-custom admin-only" onclick="purgarAlertasFirebase()" title="Limpiar Historial de Alertas"><i class="fa-solid fa-trash-can"></i> Limpiar</button>
             </div>
           </div>
-          <p class="card-subtitle">Registro cronológico de advertencias críticas y notificaciones push enviadas por anomalías en los sensores.</p>
+          <p class="card-subtitle">Registro de advertencias críticas y notificaciones push enviadas.</p>
           <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; background: rgba(0,0,0,0.3);">
             <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
               <thead>
@@ -730,7 +730,7 @@
 
     <footer>
       <p>Huerto Hidropónico Inteligente IoT · Escuela Superior de Huejutla · UAEH</p>
-      <p style="font-size: 0.72rem; margin-top: 4px; opacity: 0.7;">Desarrollado por Alan Hussein Ramírez Téllez</p>
+      <p style="font-size: 0.72rem; margin-top: 4px; opacity: 0.7;">Desarrollado por la Cuadrilla de Programación</p>
     </footer>
   </div>
 
