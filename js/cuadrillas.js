@@ -2,14 +2,14 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarCuadrillasFirebase();
 });
 
-// Crear una nueva carpeta de Cuadrilla con múltiples fechas (Solo Admin)
+// Crear una nueva carpeta de Cuadrilla con rango de fechas para el calendario (Solo Admin)
 function crearCarpetaCuadrilla() {
   const nombre = document.getElementById('inputNombreCuadrilla').value.trim();
   const integrantes = document.getElementById('inputIntegrantes').value.trim();
-  const fecha = document.getElementById('inputFechaCuadrilla').value; // Puede ser una fecha o fechas múltiples
+  const fechaAsignada = document.getElementById('inputFechaCuadrilla').value.trim();
 
-  if (!nombre || !fecha) {
-    return alert("Por favor, ingresa el nombre de la cuadrilla y las fechas asignadas.");
+  if (!nombre || !fechaAsignada) {
+    return alert("Por favor, ingresa el nombre de la cuadrilla y las fechas correspondientes.");
   }
 
   const cuadrillaId = 'cuadrilla_' + Date.now();
@@ -18,21 +18,21 @@ function crearCarpetaCuadrilla() {
     id: cuadrillaId,
     nombre: nombre,
     integrantes: integrantes || "Sin registrar",
-    fechaAsignada: fecha,
+    fechaAsignada: fechaAsignada,
     creado: Date.now()
   }).then(() => {
-    alert(`¡Carpeta "${nombre}" creada exitosamente!`);
+    alert(`¡Carpeta y asignación para "${nombre}" creada exitosamente!`);
     document.getElementById('inputNombreCuadrilla').value = '';
     document.getElementById('inputIntegrantes').value = '';
     document.getElementById('inputFechaCuadrilla').value = '';
     cargarCuadrillasFirebase();
   }).catch(err => {
     console.error("Error al crear cuadrilla:", err);
-    alert("Error al conectar con la base de datos.");
+    alert("Error al conectar con la base de datos de Firebase.");
   });
 }
 
-// Cargar y renderizar carpetas y calendario inteligente desde Firebase
+// Cargar y renderizar carpetas y el calendario interactivo
 function cargarCuadrillasFirebase() {
   database.ref('cuadrillas_sistema').on('value', (snap) => {
     const data = snap.val();
@@ -51,7 +51,7 @@ function cargarCuadrillasFirebase() {
     if (calContainer) calContainer.innerHTML = '';
 
     Object.values(data).forEach(c => {
-      // 1. Renderizar Acordeón de Carpeta de Cuadrilla
+      // 1. Renderizar acordeón de la carpeta de la cuadrilla
       const card = document.createElement('div');
       card.className = 'folder-card';
       card.innerHTML = `
@@ -60,7 +60,7 @@ function cargarCuadrillasFirebase() {
             <div class="folder-icon"><i class="fa-solid fa-folder-open"></i></div>
             <div class="folder-info">
               <h4>${c.nombre}</h4>
-              <small><i class="fa-regular fa-calendar"></i> Días asignados: ${c.fechaAsignada} | Integrantes: ${c.integrantes}</small>
+              <small><i class="fa-regular fa-calendar"></i> Fechas de labor: ${c.fechaAsignada} | Integrantes: ${c.integrantes}</small>
             </div>
           </div>
           <i class="fa-solid fa-chevron-down" id="chevron-${c.id}" style="color: var(--text-muted); transition: transform 0.3s;"></i>
@@ -70,7 +70,7 @@ function cargarCuadrillasFirebase() {
           <div style="margin-bottom: 12px;">
             <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Adjuntar Enlace del PDF de Google Drive:</label>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-              <input type="text" id="nombrePdf-${c.id}" placeholder="Nombre del reporte (ej. Reporte Semana 1)" style="flex: 1; min-width: 140px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 10px; font-size: 0.8rem; outline: none;">
+              <input type="text" id="nombrePdf-${c.id}" placeholder="Nombre del reporte (ej. Reporte de Asistencia)" style="flex: 1; min-width: 140px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 10px; font-size: 0.8rem; outline: none;">
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <input type="url" id="linkPdf-${c.id}" placeholder="https://drive.google.com/file/d/..." style="flex: 1; min-width: 200px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 10px; font-size: 0.8rem; outline: none;">
@@ -91,7 +91,7 @@ function cargarCuadrillasFirebase() {
       `;
       container.appendChild(card);
 
-      // 2. Renderizar en el Calendario Operativo con validación en tiempo real (Pintar verde si hay reporte)
+      // 2. Renderizar en el Calendario Operativo y verificar si ya cumplió (se pinta en verde)
       database.ref(`reportes_cuadrillas/${c.id}`).on('value', (snapReportes) => {
         const tieneReportes = snapReportes.exists() && Object.keys(snapReportes.val()).length > 0;
         
@@ -103,12 +103,12 @@ function cargarCuadrillasFirebase() {
           if (calContainer) calContainer.appendChild(calCard);
         }
 
-        // Estilos dinámicos: si ya subió reporte se marca en verde brillante de cumplido
+        // Si ya hay reporte adjunto, se pinta de verde brillante indicando cumplimiento
         const borderColor = tieneReportes ? 'var(--green-bright)' : 'var(--card-border)';
-        const bgColor = tieneReportes ? 'rgba(53, 229, 138, 0.08)' : 'rgba(0,0,0,0.25)';
+        const bgColor = tieneReportes ? 'rgba(53, 229, 138, 0.1)' : 'rgba(0,0,0,0.25)';
         const estadoBadge = tieneReportes 
-          ? `<span style="background: rgba(53, 229, 138, 0.2); color: var(--green-bright); padding: 2px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 800;"><i class="fa-solid fa-check"></i> Cumplido</span>` 
-          : `<span style="background: rgba(255, 209, 102, 0.15); color: var(--warning); padding: 2px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700;">Pendiente</span>`;
+          ? `<span style="background: rgba(53, 229, 138, 0.25); color: var(--green-bright); padding: 3px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 800;"><i class="fa-solid fa-check-double"></i> Cumplido (Verde)</span>` 
+          : `<span style="background: rgba(255, 209, 102, 0.15); color: var(--warning); padding: 3px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;"><i class="fa-solid fa-clock"></i> Pendiente de Reporte</span>`;
 
         calCard.style.borderColor = borderColor;
         calCard.style.background = bgColor;
@@ -116,18 +116,18 @@ function cargarCuadrillasFirebase() {
         const listaIntegrantes = c.integrantes.split(',').map(i => `<li><i class="fa-solid fa-circle-user"></i> ${i.trim()}</li>`).join('');
         
         calCard.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <h5 style="margin: 0; color: ${tieneReportes ? 'var(--green-bright)' : 'var(--text-main)'};"><i class="fa-solid fa-users"></i> ${c.nombre}</h5>
             ${estadoBadge}
           </div>
-          <small style="color: var(--cyan-neon); font-weight: 700; display: block; margin-bottom: 6px;"><i class="fa-regular fa-calendar-days"></i> Días de asistencia: ${c.fechaAsignada}</small>
+          <small style="color: var(--cyan-neon); font-weight: 700; display: block; margin-bottom: 8px;"><i class="fa-regular fa-calendar-days"></i> Días asignados: ${c.fechaAsignada}</small>
           <ul class="crew-members-list">
             ${listaIntegrantes}
           </ul>
         `;
       });
 
-      // Cargar links de esta cuadrilla
+      // Cargar links de reportes
       cargarLinksDeCuadrilla(c.id);
     });
   });
@@ -144,7 +144,7 @@ function toggleAcordeonCuadrilla(id) {
   }
 }
 
-// Guardar el enlace de Google Drive en Firebase
+// Guardar enlace de Google Drive en Firebase
 function guardarLinkDriveCuadrilla(cuadrillaId, nombreCuadrilla) {
   const inputNombre = document.getElementById(`nombrePdf-${cuadrillaId}`);
   const inputLink = document.getElementById(`linkPdf-${cuadrillaId}`);
@@ -166,7 +166,7 @@ function guardarLinkDriveCuadrilla(cuadrillaId, nombreCuadrilla) {
     subidoPor: operador,
     timestamp: Date.now()
   }).then(() => {
-    alert(`¡Enlace del reporte "${nombreArchivo}" adjuntado con éxito para ${nombreCuadrilla}! El calendario se ha actualizado.`);
+    alert(`¡Reporte "${nombreArchivo}" adjuntado con éxito! El calendario se ha actualizado a verde.`);
     inputNombre.value = '';
     inputLink.value = '';
   }).catch(err => {
@@ -211,7 +211,7 @@ function cargarLinksDeCuadrilla(cuadrillaId) {
 }
 
 function eliminarCuadrilla(cuadrillaId) {
-  if (confirm("¿Estás seguro de eliminar esta cuadrilla y todos sus enlaces de reportes asociados?")) {
+  if (confirm("¿Estás seguro de eliminar esta cuadrilla y sus reportes?")) {
     database.ref(`cuadrillas_sistema/${cuadrillaId}`).remove();
     database.ref(`reportes_cuadrillas/${cuadrillaId}`).remove();
     alert("Cuadrilla eliminada correctamente.");
@@ -219,7 +219,7 @@ function eliminarCuadrilla(cuadrillaId) {
 }
 
 function eliminarLinkCuadrilla(cuadrillaId, pdfKey) {
-  if (confirm("Desea eliminar este enlace de reporte?")) {
+  if (confirm("¿Desea eliminar este enlace de reporte?")) {
     database.ref(`reportes_cuadrillas/${cuadrillaId}/${pdfKey}`).remove();
   }
 }
