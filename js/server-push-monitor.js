@@ -1,7 +1,15 @@
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
 var admin = require("firebase-admin");
 
-// Apuntamos al archivo serviceAccountKey.json en la raíz
-var serviceAccount = require("../serviceAccountKey.json");
+// Buscar el archivo de llaves ya sea en la raíz local o en la carpeta secreta de Render
+let secretPath = path.join(__dirname, "../serviceAccountKey.json");
+if (!fs.existsSync(secretPath)) {
+  secretPath = "/etc/secrets/serviceAccountKey.json";
+}
+
+var serviceAccount = require(secretPath);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -40,4 +48,15 @@ db.ref('sensores').on('value', async (snapshot) => {
       console.error('Error al enviar notificación Push:', error);
     }
   }
+});
+
+// Servidor HTTP básico para mantener el puerto abierto exigido por Render
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Huerto ESH Monitor Push 24/7 activo\n');
+});
+
+const PORT = process.env.PORT || 10000;
+server.listen(PORT, () => {
+  console.log(`Servidor HTTP corriendo en el puerto ${PORT}`);
 });
