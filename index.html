@@ -772,10 +772,12 @@
     </div>
   </div>
 
-  <!-- MODAL DE RESUMEN OPERATIVO DEL CALENDARIO -->
+<!-- MODAL DE RESUMEN OPERATIVO DEL CALENDARIO -->
   <div id="calendarSummaryModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2000;">
-    <div class="login-hex-card" style="max-width: 450px; text-align: left; padding-top: 30px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px;">
+    <!-- Se removió la clase login-hex-card para evitar el degradado superior y se usa un diseño limpio -->
+    <div style="background: var(--card-bg); border: 1px solid var(--card-border-glow); border-radius: 28px; width: 100%; max-width: 450px; padding: 30px; box-shadow: 0 35px 70px rgba(0, 0, 0, 0.75); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); text-align: left; position: relative;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
         <h3 style="color: var(--green-bright); font-size: 1.15rem;" id="modalCalTitle">
           <i class="fa-regular fa-calendar-check"></i> Resumen de Jornada
         </h3>
@@ -789,8 +791,9 @@
       </div>
 
       <div style="margin-top: 20px; text-align: right;">
-        <button onclick="cerrarModalResumenCalendario()" class="btn-add" style="padding: 10px 18px; border-radius: 12px; font-size: 0.85rem;">Cerrar</button>
+        <button onclick="cerrarModalResumenCalendario()" class="btn-add" style="padding: 10px 20px; border-radius: 12px; font-size: 0.85rem;">Cerrar</button>
       </div>
+
     </div>
   </div>
   <!-- Scripts Modularizados -->
