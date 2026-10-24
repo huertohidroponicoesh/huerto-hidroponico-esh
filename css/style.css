@@ -563,6 +563,22 @@ body.role-guest .control-item .switch { pointer-events: none; opacity: 0.3; filt
 
 footer { text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 40px 0 20px; }
 
+/* --- CORRECCIÓN PARA EL MODAL DE ALERTAS PUSH --- */
+.push-modal-card {
+  padding-top: 30px !important;
+}
+
+.push-modal-header {
+  position: relative;
+  margin-bottom: 20px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.push-modal-body {
+  margin-top: 10px;
+}
+
 @media (max-width: 768px) {
   .main-header { flex-direction: column; text-align: center; padding: 18px; }
   .system-status-bar { justify-content: center; width: 100%; gap: 8px; }

@@ -306,7 +306,7 @@
 
         <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA -->
         <div class="card admin-only" style="margin-bottom: 20px;">
-          <h3><i class="fa-solid fa-folder-plus"></i> Crear Nueva Cuadrilla (Carpeta)</h3>
+          <h3><i class="fa-solid fa-folder-plus"></i> Crear Nueva Cuadrilla</h3>
           <p class="card-subtitle">Asigne nombre, fecha de labor (AAAA-MM-DD) y miembros del equipo (Solo Administrador)</p>
           
           <div class="tracker-inputs-form" style="margin-top: 15px;">
@@ -746,21 +746,21 @@
     </div>
   </div>
 
-  <!-- MODAL DE CONFIGURACIÓN DE DISPOSITIVO PUSH (PERSONALIZADO) -->
+  <!-- MODAL DE CONFIGURACIÓN DE DISPOSITIVO PUSH (INSTITUCIONAL LIMPIO) -->
   <div id="pushConfigModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2000;">
-    <div class="login-hex-card" style="max-width: 420px; text-align: left;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div class="login-hex-card push-modal-card" style="max-width: 420px; text-align: left;">
+      <div class="push-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: var(--green-bright); font-size: 1.2rem;"><i class="fa-solid fa-bell"></i> Configurar Alertas Push 24/7</h3>
         <button onclick="cerrarModalPush()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div style="font-size: 0.92rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 15px;">
+      <div class="push-modal-body" style="font-size: 0.92rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 15px;">
         <div>
           <label style="display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 700; color: var(--text-main);">Nombre del Dispositivo:</label>
-          <input type="text" id="inputNombreDispositivo" placeholder="Ej. Laptop Principal / Celular Alan" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; outline: none;">
+          <input type="text" id="inputNombreDispositivo" placeholder="Ej. Laptop Laboratorio" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; outline: none;">
         </div>
         <div>
-          <label style="display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 700; color: var(--text-main);">Usuario / Operador:</label>
-          <input type="text" id="inputNombreUsuario" placeholder="Ej. Alan Hussein" value="Alan Hussein" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; outline: none;">
+          <label style="display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 700; color: var(--text-main);">Usuario:</label>
+          <input type="text" id="inputNombreUsuario" placeholder="Ej. Administrador" value="" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; outline: none;">
         </div>
         <div style="display: flex; gap: 10px; margin-top: 10px;">
           <button onclick="guardarDispositivoPersonalizado()" class="btn-add" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 800;">Guardar y Activar</button>
