@@ -166,7 +166,7 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
 
   for (let i = 0; i < ajusteInicio; i++) {
     const emptyBox = document.createElement('div');
-    emptyBox.style.cssText = `background: rgba(0,0,0,0.1); border-radius: 8px; min-height: 55px; opacity: 0.2;`;
+    emptyBox.style.cssText = `background: rgba(0,0,0,0.1); border-radius: 8px; min-height: 70px; opacity: 0.2;`;
     calContainer.appendChild(emptyBox);
   }
 
@@ -177,16 +177,18 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
 
     const dayBox = document.createElement('div');
     dayBox.style.cssText = `
-      background: rgba(0,0,0,0.25);
+      background: rgba(0,0,0,0.3);
       border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 6px;
-      min-height: 65px;
+      border-radius: 10px;
+      padding: 8px;
+      min-height: 75px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       position: relative;
+      box-sizing: border-box;
+      overflow: hidden;
     `;
 
     let cuadrillaAsignada = null;
@@ -222,14 +224,15 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
       };
     }
 
-    let contenidoHtml = `<div style="font-weight: 800; color: var(--text-main);">${dia}</div>`;
+    let contenidoHtml = `<div style="font-weight: 800; color: var(--text-main); font-size: 0.85rem;">${dia}</div>`;
     
     if (cuadrillaAsignada) {
       const indicadorColor = tieneReporteEstaFecha ? 'var(--green-bright)' : 'var(--warning)';
-      const textoEstado = tieneReporteEstaFecha ? '✔ OK' : '⏳ Pendiente';
+      const textoEstado = tieneReporteEstaFecha ? '✔ OK' : '⏳ Pend.';
       contenidoHtml += `
-        <div style="font-size: 0.65rem; font-weight: 700; color: ${indicadorColor}; margin-top: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          ${cuadrillaAsignada.nombre.split(' ')[0]} (${textoEstado})
+        <div style="background: rgba(0,0,0,0.4); border-radius: 6px; padding: 3px 5px; margin-top: auto; border: 1px solid rgba(255,255,255,0.05);">
+          <div style="font-weight: 700; color: var(--text-main); font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${cuadrillaAsignada.nombre}</div>
+          <div style="font-weight: 700; color: ${indicadorColor}; font-size: 0.62rem; margin-top: 1px;">${textoEstado}</div>
         </div>
       `;
     }
