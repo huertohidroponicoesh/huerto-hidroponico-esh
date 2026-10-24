@@ -42,25 +42,46 @@ db.ref('sensores').on('value', async (snapshot) => {
       const tokensObj = tokensSnap.val();
 
       if (tokensObj) {
-        const tokens = Object.values(tokensObj).map(t => t.token);
-        console.log(`Enviando notificación a ${tokens.length} dispositivos...`);
-
-        // Usamos sendEachForMulticast para evitar errores de endpoints antiguos (404)
-        const message = {
-          tokens: tokens,
-          notification: {
-            title: '🚨 Alerta Crítica - Huerto Hidropónico UAEH',
-            body: `Anomalía detectada: pH: ${phVal || 'N/A'} | Temp: ${tempVal || 'N/A'}°C`
-          },
-          webpush: {
-            notification: {
-              icon: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png'
-            }
+        // Extracción inteligente y robusta de tokens (soporta strings o objetos con .token)
+        const tokens = [];
+        Object.values(tokensObj).forEach(item => {
+          if (typeof item === 'string') {
+            tokens.push(item);
+          } else if (item && typeof item === 'object' && item.token) {
+            tokens.push(item.token);
           }
-        };
+        });
 
-        const response = await admin.messaging().sendEachForMulticast(message);
-        console.log(`✅ Notificaciones enviadas. Exitosas: ${response.successCount}, Fallidas: ${response.failureCount}`);
+        if (tokens.length > 0) {
+          console.log(`Enviando notificación a ${tokens.length} dispositivos...`);
+
+          const message = {
+            tokens: tokens,
+            notification: {
+              title: '🚨 Alerta Crítica - Huerto Hidropónico UAEH',
+              body: `Anomalía detectada: pH: ${phVal || 'N/A'} | Temp: ${tempVal || 'N/A'}°C`
+            },
+            webpush: {
+              notification: {
+                icon: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png'
+              }
+            }
+          };
+
+          const response = await admin.messaging().sendEachForMulticast(message);
+          console.log(`✅ Notificaciones enviadas. Exitosas: ${response.successCount}, Fallidas: ${response.failureCount}`);
+
+          // Imprimir el error exacto de los tokens que hayan fallado para depurar
+          if (response.failureCount > 0) {
+            response.responses.forEach((resp, idx) => {
+              if (!resp.success) {
+                console.error(`❌ Error en token [${idx}] (${tokens[idx]}):`, resp.error.message);
+              }
+            });
+          }
+        } else {
+          console.log("⚠️ No se encontraron tokens válidos estructurados en fcm_tokens.");
+        }
       } else {
         console.log("⚠️ No hay tokens registrados en fcm_tokens.");
       }
