@@ -13,7 +13,8 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
+// Método correcto para Firebase SDK v8 en Service Workers
+messaging.setBackgroundMessageHandler((payload) => {
   console.log('[firebase-messaging-sw.js] Mensaje recibido en segundo plano:', payload);
   
   const notificationTitle = payload.notification?.title || "Alerta del Huerto IoT";
@@ -27,7 +28,7 @@ messaging.onBackgroundMessage((payload) => {
     }
   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  return self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 self.addEventListener('notificationclick', (event) => {
