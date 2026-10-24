@@ -5,6 +5,7 @@ let refSensoresActual = null;
 let refActuadoresActual = null;
 let ultimaAlertaRegistrada = 0;
 let temporizadorDesconexion = null;
+let tokenPushPendiente = null;
 
 let currentThresholds = {
   phMin: 5.5, phMax: 6.5,
@@ -445,7 +446,8 @@ function purgarAlertasFirebase() {
   }
 }
 
-function solicitarNotificaciones() {
+// NUEVAS FUNCIONES PARA EL MODAL DE CONFIGURACIÓN PUSH PERSONALIZADO
+function abrirModalPush() {
   if (!messaging) return alert("Tu navegador no soporta notificaciones Web Push.");
   
   Notification.requestPermission().then((permission) => {
@@ -456,19 +458,43 @@ function solicitarNotificaciones() {
           vapidKey: 'BJBLJ1psCydMWxnpj3LX5TbH6ev9Br8EjHgoBUdniqs2DHwm-5o2m20UW-TRyIUGT5ZFPQaoRgJSEKX1VCE2-M4' 
         }).then((currentToken) => {
           if (currentToken) {
-            const tokenKey = currentToken.substring(0, 15);
-            database.ref('fcm_tokens/' + tokenKey).set({
-              token: currentToken,
-              dispositivo: navigator.userAgent,
-              actualizado: Date.now()
-            });
-            alert("¡Notificaciones Push Nativas activadas con éxito!");
+            tokenPushPendiente = currentToken;
+            const modal = document.getElementById('pushConfigModal');
+            if (modal) modal.classList.remove('hidden');
           }
         });
       });
     } else {
-      alert("Permiso de notificaciones denegado.");
+      alert("Debes permitir las notificaciones en el navegador para continuar.");
     }
+  });
+}
+
+function cerrarModalPush() {
+  const modal = document.getElementById('pushConfigModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function guardarDispositivoPersonalizado() {
+  if (!tokenPushPendiente) return alert("No hay token de sesión válido.");
+
+  const nombreDisp = document.getElementById('inputNombreDispositivo').value.trim() || "Dispositivo_General";
+  const nombreUser = document.getElementById('inputNombreUsuario').value.trim() || "Operador";
+
+  const deviceKey = nombreDisp.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+  database.ref('fcm_tokens/' + deviceKey).set({
+    token: tokenPushPendiente,
+    dispositivoNombre: nombreDisp,
+    usuario: nombreUser,
+    userAgent: navigator.userAgent,
+    actualizado: Date.now()
+  }).then(() => {
+    alert(`¡Dispositivo "${nombreDisp}" registrado y vinculado de forma permanente para ${nombreUser}!`);
+    cerrarModalPush();
+  }).catch((err) => {
+    console.error("Error al guardar token personalizado:", err);
+    alert("Error al guardar en Firebase.");
   });
 }
 
