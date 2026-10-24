@@ -3,7 +3,6 @@ const path = require('path');
 const http = require('http');
 var admin = require("firebase-admin");
 
-// Buscar el archivo de llaves ya sea en la raíz local o en la carpeta secreta de Render
 let secretPath = path.join(__dirname, "../serviceAccountKey.json");
 if (!fs.existsSync(secretPath)) {
   secretPath = "/etc/secrets/serviceAccountKey.json";
@@ -20,17 +19,28 @@ const db = admin.database();
 
 console.log("Servidor de Notificaciones Push activado y escuchando cambios en Firebase...");
 
+// Escuchar cambios en el nodo de sensores con logs de depuración
 db.ref('sensores').on('value', async (snapshot) => {
   const data = snapshot.val();
-  if (!data) return;
+  if (!data) {
+    console.log("⚠️ No se encontraron datos en el nodo sensores.");
+    return;
+  }
 
-  const esAnomalo = (data.ph < 5.5 || data.ph > 6.5) || (data.temperatura > 25);
+  console.log("📊 Datos recibidos de sensores:", JSON.stringify(data));
+
+  const phVal = Number(data.ph);
+  const tempVal = Number(data.temperatura);
+
+  const esAnomalo = (phVal < 5.5 || phVal > 6.5) || (tempVal > 25);
 
   if (esAnomalo) {
+    console.log(`🚨 ¡Anomalía detectada! pH: ${phVal} | Temp: ${tempVal}°C. Preparando notificación...`);
+
     const payload = {
       notification: {
         title: '🚨 Alerta Crítica - Huerto Hidropónico UAEH',
-        body: `Anomalía detectada: pH: ${data.ph || 'N/A'} | Temp: ${data.temperatura || 'N/A'}°C`,
+        body: `Anomalía detectada: pH: ${phVal || 'N/A'} | Temp: ${tempVal || 'N/A'}°C`,
         icon: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png'
       }
     };
@@ -41,12 +51,17 @@ db.ref('sensores').on('value', async (snapshot) => {
 
       if (tokensObj) {
         const tokens = Object.values(tokensObj).map(t => t.token);
+        console.log(`Enviando notificación a ${tokens.length} dispositivos...`);
         const response = await admin.messaging().sendToDevice(tokens, payload);
-        console.log('Notificaciones Push enviadas con éxito. Exitosas:', response.successCount);
+        console.log('✅ Notificaciones Push enviadas con éxito. Exitosas:', response.successCount);
+      } else {
+        console.log("⚠️ No hay tokens registrados en fcm_tokens.");
       }
     } catch (error) {
-      console.error('Error al enviar notificación Push:', error);
+      console.error('❌ Error al enviar notificación Push:', error);
     }
+  } else {
+    console.log("✔️ Valores dentro del rango normal. Sin alertas.");
   }
 });
 
