@@ -10,14 +10,55 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarCuadrillasFirebase();
 });
 
-// Crear cuadrilla asignando fechas específicas (ej. formato YYYY-MM-DD)
+// Arreglo temporal para almacenar las fechas seleccionadas al crear una cuadrilla
+let fechasSeleccionadasCuadrilla = [];
+
+// Función para agregar fecha desde el selector al arreglo múltiple
+function agregarFechaASeleccion() {
+  const inputPicker = document.getElementById('inputFechaCuadrillaPicker');
+  const fecha = inputPicker.value;
+  if (fecha && !fechasSeleccionadasCuadrilla.includes(fecha)) {
+    fechasSeleccionadasCuadrilla.push(fecha);
+    actualizarBadgesFechas();
+  }
+  inputPicker.value = '';
+}
+
+// Función para remover una fecha de la selección actual
+function removerFechaSeleccion(fecha) {
+  fechasSeleccionadasCuadrilla = fechasSeleccionadasCuadrilla.filter(f => f !== fecha);
+  actualizarBadgesFechas();
+}
+
+// Renderizar las etiquetas visuales (badges) de las fechas seleccionadas
+function actualizarBadgesFechas() {
+  const container = document.getElementById('selectedBadgesDates');
+  if (!container) return;
+  
+  if (fechasSeleccionadasCuadrilla.length === 0) {
+    container.innerHTML = `<small style="color: var(--text-muted);">Ninguna fecha seleccionada todavía.</small>`;
+    return;
+  }
+
+  container.innerHTML = fechasSeleccionadasCuadrilla.map(f => `
+    <span style="background: rgba(0,240,255,0.15); border: 1px solid var(--cyan-neon); color: var(--cyan-neon); padding: 4px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+      <i class="fa-regular fa-calendar"></i> ${f}
+      <i class="fa-solid fa-xmark" style="cursor: pointer; color: var(--danger);" onclick="removerFechaSeleccion('${f}')" title="Quitar fecha"></i>
+    </span>
+  `).join('');
+}
+
+// Crear cuadrilla asignando múltiples fechas de labor
 function crearCarpetaCuadrilla() {
   const nombre = document.getElementById('inputNombreCuadrilla').value.trim();
   const integrantes = document.getElementById('inputIntegrantes').value.trim();
-  const fechaAsignada = document.getElementById('inputFechaCuadrilla').value.trim();
 
-  if (!nombre || !fechaAsignada) {
-    return alert("Por favor, ingresa el nombre de la cuadrilla y la fecha asignada (Ej. 2026-10-25).");
+  if (!nombre) {
+    return alert("Por favor, ingresa el nombre de la cuadrilla.");
+  }
+
+  if (fechasSeleccionadasCuadrilla.length === 0) {
+    return alert("Por favor, selecciona al menos una fecha de labor para la cuadrilla.");
   }
 
   const cuadrillaId = 'cuadrilla_' + Date.now();
@@ -26,13 +67,14 @@ function crearCarpetaCuadrilla() {
     id: cuadrillaId,
     nombre: nombre,
     integrantes: integrantes || "Sin registrar",
-    fechaAsignada: fechaAsignada,
+    fechasAsignadas: fechasSeleccionadasCuadrilla,
     creado: Date.now()
   }).then(() => {
-    alert(`¡Cuadrilla "${nombre}" creada exitosamente!`);
+    alert(`¡Cuadrilla "${nombre}" creada exitosamente con ${fechasSeleccionadasCuadrilla.length} fechas asignadas!`);
     document.getElementById('inputNombreCuadrilla').value = '';
     document.getElementById('inputIntegrantes').value = '';
-    document.getElementById('inputFechaCuadrilla').value = '';
+    fechasSeleccionadasCuadrilla = [];
+    actualizarBadgesFechas();
     cargarCuadrillasFirebase();
   }).catch(err => {
     console.error("Error al crear cuadrilla:", err);
@@ -56,12 +98,14 @@ function cargarCuadrillasFirebase() {
 
     container.innerHTML = '';
     
-    // Obtenemos también los reportes para cruzar la información en el calendario
+    // Obtenemos los reportes para cruzar la información en el calendario
     database.ref('reportes_cuadrillas').once('value', (snapReportes) => {
       const reportesData = snapReportes.val() || {};
 
       Object.values(cuadrillasData).forEach(c => {
-        // 1. Renderizar Acordeón de Carpeta
+        const fechasTexto = c.fechasAsignadas ? c.fechasAsignadas.join(', ') : (c.fechaAsignada || 'Sin fechas');
+
+        // Renderizar Acordeón de Carpeta
         const card = document.createElement('div');
         card.className = 'folder-card';
         card.innerHTML = `
@@ -70,7 +114,7 @@ function cargarCuadrillasFirebase() {
               <div class="folder-icon"><i class="fa-solid fa-folder-open"></i></div>
               <div class="folder-info">
                 <h4>${c.nombre}</h4>
-                <small><i class="fa-regular fa-calendar"></i> Fecha: ${c.fechaAsignada} | Integrantes: ${c.integrantes}</small>
+                <small><i class="fa-regular fa-calendar"></i> Fechas: ${fechasTexto} | Integrantes: ${c.integrantes}</small>
               </div>
             </div>
             <i class="fa-solid fa-chevron-down" id="chevron-${c.id}" style="color: var(--text-muted); transition: transform 0.3s;"></i>
@@ -80,7 +124,7 @@ function cargarCuadrillasFirebase() {
             <div style="margin-bottom: 12px;">
               <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Adjuntar Enlace del PDF de Google Drive:</label>
               <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-                <input type="text" id="nombrePdf-${c.id}" placeholder="Nombre del reporte (ej. Reporte Día 25)" style="flex: 1; min-width: 140px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 10px; font-size: 0.8rem; outline: none;">
+                <input type="text" id="nombrePdf-${c.id}" placeholder="Nombre del reporte (ej. Reporte Jornada)" style="flex: 1; min-width: 140px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 10px; font-size: 0.8rem; outline: none;">
               </div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 <input type="url" id="linkPdf-${c.id}" placeholder="https://drive.google.com/file/d/..." style="flex: 1; min-width: 200px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 10px; font-size: 0.8rem; outline: none;">
@@ -103,13 +147,13 @@ function cargarCuadrillasFirebase() {
         cargarLinksDeCuadrilla(c.id);
       });
 
-      // 2. Dibujar el Planificador Mensual con las cuadrillas y reportes cargados
+      // Dibujar el Planificador Mensual
       renderizarCalendarioMensual(cuadrillasData, reportesData);
     });
   });
 }
 
-// Generar la cuadrícula visual del mes (Estilo Planificador Mensual)
+// Generar la cuadrícula visual del mes
 function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
   const calContainer = document.getElementById('calendarioOperativoContainer');
   const mesInput = document.getElementById('mesPlanificadorInput');
@@ -123,14 +167,12 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
   const totalDiasMes = new Date(anio, mes, 0).getDate();
   const ajusteInicio = primerDiaMes === 0 ? 6 : primerDiaMes - 1;
 
-  // Rellenar espacios vacíos previos al inicio del mes
   for (let i = 0; i < ajusteInicio; i++) {
     const emptyBox = document.createElement('div');
     emptyBox.style.cssText = `background: rgba(0,0,0,0.1); border-radius: 8px; min-height: 65px; opacity: 0.2;`;
     calContainer.appendChild(emptyBox);
   }
 
-  // Dibujar cada día del mes
   for (let dia = 1; dia <= totalDiasMes; dia++) {
     const diaStr = String(dia).padStart(2, '0');
     const mesStr = String(mes).padStart(2, '0');
@@ -152,33 +194,36 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
 
     let cuadrillaAsignada = null;
     let estaCumplido = false;
-    let urlReporte = '';
+    let reportesDelDia = [];
 
     Object.values(cuadrillas).forEach(c => {
-      if (c.fechaAsignada && c.fechaAsignada.includes(fechaActualStr)) {
+      const listaFechas = c.fechasAsignadas || (c.fechaAsignada ? [c.fechaAsignada] : []);
+      if (listaFechas.includes(fechaActualStr)) {
         cuadrillaAsignada = c;
         const reps = reportes[c.id];
         if (reps && Object.keys(reps).length > 0) {
           estaCumplido = true;
-          const primerRep = Object.values(reps)[0];
-          urlReporte = primerRep.pdfUrl;
+          reportesDelDia = Object.values(reps);
         }
       }
     });
 
     if (cuadrillaAsignada) {
+      dayBox.style.cursor = 'pointer';
       if (estaCumplido) {
         dayBox.style.borderColor = 'var(--green-bright)';
-        dayBox.style.background = 'rgba(53, 229, 138, 0.15)';
-        dayBox.style.cursor = 'pointer';
-        dayBox.title = "¡Clic para abrir el reporte en PDF!";
-        dayBox.onclick = () => {
-          window.open(urlReporte, '_blank');
-        };
+        dayBox.style.background = 'rgba(53, 229, 138, 0.2)';
+        dayBox.title = "Haz clic para ver el resumen y los enlaces del reporte.";
       } else {
         dayBox.style.borderColor = 'var(--warning)';
-        dayBox.style.background = 'rgba(255, 209, 102, 0.08)';
+        dayBox.style.background = 'rgba(255, 209, 102, 0.12)';
+        dayBox.title = "Día asignado - Pendiente de subir reporte.";
       }
+
+      // Al hacer clic abre el modal emergente con la información de la jornada
+      dayBox.onclick = () => {
+        abrirResumenDiaCalendario(fechaActualStr, cuadrillaAsignada, reportesDelDia);
+      };
     }
 
     let contenidoHtml = `<div style="font-weight: 800; color: var(--text-main);">${dia}</div>`;
@@ -189,7 +234,7 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
       contenidoHtml += `
         <div style="background: rgba(0,0,0,0.4); border-radius: 4px; padding: 2px 4px; margin-top: 2px; overflow: hidden;">
           <strong style="color: ${badgeColor}; display: block; font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${cuadrillaAsignada.nombre}</strong>
-          <span style="font-size: 0.6rem; color: var(--text-muted);">${iconoEstado} ${estaCumplido ? 'Ver PDF' : 'Pendiente'}</span>
+          <span style="font-size: 0.6rem; color: var(--text-muted);">${iconoEstado} ${estaCumplido ? 'Cumplido' : 'Pendiente'}</span>
         </div>
       `;
     }
@@ -197,6 +242,62 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
     dayBox.innerHTML = contenidoHtml;
     calContainer.appendChild(dayBox);
   }
+}
+
+// Abrir el Modal de Resumen Operativo
+function abrirResumenDiaCalendario(fecha, cuadrilla, reportes) {
+  const modal = document.getElementById('calendarSummaryModal');
+  const modalTitle = document.getElementById('modalCalTitle');
+  const modalBody = document.getElementById('modalCalBody');
+
+  if (!modal || !modalBody) return;
+
+  modalTitle.innerHTML = `<i class="fa-regular fa-calendar-check"></i> Resumen de Jornada: ${fecha}`;
+
+  const tieneReportes = reportes && reportes.length > 0;
+  const estadoBadge = tieneReportes 
+    ? `<span style="background: rgba(53, 229, 138, 0.2); border: 1px solid var(--green-bright); color: var(--green-bright); padding: 4px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 800;"><i class="fa-solid fa-check-circle"></i> Cumplido</span>`
+    : `<span style="background: rgba(255, 209, 102, 0.2); border: 1px solid var(--warning); color: var(--warning); padding: 4px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 800;"><i class="fa-solid fa-clock"></i> Pendiente de Reporte</span>`;
+
+  let htmlReportes = '';
+  if (tieneReportes) {
+    htmlReportes = reportes.map(r => `
+      <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); padding: 10px 14px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+        <div>
+          <strong style="color: var(--text-main); font-size: 0.85rem; display: block;"><i class="fa-brands fa-google-drive" style="color: var(--cyan-neon);"></i> ${r.nombreArchivo}</strong>
+          <small style="color: var(--text-muted); font-size: 0.75rem;">Subido el ${r.fechaSubida} por ${r.subidoPor}</small>
+        </div>
+        <a href="${r.pdfUrl}" target="_blank" class="btn-export" style="text-decoration: none; padding: 6px 12px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 4px;">
+          <i class="fa-solid fa-external-link-alt"></i> Ver PDF
+        </a>
+      </div>
+    `).join('');
+  } else {
+    htmlReportes = `<p style="font-size: 0.82rem; color: var(--text-muted); font-style: italic; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; border: 1px dashed var(--card-border);">Esta cuadrilla aún no adjunta su enlace de reporte en Google Drive para esta jornada.</p>`;
+  }
+
+  modalBody.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <h4 style="color: var(--text-main); font-size: 1.1rem; font-weight: 800;">${cuadrilla.nombre}</h4>
+      ${estadoBadge}
+    </div>
+    
+    <div style="font-size: 0.85rem; margin-bottom: 12px;">
+      <strong style="color: var(--text-muted);">Integrantes:</strong> <span style="color: var(--text-main);">${cuadrilla.integrantes}</span>
+    </div>
+
+    <div style="border-top: 1px solid var(--card-border); padding-top: 10px;">
+      <h5 style="color: var(--cyan-neon); font-size: 0.85rem; margin-bottom: 8px;"><i class="fa-solid fa-file-pdf"></i> Reportes Adjuntos:</h5>
+      ${htmlReportes}
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+}
+
+function cerrarModalResumenCalendario() {
+  const modal = document.getElementById('calendarSummaryModal');
+  if (modal) modal.classList.add('hidden');
 }
 
 function toggleAcordeonCuadrilla(id) {
@@ -231,7 +332,7 @@ function guardarLinkDriveCuadrilla(cuadrillaId, nombreCuadrilla) {
     subidoPor: operador,
     timestamp: Date.now()
   }).then(() => {
-    alert(`¡Reporte adjuntado! El calendario se ha actualizado a verde.`);
+    alert(`¡Reporte adjuntado! El calendario se ha actualizado a verde en las fechas asignadas.`);
     inputNombre.value = '';
     inputLink.value = '';
     cargarCuadrillasFirebase();

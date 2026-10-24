@@ -304,20 +304,22 @@
           <h2><i class="fa-solid fa-users-rectangle"></i> Gestión de Cuadrillas, Reportes Google Drive & Calendario</h2>
         </div>
 
-        <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA -->
+        <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA (MÚLTIPLES FECHAS) -->
         <div class="card admin-only" style="margin-bottom: 20px;">
           <h3><i class="fa-solid fa-folder-plus"></i> Crear Nueva Cuadrilla</h3>
-          <p class="card-subtitle">Asigne nombre, fecha de labor (AAAA-MM-DD) y miembros del equipo (Solo Administrador)</p>
+          <p class="card-subtitle">Asigne nombre, días de labor múltiples y miembros del equipo (Solo Administrador)</p>
           
           <div class="tracker-inputs-form" style="margin-top: 15px;">
             <div class="tracker-inputs-row">
               <input type="text" id="inputNombreCuadrilla" placeholder="Ej. Cuadrilla 1">
               <input type="text" id="inputIntegrantes" placeholder="Ej. Integrante 1, 2, 3...">
             </div>
-            <div class="tracker-inputs-row">
-              <input type="date" id="inputFechaCuadrilla" title="Fecha exacta de asistencia">
+            <div class="tracker-inputs-row" style="align-items: center;">
+              <input type="date" id="inputFechaCuadrillaPicker" onchange="agregarFechaASeleccion()" title="Seleccionar fecha de labor" style="flex: 1;">
               <button class="btn-add" onclick="crearCarpetaCuadrilla()"><i class="fa-solid fa-plus"></i> Crear Carpeta</button>
             </div>
+            <!-- Contenedor donde se listarán las fechas seleccionadas en forma de etiquetas -->
+            <div id="selectedBadgesDates" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;"></div>
           </div>
         </div>
 
@@ -341,7 +343,7 @@
               <h3><i class="fa-regular fa-calendar-days"></i> Planificador Mensual Operativo</h3>
               <input type="month" id="mesPlanificadorInput" class="select-metric" onchange="renderizarCalendarioMensual()" title="Seleccionar Mes">
             </div>
-            <p class="card-subtitle">Días del mes asignados. Verde = Reporte Cumplido (Haz clic para ver PDF).</p>
+            <p class="card-subtitle">Amarillo = Asignado (Esperando Reporte). Verde = Reporte Cumplido (Clic para ver PDF).</p>
             
             <!-- Cabecera de días de la semana -->
             <div class="calendar-days-header" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--cyan-neon); margin-top: 12px; margin-bottom: 6px;">
@@ -746,7 +748,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE CONFIGURACIÓN DE DISPOSITIVO PUSH (INSTITUCIONAL LIMPIO) -->
+  <!-- MODAL DE CONFIGURACIÓN DE DISPOSITIVO PUSH -->
   <div id="pushConfigModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2000;">
     <div class="login-hex-card push-modal-card" style="max-width: 420px; text-align: left;">
       <div class="push-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -770,6 +772,27 @@
     </div>
   </div>
 
+  <!-- MODAL DE RESUMEN OPERATIVO DEL CALENDARIO -->
+  <div id="calendarSummaryModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2000;">
+    <div class="login-hex-card" style="max-width: 450px; text-align: left; padding-top: 30px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px;">
+        <h3 style="color: var(--green-bright); font-size: 1.15rem;" id="modalCalTitle">
+          <i class="fa-regular fa-calendar-check"></i> Resumen de Jornada
+        </h3>
+        <button onclick="cerrarModalResumenCalendario()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <div id="modalCalBody" style="font-size: 0.9rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 12px;">
+        <!-- Se llena dinámicamente con JS -->
+      </div>
+
+      <div style="margin-top: 20px; text-align: right;">
+        <button onclick="cerrarModalResumenCalendario()" class="btn-add" style="padding: 10px 18px; border-radius: 12px; font-size: 0.85rem;">Cerrar</button>
+      </div>
+    </div>
+  </div>
   <!-- Scripts Modularizados -->
   <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
