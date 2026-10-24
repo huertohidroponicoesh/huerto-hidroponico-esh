@@ -44,22 +44,3 @@
 .toast-content small { font-size: 0.75rem; color: var(--text-muted); }
 .toast-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; }
 .toast-close:hover { color: var(--text-main); }
-
-/* --- MODO KIOSCO / PANTALLA DE CAMPO --- */
-body.modo-kiosco .nav-sections-bar,
-body.modo-kiosco .huerto-selector-bar,
-body.modo-kiosco .main-header .system-status-bar select,
-body.modo-kiosco .main-header .btn-action:not(#btnExitKiosk) {
-  display: none !important;
-}
-body.modo-kiosco .app-section:not(.hidden) {
-  display: flex !important;
-  flex-direction: column;
-  gap: 25px;
-}
-body.modo-kiosco .metric-value {
-  font-size: 3.8rem !important;
-}
-body.modo-kiosco .card {
-  padding: 35px !important;
-}

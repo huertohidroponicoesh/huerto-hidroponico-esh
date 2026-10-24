@@ -61,10 +61,20 @@ function cambiarHuerto(tipo) {
   escucharFirebase();
 }
 
+function marcarConectando() {
+  const badge = document.getElementById('statusBadge');
+  const txt = document.getElementById('statusText');
+  if (badge) badge.className = "status-indicator connecting";
+  if (txt) txt.innerHTML = `Conectando<span class="liquid-dots"><span></span><span></span><span></span></span>`;
+}
+
 function marcarDesconectado() {
   ultimaVezDatos = 0;
-  document.getElementById('statusBadge').className = "status-indicator offline";
-  document.getElementById('statusText').innerText = "ESP32 Desconectado";
+  const badge = document.getElementById('statusBadge');
+  const txt = document.getElementById('statusText');
+  if (badge) badge.className = "status-indicator offline";
+  if (txt) txt.innerText = "ESP32 Desconectado";
+
   document.getElementById('phValue').innerText = '--';
   document.getElementById('ecValue').innerText = '--';
   document.getElementById('tempValue').innerText = '--';
@@ -82,6 +92,8 @@ function escucharFirebase() {
   if (refSensoresActual) refSensoresActual.off();
   if (refActuadoresActual) refActuadoresActual.off();
 
+  marcarConectando();
+
   const nodoSensores = huertoActivo === 'nft' ? 'sensores' : 'sensores_raices';
   refSensoresActual = database.ref(nodoSensores);
 
@@ -89,8 +101,10 @@ function escucharFirebase() {
     const data = snap.val();
     if (data && data.timestamp && (Date.now() - data.timestamp < 15000)) {
       ultimaVezDatos = Date.now();
-      document.getElementById('statusBadge').className = "status-indicator online";
-      document.getElementById('statusText').innerText = "ESP32 Conectado";
+      const badge = document.getElementById('statusBadge');
+      const txt = document.getElementById('statusText');
+      if (badge) badge.className = "status-indicator online";
+      if (txt) txt.innerText = "ESP32 Conectado";
 
       const banner = document.getElementById('systemBanner');
       if (banner) {
@@ -174,55 +188,48 @@ function actualizarBotonUI(id, estado) {
     statusEl.innerHTML = `<span class="status-dot" style="background:${estado ? 'var(--green-bright)' : 'var(--danger)'}"></span> ${estado ? 'ENCENDIDO' : 'APAGADO'}`;
   }
 
-  // Animación del flujo principal y nodos interactivos en el diagrama hidráulico
+  // Animación del Diagrama Hidráulico de 4 Nodos con el Bypass
   if (id === 'bomba_principal') {
-    const pipe = document.getElementById('pipeFlow');
-    const nodeTank = document.getElementById('schemaNodeTank');
+    const p1 = document.getElementById('pipeFlow1');
+    const p2 = document.getElementById('pipeFlow2');
     const txtTank = document.getElementById('schemaStatusTank');
-    if (pipe) {
-      if (estado) {
-        pipe.classList.add('flow-active');
-        if(nodeTank) nodeTank.style.borderColor = 'var(--green-bright)';
-        if(txtTank) { txtTank.innerText = "Fluyendo"; txtTank.style.color = "var(--green-bright)"; }
-      } else {
-        pipe.classList.remove('flow-active');
-        if(nodeTank) nodeTank.style.borderColor = 'var(--card-border)';
-        if(txtTank) { txtTank.innerText = "Reposo"; txtTank.style.color = "var(--text-muted)"; }
-      }
+    const txtPump = document.getElementById('schemaStatusPump');
+
+    if (estado) {
+      if(p1) p1.classList.add('flow-active');
+      if(p2) p2.classList.add('flow-active');
+      if(txtTank) { txtTank.innerText = "Succionando"; txtTank.className = "node-status text-green"; }
+      if(txtPump) { txtPump.innerText = "Impulsando"; txtPump.className = "node-status text-green"; }
+    } else {
+      if(p1) p1.classList.remove('flow-active');
+      if(p2) p2.classList.remove('flow-active');
+      if(txtTank) { txtTank.innerText = "Reposo"; txtTank.className = "node-status text-muted"; }
+      if(txtPump) { txtPump.innerText = "Apagada"; txtPump.className = "node-status text-muted"; }
     }
   }
 
-  // Animación interactiva para la Válvula Bypass
   if (id === 'bypass') {
-    const pipeBypass = document.getElementById('pipeBypassFlow');
-    const nodeBypass = document.getElementById('schemaNodeBypass');
+    const pBypass = document.getElementById('pipeBypassFlow');
     const txtBypass = document.getElementById('schemaStatusBypass');
-    if (pipeBypass) {
-      if (estado) {
-        pipeBypass.classList.add('flow-active');
-        if(nodeBypass) nodeBypass.style.borderColor = 'var(--warning)';
-        if(txtBypass) { txtBypass.innerText = "Desviando"; txtBypass.style.color = "var(--warning)"; }
-      } else {
-        pipeBypass.classList.remove('flow-active');
-        if(nodeBypass) nodeBypass.style.borderColor = 'var(--card-border)';
-        if(txtBypass) { txtBypass.innerText = "Desactivada"; txtBypass.style.color = "var(--text-muted)"; }
-      }
+
+    if (estado) {
+      if(pBypass) pBypass.classList.add('flow-active');
+      if(txtBypass) { txtBypass.innerText = "Retorno Directo Activo"; txtBypass.className = "node-status text-warning"; }
+    } else {
+      if(pBypass) pBypass.classList.remove('flow-active');
+      if(txtBypass) { txtBypass.innerText = "Desactivada"; txtBypass.className = "node-status text-warning"; }
     }
   }
 
-  // Animación para el Peltier
   if (id === 'peltier') {
-    const nodePeltier = document.getElementById('schemaNodePeltier');
     const txtPeltier = document.getElementById('schemaStatusPeltier');
-    if (nodePeltier && txtPeltier) {
+    if (txtPeltier) {
       if (estado) {
-        nodePeltier.style.borderColor = 'var(--cyan-neon)';
-        txtPeltier.innerText = "Enfriando";
-        txtPeltier.style.color = "var(--cyan-neon)";
+        txtPeltier.innerText = "Enfriando Agua";
+        txtPeltier.className = "node-status text-cyan";
       } else {
-        nodePeltier.style.borderColor = 'var(--card-border)';
         txtPeltier.innerText = "Apagado";
-        txtPeltier.style.color = "var(--text-muted)";
+        txtPeltier.className = "node-status text-muted";
       }
     }
   }
@@ -441,14 +448,12 @@ function enviarComandoRemotoESP32(cmd) {
   }
 }
 
-// --- ASISTENTE DE CALIBRACIÓN GUIADA PASO A PASO ---
 function iniciarCalibracionGuiada(tipo) {
   const modal = document.getElementById('calibrationModal');
   const content = document.getElementById('calibStepContent');
   if (!modal || !content) return;
 
   modal.classList.remove('hidden');
-  
   let titulo = tipo === 'ph' ? 'Calibración Sonda pH' : tipo === 'ec' ? 'Calibración Sonda CE' : 'Calibración Offset Temperatura';
   
   content.innerHTML = `
