@@ -2,14 +2,14 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarCuadrillasFirebase();
 });
 
-// Crear una nueva carpeta de Cuadrilla (Solo Admin)
+// Crear una nueva carpeta de Cuadrilla con múltiples fechas (Solo Admin)
 function crearCarpetaCuadrilla() {
   const nombre = document.getElementById('inputNombreCuadrilla').value.trim();
   const integrantes = document.getElementById('inputIntegrantes').value.trim();
-  const fecha = document.getElementById('inputFechaCuadrilla').value;
+  const fecha = document.getElementById('inputFechaCuadrilla').value; // Puede ser una fecha o fechas múltiples
 
   if (!nombre || !fecha) {
-    return alert("Por favor, ingresa el nombre de la cuadrilla y la fecha asignada.");
+    return alert("Por favor, ingresa el nombre de la cuadrilla y las fechas asignadas.");
   }
 
   const cuadrillaId = 'cuadrilla_' + Date.now();
@@ -32,7 +32,7 @@ function crearCarpetaCuadrilla() {
   });
 }
 
-// Cargar y renderizar carpetas y calendario desde Firebase
+// Cargar y renderizar carpetas y calendario inteligente desde Firebase
 function cargarCuadrillasFirebase() {
   database.ref('cuadrillas_sistema').on('value', (snap) => {
     const data = snap.val();
@@ -43,7 +43,7 @@ function cargarCuadrillasFirebase() {
 
     if (!data) {
       container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 20px;">No hay cuadrillas registradas todavía.</p>`;
-      if (calContainer) calContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted);">Sin asignaciones.</p>`;
+      if (calContainer) calContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted);">Sin asignaciones en el calendario.</p>`;
       return;
     }
 
@@ -51,7 +51,7 @@ function cargarCuadrillasFirebase() {
     if (calContainer) calContainer.innerHTML = '';
 
     Object.values(data).forEach(c => {
-      // Renderizar Acordeón de Cuadrilla
+      // 1. Renderizar Acordeón de Carpeta de Cuadrilla
       const card = document.createElement('div');
       card.className = 'folder-card';
       card.innerHTML = `
@@ -60,7 +60,7 @@ function cargarCuadrillasFirebase() {
             <div class="folder-icon"><i class="fa-solid fa-folder-open"></i></div>
             <div class="folder-info">
               <h4>${c.nombre}</h4>
-              <small><i class="fa-regular fa-calendar"></i> Fecha asignada: ${c.fechaAsignada} | Integrantes: ${c.integrantes}</small>
+              <small><i class="fa-regular fa-calendar"></i> Días asignados: ${c.fechaAsignada} | Integrantes: ${c.integrantes}</small>
             </div>
           </div>
           <i class="fa-solid fa-chevron-down" id="chevron-${c.id}" style="color: var(--text-muted); transition: transform 0.3s;"></i>
@@ -91,20 +91,41 @@ function cargarCuadrillasFirebase() {
       `;
       container.appendChild(card);
 
-      // Renderizar en el Calendario Operativo
-      if (calContainer) {
-        const calCard = document.createElement('div');
-        calCard.className = 'calendar-card';
+      // 2. Renderizar en el Calendario Operativo con validación en tiempo real (Pintar verde si hay reporte)
+      database.ref(`reportes_cuadrillas/${c.id}`).on('value', (snapReportes) => {
+        const tieneReportes = snapReportes.exists() && Object.keys(snapReportes.val()).length > 0;
+        
+        let calCard = document.getElementById(`cal-card-${c.id}`);
+        if (!calCard) {
+          calCard = document.createElement('div');
+          calCard.id = `cal-card-${c.id}`;
+          calCard.className = 'calendar-card';
+          if (calContainer) calContainer.appendChild(calCard);
+        }
+
+        // Estilos dinámicos: si ya subió reporte se marca en verde brillante de cumplido
+        const borderColor = tieneReportes ? 'var(--green-bright)' : 'var(--card-border)';
+        const bgColor = tieneReportes ? 'rgba(53, 229, 138, 0.08)' : 'rgba(0,0,0,0.25)';
+        const estadoBadge = tieneReportes 
+          ? `<span style="background: rgba(53, 229, 138, 0.2); color: var(--green-bright); padding: 2px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 800;"><i class="fa-solid fa-check"></i> Cumplido</span>` 
+          : `<span style="background: rgba(255, 209, 102, 0.15); color: var(--warning); padding: 2px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700;">Pendiente</span>`;
+
+        calCard.style.borderColor = borderColor;
+        calCard.style.background = bgColor;
+
         const listaIntegrantes = c.integrantes.split(',').map(i => `<li><i class="fa-solid fa-circle-user"></i> ${i.trim()}</li>`).join('');
+        
         calCard.innerHTML = `
-          <h5><i class="fa-solid fa-users"></i> ${c.nombre}</h5>
-          <small style="color: var(--cyan-neon); font-weight: 700; display: block; margin-bottom: 6px;"><i class="fa-regular fa-calendar-days"></i> Día asignado: ${c.fechaAsignada}</small>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <h5 style="margin: 0; color: ${tieneReportes ? 'var(--green-bright)' : 'var(--text-main)'};"><i class="fa-solid fa-users"></i> ${c.nombre}</h5>
+            ${estadoBadge}
+          </div>
+          <small style="color: var(--cyan-neon); font-weight: 700; display: block; margin-bottom: 6px;"><i class="fa-regular fa-calendar-days"></i> Días de asistencia: ${c.fechaAsignada}</small>
           <ul class="crew-members-list">
             ${listaIntegrantes}
           </ul>
         `;
-        calContainer.appendChild(calCard);
-      }
+      });
 
       // Cargar links de esta cuadrilla
       cargarLinksDeCuadrilla(c.id);
@@ -145,7 +166,7 @@ function guardarLinkDriveCuadrilla(cuadrillaId, nombreCuadrilla) {
     subidoPor: operador,
     timestamp: Date.now()
   }).then(() => {
-    alert(`¡Enlace del reporte "${nombreArchivo}" adjuntado con éxito para ${nombreCuadrilla}!`);
+    alert(`¡Enlace del reporte "${nombreArchivo}" adjuntado con éxito para ${nombreCuadrilla}! El calendario se ha actualizado.`);
     inputNombre.value = '';
     inputLink.value = '';
   }).catch(err => {
@@ -198,7 +219,7 @@ function eliminarCuadrilla(cuadrillaId) {
 }
 
 function eliminarLinkCuadrilla(cuadrillaId, pdfKey) {
-  if (confirm("¿Desea eliminar este enlace de reporte?")) {
+  if (confirm("Desea eliminar este enlace de reporte?")) {
     database.ref(`reportes_cuadrillas/${cuadrillaId}/${pdfKey}`).remove();
   }
 }
