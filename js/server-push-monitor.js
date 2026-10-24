@@ -37,14 +37,6 @@ db.ref('sensores').on('value', async (snapshot) => {
   if (esAnomalo) {
     console.log(`🚨 ¡Anomalía detectada! pH: ${phVal} | Temp: ${tempVal}°C. Preparando notificación...`);
 
-    const payload = {
-      notification: {
-        title: '🚨 Alerta Crítica - Huerto Hidropónico UAEH',
-        body: `Anomalía detectada: pH: ${phVal || 'N/A'} | Temp: ${tempVal || 'N/A'}°C`,
-        icon: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png'
-      }
-    };
-
     try {
       const tokensSnap = await db.ref('fcm_tokens').once('value');
       const tokensObj = tokensSnap.val();
@@ -52,8 +44,23 @@ db.ref('sensores').on('value', async (snapshot) => {
       if (tokensObj) {
         const tokens = Object.values(tokensObj).map(t => t.token);
         console.log(`Enviando notificación a ${tokens.length} dispositivos...`);
-        const response = await admin.messaging().sendToDevice(tokens, payload);
-        console.log('✅ Notificaciones Push enviadas con éxito. Exitosas:', response.successCount);
+
+        // Usamos sendEachForMulticast para evitar errores de endpoints antiguos (404)
+        const message = {
+          tokens: tokens,
+          notification: {
+            title: '🚨 Alerta Crítica - Huerto Hidropónico UAEH',
+            body: `Anomalía detectada: pH: ${phVal || 'N/A'} | Temp: ${tempVal || 'N/A'}°C`
+          },
+          webpush: {
+            notification: {
+              icon: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png'
+            }
+          }
+        };
+
+        const response = await admin.messaging().sendEachForMulticast(message);
+        console.log(`✅ Notificaciones enviadas. Exitosas: ${response.successCount}, Fallidas: ${response.failureCount}`);
       } else {
         console.log("⚠️ No hay tokens registrados en fcm_tokens.");
       }
