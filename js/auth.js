@@ -52,7 +52,8 @@ function autenticar() {
   const pass = document.getElementById("passInput").value;
   const remember = document.getElementById("rememberMe").checked;
 
-  if ((user === "H.A.G.D.R." && pass === "Hidroing26") || (user === "Hidrouser" && pass === "Erdbeer")) {
+  // Credenciales actualizadas para la cuenta oficial del huerto
+  if ((user === "H.A.G.D.R." && pass === "HidroESH#2026!") || (user === "Hidrouser" && pass === "HydroUser_2026*")) {
     userRole = (user === "H.A.G.D.R.") ? "admin" : "guest";
     if (remember) { 
       localStorage.setItem("hidro_logged_in", "true"); 
@@ -99,15 +100,4 @@ function iniciarReloj() {
     const reloj = document.getElementById("liveClock");
     if (reloj) reloj.innerText = new Date().toLocaleTimeString('es-MX');
   }, 1000);
-}
-
-// --- MODO KIOSCO / PANTALLA DE CAMPO ---
-function toggleModoKiosco() {
-  document.body.classList.toggle('modo-kiosco');
-  const activo = document.body.classList.contains('modo-kiosco');
-  if (typeof mostrarToast === 'function') {
-    mostrarToast("Modo Kiosco", activo ? "Activado para pantalla de campo" : "Desactivado", "warning");
-  } else {
-    alert(activo ? "Modo Kiosco Activado" : "Modo Kiosco Desactivado");
-  }
 }

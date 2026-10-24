@@ -17,9 +17,10 @@ const messaging = firebase.messaging();
 messaging.setBackgroundMessageHandler((payload) => {
   console.log('[firebase-messaging-sw.js] Mensaje recibido en segundo plano:', payload);
   
-  const notificationTitle = payload.notification?.title || "Alerta del Huerto IoT";
+  // Soporte tanto para notificaciones directas como para data payloads
+  const notificationTitle = payload.notification?.title || payload.data?.title || "🚨 Alerta Crítica - Huerto Hidropónico UAEH";
   const notificationOptions = {
-    body: payload.notification?.body || "Se ha detectado un evento en el sistema.",
+    body: payload.notification?.body || payload.data?.body || "Anomalía detectada en los sensores del sistema.",
     icon: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png',
     badge: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png',
     vibrate: [200, 100, 200],

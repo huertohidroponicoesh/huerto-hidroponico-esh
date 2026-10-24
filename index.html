@@ -307,7 +307,7 @@
         <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA -->
         <div class="card admin-only" style="margin-bottom: 20px;">
           <h3><i class="fa-solid fa-folder-plus"></i> Crear Nueva Cuadrilla (Carpeta)</h3>
-          <p class="card-subtitle">Asigne nombre, días de labor y miembros del equipo (Solo Administrador)</p>
+          <p class="card-subtitle">Asigne nombre, fecha de labor (AAAA-MM-DD) y miembros del equipo (Solo Administrador)</p>
           
           <div class="tracker-inputs-form" style="margin-top: 15px;">
             <div class="tracker-inputs-row">
@@ -315,7 +315,7 @@
               <input type="text" id="inputIntegrantes" placeholder="Ej. Alan Hussein, Juan Pérez, María López">
             </div>
             <div class="tracker-inputs-row">
-              <input type="text" id="inputFechaCuadrilla" placeholder="Ej. 24/10/2026 al 28/10/2026 o Lunes/Miércoles">
+              <input type="date" id="inputFechaCuadrilla" title="Fecha exacta de asistencia">
               <button class="btn-add" onclick="crearCarpetaCuadrilla()"><i class="fa-solid fa-plus"></i> Crear Carpeta</button>
             </div>
           </div>
@@ -335,14 +335,21 @@
             </div>
           </div>
 
-          <!-- CALENDARIO OPERATIVO E INTEGRANTES -->
+          <!-- PLANIFICADOR MENSUAL INTERACTIVO -->
           <div class="card">
             <div class="chart-header">
-              <h3><i class="fa-regular fa-calendar-days"></i> Calendario Operativo & Asignaciones</h3>
+              <h3><i class="fa-regular fa-calendar-days"></i> Planificador Mensual Operativo</h3>
+              <input type="month" id="mesPlanificadorInput" class="select-metric" onchange="renderizarCalendarioMensual()" title="Seleccionar Mes">
             </div>
-            <p class="card-subtitle">Días programados y personal responsable por equipo.</p>
+            <p class="card-subtitle">Días del mes asignados. Verde = Reporte Cumplido (Haz clic para ver PDF).</p>
             
-            <div id="calendarioOperativoContainer" class="calendar-grid" style="margin-top: 15px;">
+            <!-- Cabecera de días de la semana -->
+            <div class="calendar-days-header" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--cyan-neon); margin-top: 12px; margin-bottom: 6px;">
+              <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+            </div>
+
+            <!-- Cuadrícula interactiva del mes -->
+            <div id="calendarioOperativoContainer" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; min-height: 220px;">
               <!-- Se llena dinámicamente -->
             </div>
           </div>
