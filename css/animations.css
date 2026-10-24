@@ -1,4 +1,6 @@
-/* --- CONTENEDOR Y ESTILOS DE ALERTAS TOAST FLOTANTES --- */
+/* =========================================================
+   1. CONTENEDOR Y ESTILOS DE ALERTAS TOAST FLOTANTES
+   ========================================================= */
 .toast-container {
   position: fixed;
   top: 20px;
@@ -9,6 +11,7 @@
   gap: 12px;
   pointer-events: none;
 }
+
 .toast-card {
   pointer-events: auto;
   background: rgba(12, 38, 30, 0.92);
@@ -25,6 +28,7 @@
   max-width: 380px;
   animation: slideInToast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
 .toast-card.success { border-color: var(--green-bright); }
 .toast-card.warning { border-color: var(--warning); }
 
@@ -32,6 +36,7 @@
   from { transform: translateX(120%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
 @keyframes fadeOutToast {
   to { transform: translateX(120%); opacity: 0; }
 }
@@ -44,3 +49,93 @@
 .toast-content small { font-size: 0.75rem; color: var(--text-muted); }
 .toast-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; }
 .toast-close:hover { color: var(--text-main); }
+
+
+/* =========================================================
+   2. ANIMACIONES Y EFECTOS LÍQUIDOS PARA INDICADORES DE ESTADO (ESP32)
+   ========================================================= */
+
+/* ESTADO ONLINE: Resplandor verde intermitente / respiración */
+.status-indicator.online .dot {
+  background-color: var(--green-bright);
+  box-shadow: 0 0 10px var(--green-bright), 0 0 20px var(--green-bright);
+  animation: pulseGlowOnline 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlowOnline {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 8px var(--green-bright), 0 0 15px var(--green-bright);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.25);
+    box-shadow: 0 0 14px var(--green-bright), 0 0 28px var(--green-bright);
+    opacity: 1;
+  }
+}
+
+/* ESTADO OFFLINE: Parpadeo de advertencia rojo neón */
+.status-indicator.offline .dot {
+  background-color: var(--danger);
+  box-shadow: 0 0 10px var(--danger);
+  animation: blinkOffline 1.6s infinite ease-in-out;
+}
+
+@keyframes blinkOffline {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 10px var(--danger);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.85);
+    box-shadow: 0 0 2px var(--danger);
+  }
+}
+
+/* ESTADO CONNECTING: Pulsación fluida en color ámbar/amarillo */
+.status-indicator.connecting .dot {
+  background-color: var(--warning);
+  box-shadow: 0 0 10px var(--warning);
+  animation: pulseConnecting 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseConnecting {
+  0%, 100% {
+    transform: scale(0.85);
+    opacity: 0.5;
+    box-shadow: 0 0 4px var(--warning);
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+    box-shadow: 0 0 14px var(--warning);
+  }
+}
+
+/* Animación fluida para los tres puntitos en el texto "Conectando..." */
+.liquid-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 3px;
+}
+
+.liquid-dots span {
+  width: 4px;
+  height: 4px;
+  background-color: currentColor;
+  border-radius: 50%;
+  display: inline-block;
+  animation: liquidBounce 1.4s infinite ease-in-out both;
+}
+
+.liquid-dots span:nth-child(1) { animation-delay: -0.32s; }
+.liquid-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes liquidBounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.2); }
+}
