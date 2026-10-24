@@ -3,7 +3,8 @@ const path = require('path');
 const http = require('http');
 var admin = require("firebase-admin");
 
-let secretPath = path.join(__dirname, "../serviceAccountKey.json");
+// Ruta corregida para buscar serviceAccountKey.json en la misma raíz o en secretos de Render
+let secretPath = path.join(__dirname, "serviceAccountKey.json");
 if (!fs.existsSync(secretPath)) {
   secretPath = "/etc/secrets/serviceAccountKey.json";
 }
@@ -42,13 +43,21 @@ db.ref('sensores').on('value', async (snapshot) => {
       const tokensObj = tokensSnap.val();
 
       if (tokensObj) {
-        // Extracción inteligente y robusta de tokens (soporta strings o objetos con .token)
+        // Mapeo para identificar la clave del token en la base de datos si falla
+        const tokensMap = {};
         const tokens = [];
-        Object.values(tokensObj).forEach(item => {
+
+        Object.entries(tokensObj).forEach(([key, item]) => {
+          let tokenVal = null;
           if (typeof item === 'string') {
-            tokens.push(item);
+            tokenVal = item;
           } else if (item && typeof item === 'object' && item.token) {
-            tokens.push(item.token);
+            tokenVal = item.token;
+          }
+
+          if (tokenVal) {
+            tokens.push(tokenVal);
+            tokensMap[tokenVal] = key;
           }
         });
 
@@ -71,11 +80,22 @@ db.ref('sensores').on('value', async (snapshot) => {
           const response = await admin.messaging().sendEachForMulticast(message);
           console.log(`✅ Notificaciones enviadas. Exitosas: ${response.successCount}, Fallidas: ${response.failureCount}`);
 
-          // Imprimir el error exacto de los tokens que hayan fallado para depurar
+          // Autopurga de tokens obsoletos o inválidos detectados por Firebase
           if (response.failureCount > 0) {
-            response.responses.forEach((resp, idx) => {
+            response.responses.forEach(async (resp, idx) => {
               if (!resp.success) {
-                console.error(`❌ Error en token [${idx}] (${tokens[idx]}):`, resp.error.message);
+                const failedToken = tokens[idx];
+                const dbKey = tokensMap[failedToken];
+                console.error(`❌ Error en token [${idx}] (${failedToken}):`, resp.error.message);
+
+                if (resp.error.code === 'messaging/registration-token-not-registered' || 
+                    resp.error.code === 'messaging/invalid-registration-token' ||
+                    resp.error.message.includes('404')) {
+                  console.log(`🗑️ Eliminando token obsoleto/inválido de Firebase: ${dbKey}`);
+                  if (dbKey) {
+                    await db.ref(`fcm_tokens/${dbKey}`).remove();
+                  }
+                }
               }
             });
           }
