@@ -4,6 +4,7 @@ let intervaloVerificacion = null;
 let refSensoresActual = null;
 let refActuadoresActual = null;
 let ultimaAlertaRegistrada = 0;
+let temporizadorDesconexion = null;
 
 let currentThresholds = {
   phMin: 5.5, phMax: 6.5,
@@ -57,49 +58,61 @@ function cambiarHuerto(tipo) {
     gridRaices.classList.remove('hidden');
   }
 
-  marcarDesconectado();
+  marcarDesconectadoSuave();
   escucharFirebase();
 }
 
-function marcarConectando() {
+function marcarConectandoFluido() {
   const badge = document.getElementById('statusBadge');
   const txt = document.getElementById('statusText');
-  if (badge) badge.className = "status-indicator connecting";
-  if (txt) txt.innerHTML = `Conectando<span class="liquid-dots"><span></span><span></span><span></span></span>`;
+  if (badge && !badge.classList.contains('connecting')) {
+    badge.className = "status-indicator connecting";
+    if (txt) txt.innerHTML = `Conectando<span class="liquid-dots"><span></span><span></span><span></span></span>`;
+  }
 }
 
-function marcarDesconectado() {
-  ultimaVezDatos = 0;
-  const badge = document.getElementById('statusBadge');
-  const txt = document.getElementById('statusText');
-  if (badge) badge.className = "status-indicator offline";
-  if (txt) txt.innerText = "ESP32 Desconectado";
+function marcarDesconectadoSuave() {
+  if (temporizadorDesconexion) return;
+  
+  temporizadorDesconexion = setTimeout(() => {
+    ultimaVezDatos = 0;
+    const badge = document.getElementById('statusBadge');
+    const txt = document.getElementById('statusText');
+    if (badge) badge.className = "status-indicator offline";
+    if (txt) txt.innerText = "ESP32 Desconectado";
 
-  document.getElementById('phValue').innerText = '--';
-  document.getElementById('ecValue').innerText = '--';
-  document.getElementById('tempValue').innerText = '--';
-  document.getElementById('humValue').innerText = '--';
+    document.getElementById('phValue').innerText = '--';
+    document.getElementById('ecValue').innerText = '--';
+    document.getElementById('tempValue').innerText = '--';
+    document.getElementById('humValue').innerText = '--';
 
-  const banner = document.getElementById('systemBanner');
-  if (banner) {
-    banner.style.background = "rgba(255, 93, 103, 0.12)";
-    banner.style.borderColor = "rgba(255, 93, 103, 0.4)";
-    banner.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i> <span>ESP32 Fuera de Línea · Sin transmisión de datos</span>`;
-  }
+    const banner = document.getElementById('systemBanner');
+    if (banner) {
+      banner.style.background = "rgba(255, 93, 103, 0.12)";
+      banner.style.borderColor = "rgba(255, 93, 103, 0.4)";
+      banner.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i> <span>ESP32 Fuera de Línea · Sin transmisión de datos</span>`;
+    }
+    temporizadorDesconexion = null;
+  }, 4000);
 }
 
 function escucharFirebase() {
   if (refSensoresActual) refSensoresActual.off();
   if (refActuadoresActual) refActuadoresActual.off();
 
-  marcarConectando();
+  marcarConectandoFluido();
 
   const nodoSensores = huertoActivo === 'nft' ? 'sensores' : 'sensores_raices';
   refSensoresActual = database.ref(nodoSensores);
 
   refSensoresActual.on('value', (snap) => {
     const data = snap.val();
-    if (data && data.timestamp && (Date.now() - data.timestamp < 15000)) {
+    if (data && data.timestamp && (Date.now() - data.timestamp < 20000)) {
+      if (temporizadorDesconexion) {
+        clearTimeout(temporizadorDesconexion);
+        temporizadorDesconexion = null;
+      }
+
       ultimaVezDatos = Date.now();
       const badge = document.getElementById('statusBadge');
       const txt = document.getElementById('statusText');
@@ -123,9 +136,10 @@ function escucharFirebase() {
       if(document.getElementById('tempBar')) document.getElementById('tempBar').style.width = Math.min(100, (data.temperatura / 50) * 100) + '%';
       if(document.getElementById('humBar')) document.getElementById('humBar').style.width = (data.humedad || 0) + '%';
 
+      simularControlPID(data.ph);
       evaluarAlertasAnomalias(data);
     } else {
-      marcarDesconectado();
+      marcarDesconectadoSuave();
     }
   });
 
@@ -140,7 +154,7 @@ function escucharFirebase() {
 
   if (intervaloVerificacion) clearInterval(intervaloVerificacion);
   intervaloVerificacion = setInterval(() => {
-    if (Date.now() - ultimaVezDatos > 15000) marcarDesconectado();
+    if (Date.now() - ultimaVezDatos > 18000) marcarDesconectadoSuave();
   }, 4000);
 
   const nodoActuadores = huertoActivo === 'nft' ? 'actuadores' : 'actuadores_raices';
@@ -161,6 +175,32 @@ function escucharFirebase() {
       }
     }
   });
+}
+
+function simularControlPID(phActual) {
+  const setpointPh = 6.0;
+  const errorPh = phActual - setpointPh;
+  const errEl = document.getElementById('pidPhError');
+  const pwmEl = document.getElementById('pidPwmOutput');
+  const stateEl = document.getElementById('pidStateLabel');
+
+  if (!errEl || isNaN(phActual)) return;
+
+  errEl.innerText = (errorPh >= 0 ? "+" : "") + errorPh.toFixed(2) + " pH";
+  
+  if (Math.abs(errorPh) > 0.4) {
+    pwmEl.innerText = "85 %";
+    stateEl.innerText = "Corrigiendo...";
+    stateEl.style.color = "var(--danger)";
+  } else if (Math.abs(errorPh) > 0.15) {
+    pwmEl.innerText = "35 %";
+    stateEl.innerText = "Ajuste Fino";
+    stateEl.style.color = "var(--warning)";
+  } else {
+    pwmEl.innerText = "0 %";
+    stateEl.innerText = "Estable";
+    stateEl.style.color = "var(--green-bright)";
+  }
 }
 
 function toggleActuador(act, estado) {
@@ -188,7 +228,6 @@ function actualizarBotonUI(id, estado) {
     statusEl.innerHTML = `<span class="status-dot" style="background:${estado ? 'var(--green-bright)' : 'var(--danger)'}"></span> ${estado ? 'ENCENDIDO' : 'APAGADO'}`;
   }
 
-  // Animación del Diagrama Hidráulico de 4 Nodos con el Bypass
   if (id === 'bomba_principal') {
     const p1 = document.getElementById('pipeFlow1');
     const p2 = document.getElementById('pipeFlow2');
@@ -433,7 +472,10 @@ function solicitarNotificaciones() {
   });
 }
 
-// --- COMANDOS REMOTOS OTA / ESP32 ---
+function exportarReportePDF() {
+  window.print();
+}
+
 function enviarComandoRemotoESP32(cmd) {
   if ((userRole || localStorage.getItem("hidro_role")) === 'guest') {
     return alert("Acceso restringido a administradores.");
