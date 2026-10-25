@@ -191,11 +191,18 @@ function cargarCuadrillasFirebase() {
 }
 
 // =========================================================
-// LÓGICA DE DRAG & DROP PARA REORGANIZAR CARPETAS (ADMIN)
+// LÓGICA DE DRAG & DROP OPTIMIZADA (SIN GLITCHES NI DUPLICADOS)
 // =========================================================
 function activarDragAndDropCuadrillas() {
   const draggables = document.querySelectorAll('.draggable-folder');
+  
   draggables.forEach(elem => {
+    // Evitar acumulación de múltiples event listeners
+    elem.removeEventListener('dragstart', handleDragStart);
+    elem.removeEventListener('dragover', handleDragOver);
+    elem.removeEventListener('drop', handleDrop);
+    elem.removeEventListener('dragend', handleDragEnd);
+
     elem.addEventListener('dragstart', handleDragStart);
     elem.addEventListener('dragover', handleDragOver);
     elem.addEventListener('drop', handleDrop);
@@ -206,35 +213,55 @@ function activarDragAndDropCuadrillas() {
 function handleDragStart(e) {
   dragSrcEl = this;
   e.dataTransfer.effectAllowed = 'move';
-  this.style.opacity = '0.4';
+  e.dataTransfer.setData('text/html', this.innerHTML);
+  
+  setTimeout(() => {
+    this.style.opacity = '0.4';
+  }, 0);
 }
 
 function handleDragOver(e) {
-  if (e.preventDefault) e.preventDefault();
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
   e.dataTransfer.dropEffect = 'move';
   return false;
 }
 
 function handleDrop(e) {
-  if (e.stopPropagation) e.stopPropagation();
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
+
   if (dragSrcEl !== this) {
     const container = document.getElementById('cuadrillasContainer');
-    const nodes = Array.from(container.children);
-    const srcIndex = nodes.indexOf(dragSrcEl);
-    const targetIndex = nodes.indexOf(this);
+    const allCards = Array.from(container.querySelectorAll('.folder-card'));
+    const srcIndex = allCards.indexOf(dragSrcEl);
+    const targetIndex = allCards.indexOf(this);
 
     if (srcIndex < targetIndex) {
       container.insertBefore(dragSrcEl, this.nextSibling);
     } else {
       container.insertBefore(dragSrcEl, this);
     }
+    
+    // Actualizar orden en Firebase de manera limpia
     actualizarOrdenFirebase();
   }
   return false;
 }
 
-function handleDragEnd() {
+function handleDragEnd(e) {
   this.style.opacity = '1';
+  
+  // Limpiar estados visuales en el contenedor
+  const container = document.getElementById('cuadrillasContainer');
+  if (container) {
+    container.querySelectorAll('.folder-card').forEach(card => {
+      card.style.opacity = '1';
+    });
+  }
+  dragSrcEl = null;
 }
 
 function actualizarOrdenFirebase() {
