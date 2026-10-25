@@ -120,7 +120,6 @@
           <i class="fa-solid fa-user-gear"></i> <span id="lblUserRole">Cargando...</span>
         </div>
 
-        <!-- Indicador de Estado Estabilizado sin saltos -->
         <div class="status-indicator offline" id="statusBadge">
           <span class="dot"></span>
           <span id="statusText">ESP32 Desconectado</span>
@@ -134,7 +133,6 @@
           <span id="liveClock">00:00:00</span>
         </div>
 
-        <!-- SELECTOR DE 8 TEMAS VISUALES -->
         <select id="themeSelector" class="select-metric" onchange="cambiarTemaVisual(this.value)" title="Seleccionar Tema">
           <option value="theme-emerald">Esmeralda</option>
           <option value="theme-cyberpunk">Neón</option>
@@ -302,15 +300,15 @@
         </div>
       </section>
 
-      <!-- SECCIÓN NUEVA: CUADRILLAS, REPORTES DRIVE Y CALENDARIO -->
+      <!-- SECCIÓN: CUADRILLAS, REPORTES DRIVE Y CALENDARIO -->
       <section id="section-cuadrillas" class="app-section hidden">
         <div class="section-heading">
-          <h2><i class="fa-solid fa-users-rectangle"></i> Gestión de Cuadrillas, Reportes Google Drive & Calendario</h2>
+          <h2><i class="fa-solid fa-users-rectangle"></i> Gestión de Reportes & Calendario</h2>
         </div>
 
-        <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA (MÚLTIPLES FECHAS) -->
+        <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA -->
         <div class="card admin-only" style="margin-bottom: 20px;">
-          <h3><i class="fa-solid fa-folder-plus"></i> Crear Nueva Cuadrilla</h3>
+          <h3><i class="fa-solid fa-folder-plus"></i> Integrar Cuadrilla</h3>
           <p class="card-subtitle">Asigne nombre, días de labor múltiples y miembros del equipo (Solo Administrador)</p>
           
           <div class="tracker-inputs-form" style="margin-top: 15px;">
@@ -322,16 +320,15 @@
               <input type="date" id="inputFechaCuadrillaPicker" onchange="agregarFechaASeleccion()" title="Seleccionar fecha de labor" style="flex: 1;">
               <button class="btn-add" onclick="crearCarpetaCuadrilla()"><i class="fa-solid fa-plus"></i> Crear Carpeta</button>
             </div>
-            <!-- Contenedor donde se listarán las fechas seleccionadas en forma de etiquetas -->
             <div id="selectedBadgesDates" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;"></div>
           </div>
         </div>
 
         <div class="grid-2-cols">
-          <!-- LISTADO DE CARPETAS DESPLEGABLES DE CUADRILLAS -->
+          <!-- LISTADO DE CARPETAS DE CUADRILLAS (CÁPSULA SCROLEABLE INTEGRADA) -->
           <div class="card">
             <div class="chart-header">
-              <h3><i class="fa-solid fa-folder-tree"></i> Carpetas de Cuadrillas</h3>
+              <h3><i class="fa-solid fa-folder-tree"></i> Cuadrillas</h3>
               <button class="btn-action" onclick="cargarCuadrillasFirebase()" title="Recargar"><i class="fa-solid fa-rotate"></i></button>
             </div>
             <p class="card-subtitle">Despliegue cada cuadrilla para adjuntar y consultar enlaces de reportes PDF en Google Drive.</p>
@@ -344,17 +341,15 @@
           <!-- PLANIFICADOR MENSUAL INTERACTIVO -->
           <div class="card">
             <div class="chart-header">
-              <h3><i class="fa-regular fa-calendar-days"></i> Planificador Mensual Operativo</h3>
+              <h3><i class="fa-regular fa-calendar-days"></i> Planificador Mensual</h3>
               <input type="month" id="mesPlanificadorInput" class="select-metric" onchange="renderizarCalendarioMensual()" title="Seleccionar Mes">
             </div>
             <p class="card-subtitle">Amarillo = Asignado (Esperando Reporte). Verde = Reporte Cumplido (Clic para ver PDF).</p>
             
-            <!-- Cabecera de días de la semana -->
             <div class="calendar-days-header" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--cyan-neon); margin-top: 12px; margin-bottom: 6px;">
               <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
             </div>
 
-            <!-- Cuadrícula interactiva del mes -->
             <div id="calendarioOperativoContainer" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; min-height: 220px;">
               <!-- Se llena dinámicamente -->
             </div>
@@ -681,7 +676,7 @@
 
           <div class="card">
             <div class="chart-header">
-              <h3><i class="fa-solid fa-flask-vial"></i> Calibración Avanzada de Sondas</h3>
+              <h3><i class="fa-solid fa-flask-vial"></i> Calibración de Sondas</h3>
             </div>
             <div style="font-size: 0.88rem; display: flex; flex-direction: column; gap: 14px; color: var(--text-muted);">
               <div class="diag-row">
@@ -757,7 +752,6 @@
   <div id="pushConfigModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2500; padding: 15px;">
     <div class="animate-fade-in" style="background: rgba(15, 23, 42, 0.85); border: 1px solid var(--card-border-glow); border-radius: 24px; width: 100%; max-width: 420px; padding: 25px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); text-align: left; position: relative;">
       
-      <!-- Cabecera del Modal -->
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
         <h3 style="color: var(--cyan-neon); font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0;">
           <i class="fa-solid fa-bell" style="font-size: 1rem;"></i> Alertas Push 24/7
@@ -767,7 +761,6 @@
         </button>
       </div>
       
-      <!-- Cuerpo del Formulario -->
       <div style="display: flex; flex-direction: column; gap: 14px;">
         <div>
           <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">
@@ -784,7 +777,6 @@
         </div>
       </div>
 
-      <!-- Botones de Acción -->
       <div style="display: flex; gap: 10px; margin-top: 24px;">
         <button onclick="cerrarModalPush()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-muted); border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.2s;">
           Cancelar
@@ -811,7 +803,7 @@
       </div>
       
       <div id="modalCalBody" style="font-size: 0.9rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 12px;">
-        <!-- Se llena dinámicamente con JS -->
+        <!-- Se llena dinámicamente -->
       </div>
 
       <div style="margin-top: 20px; text-align: right;">
