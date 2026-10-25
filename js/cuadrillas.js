@@ -89,7 +89,7 @@ function cargarCuadrillasFirebase() {
     if (!container) return;
 
     if (!cuadrillasData) {
-      container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 20px;">No hay cuadrillas registradas.</p>`;
+      container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 25px; font-size: 0.9rem;"><i class="fa-solid fa-folder-open" style="font-size: 1.8rem; display: block; margin-bottom: 8px; opacity: 0.5;"></i>No hay cuadrillas registradas.</p>`;
       renderizarCalendarioMensual({});
       return;
     }
@@ -99,45 +99,60 @@ function cargarCuadrillasFirebase() {
     database.ref('reportes_cuadrillas').once('value', (snapReportes) => {
       const reportesData = snapReportes.val() || {};
 
-      Object.values(cuadrillasData).forEach(c => {
+      Object.values(cuadrillasData).forEach((c, index) => {
         const fechasTexto = c.fechasAsignadas ? c.fechasAsignadas.join(', ') : 'Sin fechas';
 
         const card = document.createElement('div');
-        card.className = 'folder-card';
+        card.className = 'folder-card animate-fade-in';
+        card.style.animationDelay = `${index * 0.05}s`;
+
         card.innerHTML = `
           <div class="folder-header" onclick="toggleAcordeonCuadrilla('${c.id}')">
-            <div class="folder-title-box">
-              <div class="folder-icon"><i class="fa-solid fa-folder-open"></i></div>
-              <div class="folder-info">
-                <h4>${c.nombre}</h4>
-                <small><i class="fa-regular fa-calendar"></i> Fechas: ${fechasTexto} | Integrantes: ${c.integrantes}</small>
+            <div style="display: flex; align-items: center; gap: 12px; overflow: hidden;">
+              <div class="folder-icon-glow">
+                <i class="fa-solid fa-folder"></i>
+              </div>
+              <div style="overflow: hidden;">
+                <h4 style="margin: 0; font-size: 0.98rem; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.nombre}</h4>
+                <small style="color: var(--text-muted); font-size: 0.72rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  <i class="fa-regular fa-calendar" style="color: var(--cyan-neon);"></i> ${fechasTexto}
+                </small>
               </div>
             </div>
-            <i class="fa-solid fa-chevron-down" id="chevron-${c.id}" style="color: var(--text-muted); transition: transform 0.3s;"></i>
+            <i class="fa-solid fa-chevron-down" id="chevron-${c.id}" style="color: var(--text-muted); transition: transform 0.3s; font-size: 0.9rem;"></i>
           </div>
 
-          <div class="folder-content hidden" id="content-${c.id}">
+          <div class="folder-content hidden" id="content-${c.id}" style="padding: 16px; background: rgba(0,0,0,0.25); border-radius: 0 0 18px 18px; border: 1px solid var(--card-border); border-top: none;">
             <div style="margin-bottom: 12px;">
-              <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Seleccionar Fecha de Jornada y Adjuntar PDF:</label>
+              <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-bottom: 8px;">
+                <i class="fa-solid fa-users" style="color: var(--cyan-neon);"></i> <strong>Integrantes:</strong> ${c.integrantes}
+              </small>
+              <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 6px;">Adjuntar Reporte PDF por Jornada:</label>
+              
               <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
                 <select id="selectFechaJornada-${c.id}" style="flex: 1; min-width: 130px; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 10px; font-size: 0.8rem; outline: none;">
                   ${(c.fechasAsignadas || []).map(f => `<option value="${f}">${f}</option>`).join('')}
                 </select>
-                <input type="text" id="nombrePdf-${c.id}" placeholder="Nombre del reporte (ej. Reporte Jornada)" style="flex: 2; min-width: 140px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 10px; font-size: 0.8rem; outline: none;">
+                <input type="text" id="nombrePdf-${c.id}" placeholder="Nombre del reporte" style="flex: 2; min-width: 140px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 10px; font-size: 0.8rem; outline: none;">
               </div>
+
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 <input type="url" id="linkPdf-${c.id}" placeholder="https://drive.google.com/file/d/..." style="flex: 1; min-width: 200px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 10px; font-size: 0.8rem; outline: none;">
-                <button class="btn-add" style="padding: 10px 16px; font-size: 0.8rem;" onclick="guardarLinkDriveCuadrilla('${c.id}')"><i class="fa-solid fa-link"></i> Adjuntar Link</button>
+                <button class="btn-add" style="padding: 10px 16px; font-size: 0.8rem; white-space: nowrap;" onclick="guardarLinkDriveCuadrilla('${c.id}')">
+                  <i class="fa-solid fa-link"></i> Adjuntar
+                </button>
               </div>
             </div>
 
-            <div id="pdfList-${c.id}" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+            <div id="pdfList-${c.id}" style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
               <small style="color: var(--text-muted);">Cargando enlaces...</small>
             </div>
 
             ${(userRole || localStorage.getItem("hidro_role")) === 'admin' ? `
-              <div style="margin-top: 15px; text-align: right;">
-                <button class="btn-danger-custom" onclick="eliminarCuadrilla('${c.id}')"><i class="fa-solid fa-trash-can"></i> Eliminar Cuadrilla</button>
+              <div style="margin-top: 15px; text-align: right; border-top: 1px dashed var(--card-border); padding-top: 12px;">
+                <button class="btn-danger-custom" onclick="eliminarCuadrilla('${c.id}')" style="padding: 6px 12px; font-size: 0.78rem;">
+                  <i class="fa-solid fa-trash-can"></i> Eliminar Cuadrilla
+                </button>
               </div>
             ` : ''}
           </div>
@@ -166,7 +181,7 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
 
   for (let i = 0; i < ajusteInicio; i++) {
     const emptyBox = document.createElement('div');
-    emptyBox.style.cssText = `background: rgba(0,0,0,0.1); border-radius: 8px; min-height: 70px; opacity: 0.2;`;
+    emptyBox.style.cssText = `background: rgba(0,0,0,0.1); border-radius: 8px; opacity: 0.2; min-height: 58px;`;
     calContainer.appendChild(emptyBox);
   }
 
@@ -176,20 +191,7 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
     const fechaActualStr = `${anio}-${mesStr}-${diaStr}`;
 
     const dayBox = document.createElement('div');
-    dayBox.style.cssText = `
-      background: rgba(0,0,0,0.3);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 8px;
-      min-height: 75px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      position: relative;
-      box-sizing: border-box;
-      overflow: hidden;
-    `;
+    dayBox.className = 'calendar-day-box';
 
     let cuadrillaAsignada = null;
     let tieneReporteEstaFecha = false;
@@ -212,10 +214,10 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
     if (cuadrillaAsignada) {
       dayBox.style.cursor = 'pointer';
       if (tieneReporteEstaFecha) {
-        dayBox.className = "calendar-day-box calendar-day-cumplido";
+        dayBox.classList.add("calendar-day-cumplido");
         dayBox.title = "Reporte cumplido - Clic para ver detalles.";
       } else {
-        dayBox.className = "calendar-day-box calendar-day-pendiente";
+        dayBox.classList.add("calendar-day-pendiente");
         dayBox.title = "Día asignado - Pendiente de reporte.";
       }
 
@@ -224,15 +226,17 @@ function renderizarCalendarioMensual(cuadrillas = {}, reportes = {}) {
       };
     }
 
-    let contenidoHtml = `<div style="font-weight: 800; color: var(--text-main); font-size: 0.85rem;">${dia}</div>`;
+    let contenidoHtml = `<div style="font-weight: 800; color: var(--text-main); font-size: 0.8rem;">${dia}</div>`;
     
     if (cuadrillaAsignada) {
       const indicadorColor = tieneReporteEstaFecha ? 'var(--green-bright)' : 'var(--warning)';
-      const textoEstado = tieneReporteEstaFecha ? '✔ OK' : '⏳ Pend.';
+      const textoEstado = tieneReporteEstaFecha ? '✔' : '⏳';
+      const primerNombre = cuadrillaAsignada.nombre.split(' ')[0];
+
       contenidoHtml += `
-        <div style="background: rgba(0,0,0,0.4); border-radius: 6px; padding: 3px 5px; margin-top: auto; border: 1px solid rgba(255,255,255,0.05);">
-          <div style="font-weight: 700; color: var(--text-main); font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${cuadrillaAsignada.nombre}</div>
-          <div style="font-weight: 700; color: ${indicadorColor}; font-size: 0.62rem; margin-top: 1px;">${textoEstado}</div>
+        <div class="calendar-badge-mobile" style="background: rgba(0,0,0,0.5); border-radius: 6px; padding: 2px 4px; margin-top: auto; border: 1px solid rgba(255,255,255,0.08); text-align: center;">
+          <div style="font-weight: 700; color: var(--text-main); font-size: 0.62rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${primerNombre}</div>
+          <div style="font-weight: 800; color: ${indicadorColor}; font-size: 0.6rem; margin-top: 1px;">${textoEstado}</div>
         </div>
       `;
     }
@@ -357,16 +361,17 @@ function cargarLinksDeCuadrilla(cuadrillaId) {
     Object.entries(data).forEach(([pdfKey, pdfObj]) => {
       const item = document.createElement('div');
       item.className = 'pdf-file-item';
+      item.style.cssText = `background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); padding: 10px 14px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 6px; gap: 8px; flex-wrap: wrap;`;
       item.innerHTML = `
-        <div class="pdf-file-info">
-          <i class="fa-brands fa-google-drive" style="color: var(--cyan-neon);"></i>
-          <div>
-            <strong>[${pdfObj.fechaJornada}] ${pdfObj.nombreArchivo}</strong>
-            <small>Añadido el ${pdfObj.fechaSubida}</small>
+        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+          <i class="fa-brands fa-google-drive" style="color: var(--cyan-neon); font-size: 1.2rem;"></i>
+          <div style="overflow: hidden;">
+            <strong style="color: var(--text-main); font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[${pdfObj.fechaJornada}] ${pdfObj.nombreArchivo}</strong>
+            <small style="color: var(--text-muted); font-size: 0.72rem;">Añadido el ${pdfObj.fechaSubida}</small>
           </div>
         </div>
-        <div style="display: flex; gap: 6px;">
-          <a href="${pdfObj.pdfUrl}" target="_blank" class="btn-export" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-external-link-alt"></i> Abrir</a>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <a href="${pdfObj.pdfUrl}" target="_blank" class="btn-export" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; font-size: 0.78rem;"><i class="fa-solid fa-external-link-alt"></i> Abrir</a>
           ${(userRole || localStorage.getItem("hidro_role")) === 'admin' ? `
             <button class="btn-danger-custom" onclick="eliminarLinkCuadrilla('${cuadrillaId}', '${pdfKey}')" style="padding: 6px 10px; font-size: 0.75rem;"><i class="fa-solid fa-trash"></i></button>
           ` : ''}

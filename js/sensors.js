@@ -1,3 +1,7 @@
+// =========================================================
+// MÓDULO DE SENsores, TELEMETRÍA Y CONTROL - HUERTO ESH V3
+// =========================================================
+
 let huertoActivo = 'nft';
 let ultimaVezDatos = 0;
 let intervaloVerificacion = null;
@@ -205,7 +209,11 @@ function simularControlPID(phActual) {
 }
 
 function toggleActuador(act, estado) {
-  if ((userRole || localStorage.getItem("hidro_role")) === 'guest') return;
+  const rolActual = typeof userRole !== 'undefined' ? userRole : localStorage.getItem("hidro_role");
+  if (rolActual === 'guest') {
+    if (typeof mostrarToast === 'function') mostrarToast("Acceso Restringido", "Modo monitor solo lectura", "warning");
+    return;
+  }
   actualizarBotonUI(act, estado);
   if (huertoActivo === 'nft') {
     database.ref(`actuadores/${act}`).set(estado);
@@ -284,7 +292,11 @@ function guardarUmbrales() {
   currentThresholds.tempMax = parseFloat(document.getElementById('threshTempMax').value);
 
   database.ref('umbrales').set(currentThresholds).then(() => {
-    alert("¡Umbrales actualizados con éxito en Firebase!");
+    if (typeof mostrarToast === 'function') {
+      mostrarToast("Umbrales Actualizados", "Lmites guardados correctamente en Firebase", "success");
+    } else {
+      alert("¡Umbrales actualizados con éxito en Firebase!");
+    }
   });
 }
 
@@ -389,7 +401,8 @@ function registrarCalibracionSonda(tipo) {
 
   database.ref(`mantenimiento/calibracion_${tipo}`).set(hoy);
 
-  const rolOperador = (userRole || localStorage.getItem("hidro_role")) === 'admin' ? 'H.A.G.D.R.' : 'Hidrouser';
+  const rolActual = typeof userRole !== 'undefined' ? userRole : localStorage.getItem("hidro_role");
+  const rolOperador = rolActual === 'admin' ? 'H.A.G.D.R.' : 'Hidrouser';
   
   database.ref('mantenimiento/eventos').push({
     evento: eventoDesc,
@@ -399,7 +412,11 @@ function registrarCalibracionSonda(tipo) {
     timestamp: Date.now()
   });
 
-  alert(`¡${eventoDesc} registrada exitosamente y guardada en la bitácora!`);
+  if (typeof mostrarToast === 'function') {
+    mostrarToast("Calibración Exitosa", eventoDesc, "success");
+  } else {
+    alert(`¡${eventoDesc} registrada exitosamente y guardada en la bitácora!`);
+  }
 }
 
 function cargarMantenimientoFirebase() {
@@ -437,18 +454,23 @@ function purgarBitacoraFirebase() {
   if (confirm("¿Purgar historial de lecturas y bitácora en Firebase?")) {
     database.ref('historial').remove().then(() => cargarHistorialFirebase());
     database.ref('mantenimiento').remove().then(() => cargarMantenimientoFirebase());
+    if (typeof mostrarToast === 'function') mostrarToast("Bitácora Limpia", "Se han borrado los registros históricos", "warning");
   }
 }
 
 function purgarAlertasFirebase() {
   if (confirm("¿Desea limpiar todo el historial de alertas push recientes?")) {
     database.ref('push_alerts_history').remove().then(() => cargarHistorialAlertasFirebase());
+    if (typeof mostrarToast === 'function') mostrarToast("Alertas Limpias", "Se borró el historial de alertas push", "warning");
   }
 }
 
-// NUEVAS FUNCIONES PARA EL MODAL DE CONFIGURACIÓN PUSH PERSONALIZADO
 function abrirModalPush() {
-  if (!messaging) return alert("Tu navegador no soporta notificaciones Web Push.");
+  if (!messaging) {
+    if (typeof mostrarToast === 'function') mostrarToast("No Compatible", "Tu navegador no soporta notificaciones Web Push.", "warning");
+    else alert("Tu navegador no soporta notificaciones Web Push.");
+    return;
+  }
   
   Notification.requestPermission().then((permission) => {
     if (permission === 'granted') {
@@ -465,7 +487,8 @@ function abrirModalPush() {
         });
       });
     } else {
-      alert("Debes permitir las notificaciones en el navegador para continuar.");
+      if (typeof mostrarToast === 'function') mostrarToast("Permiso Denegado", "Debes permitir las notificaciones en el navegador.", "warning");
+      else alert("Debes permitir las notificaciones en el navegador para continuar.");
     }
   });
 }
@@ -490,11 +513,15 @@ function guardarDispositivoPersonalizado() {
     userAgent: navigator.userAgent,
     actualizado: Date.now()
   }).then(() => {
-    alert(`¡Dispositivo "${nombreDisp}" registrado y vinculado de forma permanente para ${nombreUser}!`);
+    if (typeof mostrarToast === 'function') {
+      mostrarToast("Dispositivo Registrado", `Vinculado correctamente para ${nombreUser}`, "success");
+    } else {
+      alert(`¡Dispositivo "${nombreDisp}" registrado y vinculado de forma permanente para ${nombreUser}!`);
+    }
     cerrarModalPush();
   }).catch((err) => {
     console.error("Error al guardar token personalizado:", err);
-    alert("Error al guardar en Firebase.");
+    if (typeof mostrarToast === 'function') mostrarToast("Error de Red", "No se pudo guardar el token en Firebase.", "warning");
   });
 }
 
@@ -503,7 +530,9 @@ function exportarReportePDF() {
 }
 
 function enviarComandoRemotoESP32(cmd) {
-  if ((userRole || localStorage.getItem("hidro_role")) === 'guest') {
+  const rolActual = typeof userRole !== 'undefined' ? userRole : localStorage.getItem("hidro_role");
+  if (rolActual === 'guest') {
+    if (typeof mostrarToast === 'function') mostrarToast("Acceso Restringido", "Solo administradores pueden enviar comandos OTA", "warning");
     return alert("Acceso restringido a administradores.");
   }
   if (confirm(`¿Seguro que desea enviar el comando remoto [${cmd}] al ESP32?`)) {
@@ -511,7 +540,11 @@ function enviarComandoRemotoESP32(cmd) {
       accion: cmd,
       timestamp: Date.now()
     }).then(() => {
-      alert(`Comando '${cmd}' enviado correctamente al microcontrolador.`);
+      if (typeof mostrarToast === 'function') {
+        mostrarToast("Comando OTA", `Comando '${cmd}' enviado al microcontrolador`, "success");
+      } else {
+        alert(`Comando '${cmd}' enviado correctamente al microcontrolador.`);
+      }
     });
   }
 }

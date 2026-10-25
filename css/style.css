@@ -123,6 +123,15 @@ body.theme-crimson {
 }
 ::-webkit-scrollbar { display: none; }
 
+/* Corrección global y prevención de distorsión en iconos FontAwesome */
+i.fa-solid, i.fa-regular, i.fa-brands {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1 !important;
+}
+
 html, body {
   background-color: var(--bg-dark); color: var(--text-main); 
   min-height: 100vh; width: 100%; overflow-x: hidden; 
@@ -180,6 +189,12 @@ body::before {
   50% { transform: translateY(4px); }
 }
 .water-drop-anim { animation: waterDrop 2s infinite ease-in-out; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
 /* --- LOGIN OVERLAY Y TARJETA --- */
 .login-overlay { 
@@ -415,6 +430,49 @@ body::before {
 .diag-row { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .diag-row strong { color: var(--text-main); }
 
+/* --- GESTOR DE CARPETAS Y CUADRILLAS DINÁMICAS (MACRO / GLASSMORPHISM) --- */
+.folder-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.folder-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 240, 255, 0.12);
+  border-color: var(--card-border-glow);
+}
+.folder-card:active {
+  transform: scale(0.98);
+}
+
+.folder-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(15, 23, 42, 0.6);
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+}
+
+.folder-icon-glow {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background: rgba(0, 240, 255, 0.1);
+  color: var(--cyan-neon);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
+  flex-shrink: 0;
+}
+
 /* DIAGRAMA HIDRÁULICO AVANZADO */
 .hydraulic-card { overflow: hidden; }
 .hydraulic-title-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
@@ -480,7 +538,7 @@ body::before {
 }
 .btn-sched-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(53, 229, 138, 0.4); }
 
-/* UMBRALES Y ALERTAS (CORRECCIÓN DE RECORTES EN MÓVIL) */
+/* UMBRALES Y ALERTAS */
 .threshold-group { margin-bottom: 14px; width: 100%; box-sizing: border-box; }
 .threshold-group label { display: block; font-size: 0.82rem; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
 
@@ -563,23 +621,32 @@ body.role-guest .control-item .switch { pointer-events: none; opacity: 0.3; filt
 
 footer { text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 40px 0 20px; }
 
-/* --- CORRECCIÓN PARA EL MODAL DE ALERTAS PUSH --- */
-.push-modal-card {
-  padding-top: 30px !important;
+/* --- CALENDARIO OPERATIVO MENSUAL & RESPONSIVIDAD MÓVIL --- */
+#calendarioOperativoContainer {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
 }
 
-.push-modal-header {
+.calendar-day-box {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 6px;
+  min-height: 68px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   position: relative;
-  margin-bottom: 20px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid var(--card-border);
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
-.push-modal-body {
-  margin-top: 10px;
+.calendar-day-box:active {
+  transform: scale(0.95);
 }
 
-/* --- ESTADOS DINÁMICOS DEL PLANIFICADOR MENSUAL --- */
 .calendar-day-pendiente {
   border: 1px solid var(--warning) !important;
   background: rgba(255, 209, 102, 0.12) !important;
@@ -590,6 +657,39 @@ footer { text-align: center; color: var(--text-muted); font-size: 0.78rem; paddi
   background: rgba(53, 229, 138, 0.22) !important;
   box-shadow: 0 0 12px rgba(53, 229, 138, 0.35);
   cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  #calendarioOperativoContainer {
+    gap: 4px;
+  }
+  
+  .calendar-day-box {
+    min-height: 58px !important;
+    padding: 4px !important;
+    border-radius: 8px !important;
+  }
+
+  .calendar-day-box > div:first-child {
+    font-size: 0.75rem !important;
+  }
+
+  .calendar-badge-mobile {
+    font-size: 0.58rem !important;
+    padding: 2px 3px !important;
+  }
+
+  .folder-content div[style*="display: flex"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .folder-content input, 
+  .folder-content select, 
+  .folder-content button {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
 }
 
 @media (max-width: 768px) {
