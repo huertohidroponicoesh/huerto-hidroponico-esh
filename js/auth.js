@@ -86,7 +86,8 @@ function autenticar() {
     (user === "H.A.G.D.R." && pass === "HidroESH#2026!") || 
     (user === "Hidrouser" && pass === "HydroUser_2026*")
   ) {
-    userRole = (user === "H.A.G.D.R.") ? "admin" : "guest";
+    // CORRECCIÓN: Asignar explícitamente "admin" o "monitor"
+    userRole = (user === "H.A.G.D.R.") ? "admin" : "monitor";
     
     if (remember) { 
       localStorage.setItem("hidro_logged_in", "true"); 
@@ -98,7 +99,6 @@ function autenticar() {
     
     mostrarInterfaz();
   } else {
-    // Aplicar animación de error (shake) en la tarjeta de login
     if (loginCard) {
       loginCard.classList.add("shake");
       setTimeout(() => loginCard.classList.remove("shake"), 500);
@@ -125,12 +125,12 @@ function mostrarInterfaz() {
     app.classList.remove("hidden");
   }
 
-  const rolActivo = userRole || localStorage.getItem("hidro_role") || "guest";
+  const rolActivo = userRole || localStorage.getItem("hidro_role") || "monitor";
   const roleText = rolActivo === 'admin' ? 'Administrador General' : 'Monitor de Campo';
   
   if (lblUserRole) lblUserRole.innerText = roleText;
 
-  if (rolActivo === 'guest') {
+  if (rolActivo === 'monitor') {
     document.body.classList.add('role-guest');
   } else {
     document.body.classList.remove('role-guest');
