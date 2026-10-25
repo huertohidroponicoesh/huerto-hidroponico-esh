@@ -118,10 +118,8 @@ body.theme-crimson {
 * { 
   box-sizing: border-box; margin: 0; padding: 0; 
   font-family: 'Plus Jakarta Sans', Arial, sans-serif; 
-  scrollbar-width: none; 
   -webkit-font-smoothing: antialiased;
 }
-::-webkit-scrollbar { display: none; }
 
 /* Corrección global y prevención de distorsión en iconos FontAwesome */
 i.fa-solid, i.fa-regular, i.fa-brands {
@@ -345,7 +343,7 @@ body::before {
 .system-status-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .role-badge { background: rgba(0, 240, 255, 0.12); border: 1px solid rgba(0, 240, 255, 0.3); color: var(--cyan-neon); padding: 8px 14px; border-radius: 18px; font-size: 0.82rem; font-weight: 700; }
 
-/* ESTADOS LÍQUIDOS ANIMADOS PARA EL ESP32 (ANCHO FIJO PARA EVITAR SALTOS) */
+/* ESTADOS LÍQUIDOS ANIMADOS PARA EL ESP32 */
 .status-indicator { 
   display: inline-flex; align-items: center; gap: 8px; 
   background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border); 
@@ -430,22 +428,20 @@ body::before {
 .diag-row { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .diag-row strong { color: var(--text-main); }
 
-/* --- GESTOR DE CARPETAS Y CUADRILLAS DINÁMICAS (MACRO / GLASSMORPHISM) --- */
+/* --- GESTOR DE CARPETAS Y CUADRILLAS DINÁMICAS (GLASSMORPHISM) --- */
 .folder-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 18px;
-  margin-bottom: 12px;
   overflow: hidden;
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  flex-shrink: 0 !important;
+  margin-bottom: 0 !important;
 }
 .folder-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(0, 240, 255, 0.12);
   border-color: var(--card-border-glow);
-}
-.folder-card:active {
-  transform: scale(0.98);
 }
 
 .folder-header {
@@ -473,38 +469,47 @@ body::before {
   flex-shrink: 0;
 }
 
-/* --- CÁPSULA SCROLEABLE PARA LAS CARPETAS DE CUADRILLAS --- */
-.cuadrillas-container {
-  max-height: 480px;         /* Altura máxima fija para equilibrar junto al calendario */
-  overflow-y: scroll !important; /* Fuerza la activación del scroll vertical */
-  scrollbar-width: auto !important; /* Sobrescribe la regla global de Firefox */
-  padding-right: 8px;        
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  box-sizing: border-box;
-  width: 100%;
+/* --- CÁPSULA SCROLEABLE PARA LAS CARPETAS (SOPORTE TANTO PARA ID Y CLASE) --- */
+.cuadrillas-container, #cuadrillasContainer {
+  max-height: 440px !important;
+  height: 440px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important; /* Scroll suave en móviles (iOS/Android) */
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--green-bright) rgba(0, 0, 0, 0.3) !important;
+  padding-right: 8px !important;
+  padding-bottom: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important; /* Espaciado entre carpetas */
+  box-sizing: border-box !important;
+  width: 100% !important;
 }
 
-/* Personalización visible y Neón para la barra de desplazamiento */
-.cuadrillas-container::-webkit-scrollbar {
-  display: block !important;  /* Re-habilita la barra explícitamente */
+/* Personalización de la barra de desplazamiento Neón (PC / Laptop) */
+.cuadrillas-container::-webkit-scrollbar, 
+#cuadrillasContainer::-webkit-scrollbar {
+  display: block !important;
   width: 6px !important;
 }
 
-.cuadrillas-container::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 10px;
+.cuadrillas-container::-webkit-scrollbar-track, 
+#cuadrillasContainer::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-radius: 10px !important;
 }
 
-.cuadrillas-container::-webkit-scrollbar-thumb {
-  background: var(--green-bright);
-  border-radius: 10px;
-  box-shadow: 0 0 8px var(--green-bright);
+.cuadrillas-container::-webkit-scrollbar-thumb, 
+#cuadrillasContainer::-webkit-scrollbar-thumb {
+  background: var(--green-bright) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 0 8px var(--green-bright) !important;
 }
 
-.cuadrillas-container::-webkit-scrollbar-thumb:hover {
-  background: var(--cyan-neon);
+.cuadrillas-container::-webkit-scrollbar-thumb:hover, 
+#cuadrillasContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan-neon) !important;
 }
 
 /* DIAGRAMA HIDRÁULICO AVANZADO */
