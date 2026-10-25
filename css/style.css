@@ -476,8 +476,9 @@ body::before {
 /* --- CÁPSULA SCROLEABLE PARA LAS CARPETAS DE CUADRILLAS --- */
 .cuadrillas-container {
   max-height: 480px;         /* Altura máxima fija para equilibrar junto al calendario */
-  overflow-y: auto;          /* Habilita el scroll vertical cuando sobrepase el espacio */
-  padding-right: 6px;        /* Espacio para la barra de desplazamiento */
+  overflow-y: scroll !important; /* Fuerza la activación del scroll vertical */
+  scrollbar-width: auto !important; /* Sobrescribe la regla global de Firefox */
+  padding-right: 8px;        
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -485,23 +486,25 @@ body::before {
   width: 100%;
 }
 
-/* Personalización moderna de la barra de desplazamiento en la cápsula */
+/* Personalización visible y Neón para la barra de desplazamiento */
 .cuadrillas-container::-webkit-scrollbar {
-  width: 5px;
+  display: block !important;  /* Re-habilita la barra explícitamente */
+  width: 6px !important;
 }
 
 .cuadrillas-container::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.25);
   border-radius: 10px;
 }
 
 .cuadrillas-container::-webkit-scrollbar-thumb {
-  background: rgba(53, 229, 138, 0.35);
+  background: var(--green-bright);
   border-radius: 10px;
+  box-shadow: 0 0 8px var(--green-bright);
 }
 
 .cuadrillas-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(53, 229, 138, 0.7);
+  background: var(--cyan-neon);
 }
 
 /* DIAGRAMA HIDRÁULICO AVANZADO */

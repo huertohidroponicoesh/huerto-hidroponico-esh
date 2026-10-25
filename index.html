@@ -813,6 +813,49 @@
     </div>
   </div>
 
+  <!-- MODAL PARA EDITAR CUADRILLA (SOLO ADMINISTRADOR) -->
+  <div id="editCuadrillaModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2200;">
+    <div style="background: var(--card-bg); border: 1px solid var(--card-border-glow); border-radius: 28px; width: 100%; max-width: 480px; padding: 25px; box-shadow: 0 35px 70px rgba(0, 0, 0, 0.75); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); text-align: left; position: relative;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
+        <h3 style="color: var(--cyan-neon); font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0;">
+          <i class="fa-solid fa-pen-to-square"></i> Editar Cuadrilla
+        </h3>
+        <button onclick="cerrarModalEditarCuadrilla()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div>
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Nombre de la Cuadrilla:</label>
+          <input type="text" id="editNombreCuadrilla" style="width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Integrantes:</label>
+          <input type="text" id="editIntegrantesCuadrilla" style="width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Días de Labor Asignados:</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="date" id="editFechaPicker" onchange="agregarFechaEdicion()" style="flex: 1; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none;">
+          </div>
+          <div id="editFechasBadgesContainer" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;"></div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 24px;">
+        <button onclick="cerrarModalEditarCuadrilla()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-muted); border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">Cancelar</button>
+        <button onclick="guardarEdicionCuadrilla()" class="btn-add" style="flex: 1.2; padding: 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Scripts Modularizados -->
   <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
