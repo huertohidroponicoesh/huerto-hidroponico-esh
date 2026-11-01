@@ -4,6 +4,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   inicializarShellAGS();
+  inicializarMenuMobileAGS();
 });
 
 function inicializarShellAGS() {
@@ -12,6 +13,39 @@ function inicializarShellAGS() {
   // Efecto de entrada en los contenedores de cristal al cargar
   document.querySelectorAll('.card-glass, .panel-glass').forEach((el, index) => {
     el.style.animation = `tabFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.05}s forwards`;
+  });
+}
+
+// Lógica de apertura, cierre y control táctil/móvil para el Dock Lateral AGS
+function inicializarMenuMobileAGS() {
+  const sidebar = document.querySelector('.ags-sidebar');
+  const btnToggle = document.getElementById('btnToggleSidebar');
+
+  // 1. Abrir / Cerrar menú al presionar el botón hamburguesa (.mobile-only)
+  if (btnToggle && sidebar) {
+    btnToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sidebar.classList.toggle('mobile-open');
+    });
+  }
+
+  // 2. Cerrar automáticamente el menú al hacer clic en cualquier opción de la navegación en móviles
+  const navItems = document.querySelectorAll('.ags-nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth <= 992 && sidebar) {
+        sidebar.classList.remove('mobile-open');
+      }
+    });
+  });
+
+  // 3. Cerrar el menú si se da clic fuera de él en dispositivos móviles
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 992 && sidebar && sidebar.classList.contains('mobile-open')) {
+      if (!sidebar.contains(e.target) && (!btnToggle || !btnToggle.contains(e.target))) {
+        sidebar.classList.remove('mobile-open');
+      }
+    }
   });
 }
 
@@ -36,7 +70,7 @@ function ejecutarHardRefresh() {
   }, 1200);
 }
 
-// Sistema de Alertas Toast flotantes flotantes tipo AGS
+// Sistema de Alertas Toast flotantes tipo AGS
 function mostrarToast(titulo, mensaje, tipo = 'success') {
   let container = document.getElementById('toastContainer');
   if (!container) {

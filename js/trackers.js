@@ -1,5 +1,5 @@
 // =========================================================
-// MÓDULO DE TRACKERS, LOTES Y CHECKLIST DE TAREAS - HUERTO ESH
+// MÓDULO DE TRACKERS, LOTES Y CHECKLIST DE TAREAS - HUERTO ESH (HUD v3)
 // =========================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (trackers) {
       Object.keys(trackers).forEach(k => renderTrackerItem(k, trackers[k]));
     } else {
-      container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px; font-size: 0.85rem;">No hay lotes de cultivo activos.</p>`;
+      container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.85rem;">No hay lotes de cultivo activos en este momento.</p>`;
     }
   });
 
@@ -91,28 +91,30 @@ function renderTrackerItem(key, item) {
   const w100 = ((dias100 / totalDays) * 100).toFixed(2);
 
   let stagesHTML = `
-    <div class="tracker-stage-segment stage-agua" style="width: ${wAgua}%;">Agua (${diasAgua}d)</div>
-    <div class="tracker-stage-segment stage-sol50" style="width: ${w50}%;">Sol. 50% (${dias50}d)</div>
-    <div class="tracker-stage-segment stage-sol100" style="width: ${w100}%;">Sol. 100% (${dias100}d)</div>
+    <div class="tracker-stage-segment stage-agua" style="width: ${wAgua}%; background: rgba(0, 240, 255, 0.25); border-right: 1px solid rgba(255,255,255,0.1); padding: 6px; font-size: 0.72rem; font-weight: 700; color: var(--cyan-neon); text-align: center;">Agua (${diasAgua}d)</div>
+    <div class="tracker-stage-segment stage-sol50" style="width: ${w50}%; background: rgba(255, 209, 102, 0.25); border-right: 1px solid rgba(255,255,255,0.1); padding: 6px; font-size: 0.72rem; font-weight: 700; color: var(--warning); text-align: center;">Sol. 50% (${dias50}d)</div>
+    <div class="tracker-stage-segment stage-sol100" style="width: ${w100}%; background: rgba(53, 229, 138, 0.25); padding: 6px; font-size: 0.72rem; font-weight: 700; color: var(--green-bright); text-align: center;">Sol. 100% (${dias100}d)</div>
   `;
 
   const div = document.createElement('div');
-  div.className = 'tracker-item animate-fade-in';
+  div.className = 'tracker-item-hud animate-fade-in';
   div.innerHTML = `
-    <div class="tracker-header">
-      <span class="tracker-title"><i class="fa-solid fa-seedling" style="color: var(--green-bright);"></i> ${item.title}</span>
-      <div class="tracker-actions">
-        <span class="tracker-days">Día ${currentDay} / ${totalDays}</span>
-        ${isAdmin ? `<button class="tracker-delete" onclick="eliminarTracker('${key}')" title="Eliminar Lote"><i class="fa-solid fa-xmark"></i></button>` : ''}
+    <div class="tracker-item-header">
+      <strong><i class="fa-solid fa-seedling" style="color: var(--green-bright);"></i> ${item.title}</strong>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 0.8rem; font-weight: 700; background: rgba(53,229,138,0.1); border: 1px solid var(--card-border); padding: 4px 10px; border-radius: 10px; color: var(--green-bright);">Día ${currentDay} / ${totalDays}</span>
+        ${isAdmin ? `<button class="btn-danger-custom" style="padding: 6px 10px;" onclick="eliminarTracker('${key}')" title="Eliminar Lote"><i class="fa-solid fa-xmark"></i></button>` : ''}
       </div>
     </div>
-    <div class="tracker-visual-bar">
+    
+    <div class="tracker-visual-bar" style="position: relative; display: flex; height: 32px; background: rgba(0,0,0,0.4); border-radius: 10px; overflow: hidden; border: 1px solid var(--card-border);">
       ${stagesHTML}
-      <div class="tracker-cursor" style="left: ${percentage}%;"></div>
+      <div class="tracker-cursor" style="position: absolute; top: 0; bottom: 0; width: 3px; background: #fff; box-shadow: 0 0 10px #fff; left: ${percentage}%; transition: left 0.5s ease;"></div>
     </div>
-    <div class="tracker-dates">
-      <span>Inicio: ${fechaValida}</span>
-      <span>Cosecha estimada: +${totalDays} días</span>
+
+    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+      <span><i class="fa-regular fa-calendar"></i> Inicio: ${fechaValida}</span>
+      <span><i class="fa-solid fa-flag-checkered" style="color: var(--cyan-neon);"></i> Cosecha estimada: +${totalDays} días</span>
     </div>
   `;
   container.appendChild(div);

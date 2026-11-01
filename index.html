@@ -160,7 +160,24 @@
         </nav>
       </div>
 
-      <div class="ags-sidebar-widget">
+      <!-- WIDGET DE TEMAS VISUALES EN LA BARRA LATERAL -->
+      <div class="ags-sidebar-widget" style="margin-top: 15px;">
+        <div class="ags-weather-row" style="margin-bottom: 4px;">
+          <span><i class="fa-solid fa-palette"></i> Tema Visual:</span>
+        </div>
+        <select id="themeSelector" class="select-metric" style="width: 100%; font-size: 0.78rem; padding: 8px 10px;" onchange="cambiarTemaVisual(this.value)" title="Seleccionar Tema">
+          <option value="theme-cachyos">CachyOS Emerald</option>
+          <option value="theme-cyberpunk">Neón Cyberpunk</option>
+          <option value="theme-midnight">Nocturno Deep</option>
+          <option value="theme-sunset">Cálido Sunset</option>
+          <option value="theme-matrix">Terminal Matrix</option>
+          <option value="theme-aurora">Boreal Aurora</option>
+          <option value="theme-solarized">SoTech Lab</option>
+          <option value="theme-crimson">Crimson Red</option>
+        </select>
+      </div>
+
+      <div class="ags-sidebar-widget" style="margin-top: 10px;">
         <div class="ags-weather-row">
           <span><i class="fa-solid fa-user-gear"></i> Rol:</span>
           <span id="lblUserRole" style="color: var(--cyan-neon);">Cargando...</span>
@@ -176,6 +193,10 @@
     <div class="main-content-wrapper">
       
       <header class="main-header">
+        <button id="btnToggleSidebar" class="btn-action mobile-only" title="Abrir / Cerrar Menú Lateral">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
         <div class="header-branding">
           <div class="brand-badge"><i class="fa-solid fa-graduation-cap"></i> UAEH · ESH</div>
           <h1>SISTEMA AUTOMATIZADO DE MONITOREO HIDROPÓNICO</h1>
@@ -190,17 +211,6 @@
 
           <!-- WIDGET CLIMÁTICO DE HUEJUTLA -->
           <div id="weatherWidgetContainer"></div>
-
-          <select id="themeSelector" class="select-metric" onchange="cambiarTemaVisual(this.value)" title="Seleccionar Tema">
-            <option value="theme-cachyos">CachyOS Emerald</option>
-            <option value="theme-cyberpunk">Neón Cyberpunk</option>
-            <option value="theme-midnight">Nocturno Deep</option>
-            <option value="theme-sunset">Cálido Sunset</option>
-            <option value="theme-matrix">Terminal Matrix</option>
-            <option value="theme-aurora">Boreal Aurora</option>
-            <option value="theme-solarized">SoTech Lab</option>
-            <option value="theme-crimson">Crimson Red</option>
-          </select>
 
           <button class="btn-action btn-notify" id="btnNotify" onclick="abrirModalPush()" title="Configurar Notificaciones">
             <i class="fa-solid fa-bell"></i>
@@ -565,18 +575,19 @@
               </div>
             </div>
 
-            <div class="scheduler-card-box admin-only" style="margin-top: 25px;">
-              <div class="sched-header">
-                <i class="fa-solid fa-clock-rotate-left"></i>
+            <!-- PROGRAMADOR AUTOMÁTICO (REDES DISEÑO PREMIUM HUD) -->
+            <div class="scheduler-hud-card admin-only">
+              <div class="scheduler-hud-header">
+                <div class="scheduler-hud-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
                 <div>
-                  <h4>Programador Automático</h4>
-                  <p>Define horarios automatizados para los componentes del huerto</p>
+                  <h4>Programador Automático Inteligente</h4>
+                  <p>Automatización horaria de relés y actuadores del huerto</p>
                 </div>
               </div>
               
-              <div class="sched-controls-grid">
+              <div class="scheduler-hud-grid">
                 <div class="sched-field">
-                  <label><i class="fa-solid fa-toggle-on"></i> Actuador</label>
+                  <label><i class="fa-solid fa-toggle-on"></i> Actuador Objetivo</label>
                   <select id="schedActuator" class="select-metric">
                     <option value="bomba_principal">Bomba Principal NFT</option>
                     <option value="peltier">Placa Peltier Enfriador</option>
@@ -585,12 +596,12 @@
                 </div>
 
                 <div class="sched-field">
-                  <label><i class="fa-regular fa-clock"></i> Hora Encendido</label>
+                  <label><i class="fa-regular fa-clock"></i> Hora de Encendido</label>
                   <input type="time" id="schedTimeOn" class="select-metric" value="08:00">
                 </div>
 
                 <div class="sched-field">
-                  <label><i class="fa-solid fa-power-off"></i> Hora Apagado</label>
+                  <label><i class="fa-solid fa-power-off"></i> Hora de Apagado</label>
                   <input type="time" id="schedTimeOff" class="select-metric" value="20:00">
                 </div>
 
@@ -609,19 +620,23 @@
           </div>
 
           <div class="bottom-grid">
-            <div class="card tracker-card">
-              <h3><i class="fa-solid fa-leaf"></i> Trackers de Cultivo</h3>
-              <p class="card-subtitle">Fase 1: Agua (7d) | Fase 2: Solución 50% (7d) | Fase 3: Solución 100% (Resto)</p>
+            <!-- TRACKERS DE CULTIVO REDISEÑADOS -->
+            <div class="card tracker-card-hud">
+              <div class="chart-header">
+                <h3><i class="fa-solid fa-leaf"></i> Trackers de Cultivo Avanzados</h3>
+                <span class="hydraulic-badge">Fase 1: Agua (7d) | Fase 2: Solución 50% (7d) | Fase 3: Solución 100% (Resto)</span>
+              </div>
               
-              <div class="tracker-inputs-form admin-only">
-                <input type="text" id="tracker-input" placeholder="Nombre del Lote (ej. Lote Lechuga 1)...">
+              <div class="tracker-inputs-box admin-only">
                 <div class="tracker-inputs-row">
-                  <input type="date" id="tracker-date-input" title="Fecha de inicio">
-                  <input type="number" id="tracker-days-total" min="15" max="90" placeholder="Días Totales" value="30" title="Duración del ciclo">
-                  <button class="btn-add" onclick="addTracker()"><i class="fa-solid fa-plus"></i> Añadir</button>
+                  <input type="text" id="tracker-input" placeholder="Nombre del Lote (ej. Lote Lechuga 1)..." style="flex: 2;">
+                  <input type="date" id="tracker-date-input" title="Fecha de inicio" style="flex: 1;">
+                  <input type="number" id="tracker-days-total" min="15" max="90" placeholder="Días Totales" value="30" title="Duración del ciclo" style="flex: 0.7;">
+                  <button class="btn-add" onclick="addTracker()"><i class="fa-solid fa-plus"></i> Añadir Lote</button>
                 </div>
               </div>
-              <div id="tracker-container" class="tracker-list"></div>
+              
+              <div id="tracker-container" class="tracker-list-hud"></div>
             </div>
 
             <div class="card checklist-card">
