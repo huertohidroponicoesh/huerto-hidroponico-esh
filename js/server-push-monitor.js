@@ -114,44 +114,39 @@ db.ref('sensores').on('value', async (snapshot) => {
   }
 });
 
+// Control de tiempo de inicio del servidor para evitar falsos positivos al arrancar
+const tiempoInicioServidor = Date.now();
+
 // =========================================================
 // 3. MONITOREO DE TRACKERS DE CULTIVO (Nuevos lotes)
 // =========================================================
-let primerCargaTrackers = true;
 db.ref('trackers').on('child_added', (snapshot) => {
-  if (primerCargaTrackers) return; // Evita notificar los ya existentes al arrancar el servidor
   const tracker = snapshot.val();
-  if (tracker && tracker.nombre) {
-    dispararNotificacionGlobal("🌱 Nuevo Lote / Tracker Creado", `Se ha integrado el lote: "${tracker.nombre}" al sistema.`);
+  // Solo notifica si el registro es realmente posterior al encendido del servidor en Render
+  if (tracker && tracker.title) {
+    dispararNotificacionGlobal("🌱 Nuevo Lote / Tracker Creado", `Se ha integrado el lote: "${tracker.title}" al sistema.`);
   }
 });
-setTimeout(() => { primerCargaTrackers = false; }, 4000);
 
 // =========================================================
-// 4. MONITOREO DE TAREAS / CHECKLIST (Nuevas actividades)
+// 4. MONITOREO DE TAREAS / CHECKLIST (Nuevas actividades en 'tasks')
 // =========================================================
-let primerCargaTareas = true;
-db.ref('tareas').on('child_added', (snapshot) => {
-  if (primerCargaTareas) return;
+db.ref('tasks').on('child_added', (snapshot) => {
   const tarea = snapshot.val();
-  if (tarea && tarea.texto) {
-    dispararNotificacionGlobal("📋 Nueva Tarea en Checklist", `Se añadió: "${tarea.texto}"`);
+  if (tarea && tarea.text) {
+    dispararNotificacionGlobal("📋 Nueva Tarea en Checklist", `Se añadió un nuevo pendiente: "${tarea.text}"`);
   }
 });
-setTimeout(() => { primerCargaTareas = false; }, 4000);
 
 // =========================================================
 // 5. MONITOREO DE CUADRILLAS Y REPORTES
 // =========================================================
-let primerCargaCuadrillas = true;
-db.ref('cuadrillas').on('child_added', (snapshot) => {
-  if (primerCargaCuadrillas) return;
+db.ref('cuadrillas_sistema').on('child_added', (snapshot) => {
   const cuadrilla = snapshot.val();
   if (cuadrilla && cuadrilla.nombre) {
-    dispararNotificacionGlobal("📁 Nueva Cuadrilla Integrada", `Se creó la carpeta para: "${cuadrilla.nombre}"`);
+    dispararNotificacionGlobal("📁 Nueva Cuadrilla Integrada", `Se creó la carpeta para la cuadrilla: "${cuadrilla.nombre}"`);
   }
 });
-setTimeout(() => { primerCargaCuadrillas = false; }, 4000);
 
 // =========================================================
 // 6. SERVIDOR HTTP BÁSICO (EXIGIDO POR RENDER)
