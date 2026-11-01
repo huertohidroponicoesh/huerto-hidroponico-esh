@@ -69,7 +69,6 @@
    2. ANIMACIONES Y EFECTOS LÍQUIDOS PARA INDICADORES DE ESTADO (ESP32)
    ========================================================= */
 
-/* ESTADO ONLINE: Resplandor verde neón intermitente / respiración */
 .status-indicator.online .dot {
   background-color: var(--green-bright, #35e58a);
   box-shadow: 0 0 12px var(--green-bright, #35e58a), 0 0 24px var(--green-bright, #35e58a);
@@ -89,7 +88,6 @@
   }
 }
 
-/* ESTADO OFFLINE: Parpadeo de advertencia rojo neón */
 .status-indicator.offline .dot {
   background-color: var(--danger, #ff5d67);
   box-shadow: 0 0 12px var(--danger, #ff5d67);
@@ -109,7 +107,6 @@
   }
 }
 
-/* ESTADO CONNECTING: Pulsación fluida en color ámbar */
 .status-indicator.connecting .dot {
   background-color: var(--warning, #ffd166);
   box-shadow: 0 0 12px var(--warning, #ffd166);
@@ -129,7 +126,6 @@
   }
 }
 
-/* Animación fluida para los tres puntitos en el texto "Conectando..." */
 .liquid-dots {
   display: inline-flex;
   align-items: center;
@@ -159,7 +155,6 @@
    3. NUEVAS ANIMACIONES PARA INTERFAZ GLASSMORPHIC & IOT NEÓN
    ========================================================= */
 
-/* Efecto de actualización sutil en las tarjetas de monitoreo en vivo */
 .value-update-flash {
   animation: valuePulse 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -170,7 +165,6 @@
   100% { transform: scale(1); filter: brightness(1); }
 }
 
-/* Resplandor pulsante para alertas críticas en tablas */
 .badge-alert-pulse {
   animation: badgeAlertGlow 1.8s infinite ease-in-out;
 }
@@ -180,12 +174,10 @@
   50% { box-shadow: 0 0 16px rgba(255, 93, 103, 0.9); }
 }
 
-/* Transición suave global al cambiar de tema (Nocturno, Esmeralda, CachyOS, etc.) */
 body, .card, header, nav, table, input, select, button {
   transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, color 0.25s ease;
 }
 
-/* Efecto de entrada para pestañas al cambiar de vista */
 .tab-section-fade {
   animation: tabFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -195,7 +187,6 @@ body, .card, header, nav, table, input, select, button {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Animación de partículas de flujo en esquema hidráulico */
 @keyframes moveFlow {
   from { left: -30%; }
   to { left: 130%; }

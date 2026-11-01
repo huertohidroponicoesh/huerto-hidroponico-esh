@@ -47,9 +47,10 @@
    ========================================================= */
 .cuadrillas-container {
   margin-top: 15px;
-  max-height: 480px !important;
-  min-height: 280px;
-  overflow-y: auto !important;
+  height: 350px !important;
+  max-height: 350px !important;
+  overflow-y: scroll !important;
+  overscroll-behavior-y: contain;
   padding-right: 8px;
   display: flex;
   flex-direction: column;
@@ -86,6 +87,7 @@
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
 }
 
 .folder-card:hover {

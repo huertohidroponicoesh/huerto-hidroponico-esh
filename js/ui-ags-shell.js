@@ -57,7 +57,7 @@ function inicializarMenuMobileAGS() {
 // =========================================================
 // REGISTRO DE SERVICE WORKER Y GESTIÓN DE PWA (INSTALACIÓN)
 // =========================================================
-let deferredPrompt;
+let deferredPrompt = null;
 
 function registrarServiceWorkerPWA() {
   if ('serviceWorker' in navigator) {
@@ -75,13 +75,26 @@ function registrarServiceWorkerPWA() {
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  
+  mostrarBotonPWAVisualmente();
+  console.log("📲 Evento beforeinstallprompt capturado con éxito.");
+});
+
+function mostrarBotonPWAVisualmente() {
   const btnInstall = document.getElementById('btnInstallPwa');
   if (btnInstall) {
-    btnInstall.classList.remove('hidden'); // Muestra el botón en la barra superior
+    btnInstall.classList.remove('hidden');
+    btnInstall.style.display = 'flex';
   }
-  console.log("📲 Aplicación lista para instalar como PWA.");
-});
+}
+
+// Respaldo para asegurar visibilidad en entornos locales o de desarrollo
+setTimeout(() => {
+  const btnInstall = document.getElementById('btnInstallPwa');
+  if (btnInstall && !window.matchMedia('(display-mode: standalone)').matches) {
+    btnInstall.classList.remove('hidden');
+    btnInstall.style.display = 'flex';
+  }
+}, 800);
 
 function instalarAplicacionPWA() {
   if (deferredPrompt) {
@@ -90,12 +103,12 @@ function instalarAplicacionPWA() {
       if (choiceResult.outcome === 'accepted') {
         console.log('✅ El usuario aceptó instalar la aplicación PWA.');
         const btnInstall = document.getElementById('btnInstallPwa');
-        if (btnInstall) btnInstall.classList.add('hidden');
+        if (btnInstall) btnInstall.style.display = 'none';
       }
       deferredPrompt = null;
     });
   } else {
-    // Guía interactiva si el navegador no expone prompt directo (como en iOS Safari o navegadores de escritorio)
+    // Guía interactiva si el navegador no expone prompt directo
     if (typeof mostrarToast === 'function') {
       mostrarToast("Instalación PWA", "Abre el menú de tu navegador y selecciona 'Instalar aplicación' o 'Agregar a la pantalla de inicio'.", "warning");
     } else {
@@ -103,11 +116,12 @@ function instalarAplicacionPWA() {
     }
   }
 }
+window.instalarAplicacionPWA = instalarAplicacionPWA;
 
 window.addEventListener('appinstalled', (evt) => {
   console.log('🎉 PWA instalada con éxito.');
   const btnInstall = document.getElementById('btnInstallPwa');
-  if (btnInstall) btnInstall.classList.add('hidden');
+  if (btnInstall) btnInstall.style.display = 'none';
 });
 
 // =========================================================
@@ -137,10 +151,12 @@ function verificarModoNocturnoAutomatico() {
   }
 }
 
-// Función para simular un "Hard Refresh" de telemetría y reconexión limpia
+// Función para simular un "Hard Refresh" robusto de telemetría y reconexión limpia
 function ejecutarHardRefresh() {
   if (typeof mostrarToast === 'function') {
     mostrarToast("Hard Refresh", "Reiniciando sockets y sincronizando con ESP32...", "success");
+  } else {
+    console.log("🔄 Hard Refresh iniciado...");
   }
 
   const badge = document.getElementById('statusBadge');
@@ -149,14 +165,36 @@ function ejecutarHardRefresh() {
   if (txt) txt.innerHTML = `Sincronizando<span class="liquid-dots"><span></span><span></span><span></span></span>`;
 
   setTimeout(() => {
+    // Intentar invocar funciones de escucha de Firebase si existen en otros scripts
     if (typeof escucharFirebase === 'function') {
       escucharFirebase();
     }
+    if (typeof cargarCuadrillasFirebase === 'function') {
+      cargarCuadrillasFirebase();
+    }
+    if (typeof cargarHistorialFirebase === 'function') {
+      cargarHistorialFirebase();
+    }
+
     if (typeof mostrarToast === 'function') {
       mostrarToast("Sincronización Exitosa", "Telemetría restablecida al 100%", "success");
     }
   }, 1200);
 }
+window.ejecutarHardRefresh = ejecutarHardRefresh;
+
+// Funciones expuestas globales para modales
+function abrirModalPush() {
+  const modal = document.getElementById('pushConfigModal');
+  if (modal) modal.classList.remove('hidden');
+}
+window.abrirModalPush = abrirModalPush;
+
+function cerrarModalPush() {
+  const modal = document.getElementById('pushConfigModal');
+  if (modal) modal.classList.add('hidden');
+}
+window.cerrarModalPush = cerrarModalPush;
 
 // Sistema de Alertas Toast flotantes tipo AGS
 function mostrarToast(titulo, mensaje, tipo = 'success') {
@@ -192,3 +230,4 @@ function mostrarToast(titulo, mensaje, tipo = 'success') {
     setTimeout(() => toast.remove(), 400);
   }, 4500);
 }
+window.mostrarToast = mostrarToast;
