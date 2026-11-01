@@ -12,7 +12,7 @@
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* Caja de Formulario para Integrar Cuadrilla (Adaptada a temas) */
+/* Caja de Formulario para Integrar Cuadrilla */
 .report-inputs-box {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -73,18 +73,19 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
+/* Contenedor del ícono adaptado al color dinámico del tema */
 .folder-icon-glow {
   width: 44px;
   height: 44px;
   border-radius: 14px;
-  background: rgba(255, 209, 102, 0.15);
-  border: 1px solid rgba(255, 209, 102, 0.35);
+  background: rgba(53, 229, 138, 0.12);
+  border: 1px solid var(--card-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--warning);
+  color: var(--green-bright);
   font-size: 1.15rem;
-  box-shadow: 0 0 15px rgba(255, 209, 102, 0.25);
+  box-shadow: 0 0 15px rgba(53, 229, 138, 0.2);
   flex-shrink: 0;
 }
 
