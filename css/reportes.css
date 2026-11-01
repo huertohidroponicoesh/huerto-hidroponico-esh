@@ -12,9 +12,9 @@
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* Caja de Formulario para Integrar Cuadrilla */
+/* Caja de Formulario para Integrar Cuadrilla (Adaptada a temas) */
 .report-inputs-box {
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 20px;
   padding: 22px;
@@ -26,7 +26,7 @@
 .report-inputs-box input, 
 .report-inputs-box select {
   padding: 13px 16px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--card-border);
   color: var(--text-main);
   border-radius: 14px;
@@ -39,12 +39,12 @@
 .report-inputs-box input:focus, 
 .report-inputs-box select:focus {
   border-color: var(--green-bright);
-  box-shadow: 0 0 18px rgba(53, 229, 138, 0.3);
+  box-shadow: 0 0 18px var(--card-border-glow);
 }
 
 /* Cuadrillas Activas: Tarjetas de Carpetas */
 .folder-card {
-  background: rgba(0, 0, 0, 0.35);
+  background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 18px;
   margin-bottom: 14px;
@@ -55,7 +55,6 @@
 
 .folder-card:hover {
   border-color: var(--card-border-glow);
-  background: rgba(0, 0, 0, 0.5);
   transform: translateY(-2px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
@@ -66,12 +65,12 @@
   align-items: center;
   padding: 16px 20px;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
   transition: background 0.2s ease;
 }
 
 .folder-header:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .folder-icon-glow {
@@ -91,14 +90,14 @@
 
 .folder-content {
   padding: 18px 20px;
-  background: rgba(0, 0, 0, 0.28);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid var(--card-border);
   animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Planificador Mensual & Calendario Operativo */
 .calendar-hud-wrapper {
-  background: rgba(0, 0, 0, 0.38);
+  background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 20px;
   padding: 20px;
@@ -134,7 +133,7 @@
 }
 
 .calendar-day-box {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--card-border);
   border-radius: 14px;
   padding: 8px;
@@ -151,7 +150,7 @@
 .calendar-day-box:hover {
   border-color: var(--card-border-glow);
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
@@ -159,7 +158,7 @@
   transform: scale(0.95);
 }
 
-/* Estados de días en el calendario con acentos de las variables de tema */
+/* Estados de días en el calendario sincronizados con las variables del tema */
 .calendar-day-pendiente {
   border: 1px solid var(--warning) !important;
   background: rgba(255, 209, 102, 0.15) !important;
@@ -169,7 +168,7 @@
 .calendar-day-cumplido {
   border: 1px solid var(--green-bright) !important;
   background: rgba(53, 229, 138, 0.25) !important;
-  box-shadow: 0 0 16px rgba(53, 229, 138, 0.4);
+  box-shadow: 0 0 16px var(--card-border-glow);
   cursor: pointer;
 }
 
@@ -178,11 +177,11 @@
 }
 
 .calendar-badge-mobile {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 8px;
   padding: 3px 6px;
   margin-top: auto;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--card-border);
   text-align: center;
   backdrop-filter: blur(5px);
 }
