@@ -81,7 +81,7 @@ function renderTrackerItem(key, item) {
   let currentDay = Math.min(totalDays, Math.max(1, 1 + diffDays));
   const percentage = Math.min(100, Math.max(0, (currentDay / totalDays) * 100));
 
-  // Distribución de fases por defecto (Fase 1: 7d Agua, Fase 2: 7d Sol 50%, Resto: Sol 100%)
+  // Distribución de fases por defecto
   const diasAgua = Math.min(7, totalDays);
   const dias50 = Math.min(7, Math.max(0, totalDays - 7));
   const dias100 = Math.max(0, totalDays - 14);

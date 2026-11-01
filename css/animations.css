@@ -181,7 +181,7 @@
 }
 
 /* Transición suave global al cambiar de tema (Nocturno, Esmeralda, Cálido, etc.) */
-body, .card-glass, header, nav, table, input, select, button {
+body, .card, header, nav, table, input, select, button {
   transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, color 0.25s ease;
 }
 
@@ -193,4 +193,10 @@ body, .card-glass, header, nav, table, input, select, button {
 @keyframes tabFadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animación de partículas de flujo en esquema hidráulico */
+@keyframes moveFlow {
+  from { left: -30%; }
+  to { left: 130%; }
 }

@@ -30,7 +30,6 @@ function exportarReporteExcelEjecutivo() {
         "Humedad Ambiente (%)": parseFloat(celdas[4].innerText) || celdas[4].innerText.trim()
       });
     } else if (celdas.length >= 2 && fila.innerText.includes('Calibración')) {
-      // Captura de eventos de mantenimiento/calibración intercalados en la bitácora
       datosEventosMantenimiento.push({
         "Fecha / Hora": celdas[0].innerText.trim(),
         "Evento / Descripción": celdas[1].innerText.replace(/\n/g, ' ').trim()
@@ -64,7 +63,6 @@ function exportarReporteExcelEjecutivo() {
   const fechaGeneracion = new Date().toLocaleString('es-MX');
   const huertoActual = document.getElementById('currentHuertoTitle') ? document.getElementById('currentHuertoTitle').innerText : 'Huerto NFT Principal';
   
-  // Umbrales actuales configurados en la interfaz
   const phMin = document.getElementById('threshPhMin') ? document.getElementById('threshPhMin').value : '5.5';
   const phMax = document.getElementById('threshPhMax') ? document.getElementById('threshPhMax').value : '6.5';
   const ecMin = document.getElementById('threshEcMin') ? document.getElementById('threshEcMin').value : '2.0';
@@ -73,7 +71,7 @@ function exportarReporteExcelEjecutivo() {
   const tempMax = document.getElementById('threshTempMax') ? document.getElementById('threshTempMax').value : '24.0';
 
   const resumenData = [
-    ["SISTEMA AUTOMATIZADO DE MONITOREO HIDROPÓNICO IoT"],
+    ["SISTEMA AUTOMATIZADO DE MONITOREO HIDROPÓNICO IoT - CAELESTIA HUD"],
     ["ESCUELA SUPERIOR DE HUEJUTLA - UNIVERSIDAD AUTÓNOMA DEL ESTADO DE HIDALGO (UAEH)"],
     ["REPORTE EJECUTIVO DE MONITOREO E INVESTIGACIÓN HIDROPÓNICA"],
     [],
@@ -93,12 +91,10 @@ function exportarReporteExcelEjecutivo() {
     ["RESPONSABLES DEL SISTEMA"],
     ["Institución:", "Escuela Superior de Huejutla · UAEH"],
     ["Área Académica:", "Propedéutico Ciencias Básicas e Ingeniería"],
-    ["Desarrollo & Operación:", "Cuadrilla de Programación e Ingeniería IoT"]
+    ["Desarrollo & Operación:", "Cuadrilla de Programación e Ingeniería IoT (HUss)"]
   ];
 
   const wsResumen = XLSX.utils.aoa_to_sheet(resumenData);
-  
-  // Ancho de columnas para Pestaña 1
   wsResumen['!cols'] = [
     { wch: 38 },
     { wch: 28 },
@@ -109,7 +105,7 @@ function exportarReporteExcelEjecutivo() {
   XLSX.utils.book_append_sheet(wb, wsResumen, "Resumen Ejecutivo");
 
   // ---------------------------------------------------------
-  // PESTAÑA 2: BITÁCORA HISTÓRICA DE SENSORES Y CALIBRACIÓN
+  // PESTAÑA 2: BITÁCORA HISTÓRICA DE SENSORES
   // ---------------------------------------------------------
   if (datosHistorial.length > 0) {
     const wsHistorial = XLSX.utils.json_to_sheet(datosHistorial);
@@ -151,8 +147,6 @@ function exportarReporteExcelEjecutivo() {
   
   if (typeof mostrarToast === 'function') {
     mostrarToast("Exportación Exitosa", `Se descargó '${nombreArchivo}' con 3 pestañas de análisis.`, "success");
-  } else {
-    console.log(`✅ Reporte Excel descargado exitosamente: ${nombreArchivo}`);
   }
 }
 

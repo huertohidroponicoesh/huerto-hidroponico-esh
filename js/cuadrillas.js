@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function agregarFechaASeleccion() {
   const inputPicker = document.getElementById('inputFechaCuadrillaPicker');
+  if (!inputPicker) return;
   const fecha = inputPicker.value;
   if (fecha && !fechasSeleccionadasCuadrilla.includes(fecha)) {
     fechasSeleccionadasCuadrilla.push(fecha);
@@ -53,15 +54,23 @@ function actualizarBadgesFechas() {
 }
 
 function crearCarpetaCuadrilla() {
-  const nombre = document.getElementById('inputNombreCuadrilla').value.trim();
-  const integrantes = document.getElementById('inputIntegrantes').value.trim();
+  const nombreEl = document.getElementById('inputNombreCuadrilla');
+  const integrantesEl = document.getElementById('inputIntegrantes');
+  if (!nombreEl) return;
+
+  const nombre = nombreEl.value.trim();
+  const integrantes = integrantesEl ? integrantesEl.value.trim() : '';
 
   if (!nombre) {
-    return alert("Por favor, ingresa el nombre de la cuadrilla.");
+    if (typeof mostrarToast === 'function') mostrarToast("Campo Requerido", "Ingresa el nombre de la cuadrilla", "warning");
+    else alert("Por favor, ingresa el nombre de la cuadrilla.");
+    return;
   }
 
   if (fechasSeleccionadasCuadrilla.length === 0) {
-    return alert("Por favor, selecciona al menos una fecha de labor.");
+    if (typeof mostrarToast === 'function') mostrarToast("Fecha Requerida", "Selecciona al menos una fecha de labor", "warning");
+    else alert("Por favor, selecciona al menos una fecha de labor.");
+    return;
   }
 
   const cuadrillaId = 'cuadrilla_' + Date.now();
@@ -74,15 +83,14 @@ function crearCarpetaCuadrilla() {
     creado: Date.now(),
     orden: Date.now()
   }).then(() => {
-    alert(`¡Cuadrilla "${nombre}" creada exitosamente!`);
-    document.getElementById('inputNombreCuadrilla').value = '';
-    document.getElementById('inputIntegrantes').value = '';
+    if (typeof mostrarToast === 'function') mostrarToast("Cuadrilla Creada", `Se añadió '${nombre}' con éxito`, "success");
+    nombreEl.value = '';
+    if (integrantesEl) integrantesEl.value = '';
     fechasSeleccionadasCuadrilla = [];
     actualizarBadgesFechas();
     cargarCuadrillasFirebase();
   }).catch(err => {
     console.error("Error al crear cuadrilla:", err);
-    alert("Error al conectar con la base de datos.");
   });
 }
 
@@ -191,13 +199,12 @@ function cargarCuadrillasFirebase() {
 }
 
 // =========================================================
-// LÓGICA DE DRAG & DROP OPTIMIZADA (SIN GLITCHES NI DUPLICADOS)
+// LÓGICA DE DRAG & DROP OPTIMIZADA
 // =========================================================
 function activarDragAndDropCuadrillas() {
   const draggables = document.querySelectorAll('.draggable-folder');
   
   draggables.forEach(elem => {
-    // Evitar acumulación de múltiples event listeners
     elem.removeEventListener('dragstart', handleDragStart);
     elem.removeEventListener('dragover', handleDragOver);
     elem.removeEventListener('drop', handleDrop);
@@ -214,24 +221,17 @@ function handleDragStart(e) {
   dragSrcEl = this;
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/html', this.innerHTML);
-  
-  setTimeout(() => {
-    this.style.opacity = '0.4';
-  }, 0);
+  setTimeout(() => { this.style.opacity = '0.4'; }, 0);
 }
 
 function handleDragOver(e) {
-  if (e.preventDefault) {
-    e.preventDefault();
-  }
+  if (e.preventDefault) e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
   return false;
 }
 
 function handleDrop(e) {
-  if (e.stopPropagation) {
-    e.stopPropagation();
-  }
+  if (e.stopPropagation) e.stopPropagation();
 
   if (dragSrcEl !== this) {
     const container = document.getElementById('cuadrillasContainer');
@@ -245,7 +245,6 @@ function handleDrop(e) {
       container.insertBefore(dragSrcEl, this);
     }
     
-    // Actualizar orden en Firebase de manera limpia
     actualizarOrdenFirebase();
   }
   return false;
@@ -253,13 +252,9 @@ function handleDrop(e) {
 
 function handleDragEnd(e) {
   this.style.opacity = '1';
-  
-  // Limpiar estados visuales en el contenedor
   const container = document.getElementById('cuadrillasContainer');
   if (container) {
-    container.querySelectorAll('.folder-card').forEach(card => {
-      card.style.opacity = '1';
-    });
+    container.querySelectorAll('.folder-card').forEach(card => { card.style.opacity = '1'; });
   }
   dragSrcEl = null;
 }
@@ -309,6 +304,7 @@ function renderEditFechasBadges() {
 
 function agregarFechaEdicion() {
   const picker = document.getElementById('editFechaPicker');
+  if (!picker) return;
   if (picker.value && !editFechasArray.includes(picker.value)) {
     editFechasArray.push(picker.value);
     renderEditFechasBadges();
@@ -338,7 +334,7 @@ function guardarEdicionCuadrilla() {
     fechasAsignadas: editFechasArray
   }, (err) => {
     if (!err) {
-      alert("Cuadrilla actualizada exitosamente.");
+      if (typeof mostrarToast === 'function') mostrarToast("Actualizado", "Cuadrilla modificada con éxito", "success");
       cerrarModalEditarCuadrilla();
       cargarCuadrillasFirebase();
     } else {
@@ -507,12 +503,16 @@ function guardarLinkDriveCuadrilla(cuadrillaId) {
   const inputNombre = document.getElementById(`nombrePdf-${cuadrillaId}`);
   const inputLink = document.getElementById(`linkPdf-${cuadrillaId}`);
   
+  if (!selectFecha || !inputNombre || !inputLink) return;
+
   const fechaJornada = selectFecha.value;
   const nombreArchivo = inputNombre.value.trim();
   const linkUrl = inputLink.value.trim();
 
   if (!fechaJornada || !nombreArchivo || !linkUrl) {
-    return alert("Por favor, selecciona la fecha de la jornada, ingresa el nombre del reporte y el enlace.");
+    if (typeof mostrarToast === 'function') mostrarToast("Campos Incompletos", "Rellena fecha, nombre y enlace del reporte", "warning");
+    else alert("Por favor, selecciona la fecha, nombre y enlace.");
+    return;
   }
 
   const fechaSubida = new Date().toLocaleString('es-MX');
@@ -526,13 +526,10 @@ function guardarLinkDriveCuadrilla(cuadrillaId) {
     subidoPor: operador,
     timestamp: Date.now()
   }).then(() => {
-    alert(`¡Reporte guardado para la jornada ${fechaJornada}! El calendario se ha actualizado.`);
+    if (typeof mostrarToast === 'function') mostrarToast("Reporte Adjuntado", `Guardado para la jornada ${fechaJornada}`, "success");
     inputNombre.value = '';
     inputLink.value = '';
     cargarCuadrillasFirebase();
-  }).catch(err => {
-    console.error("Error al guardar enlace:", err);
-    alert("Error al conectar con la base de datos.");
   });
 }
 
@@ -576,7 +573,7 @@ function eliminarCuadrilla(cuadrillaId) {
   if (confirm("¿Estás seguro de eliminar esta cuadrilla?")) {
     database.ref(`cuadrillas_sistema/${cuadrillaId}`).remove();
     database.ref(`reportes_cuadrillas/${cuadrillaId}`).remove();
-    alert("Cuadrilla eliminada.");
+    if (typeof mostrarToast === 'function') mostrarToast("Eliminado", "Cuadrilla borrada del sistema", "warning");
     cargarCuadrillasFirebase();
   }
 }

@@ -156,6 +156,166 @@ body::before {
   100% { transform: translate(-30px, -20px) scale(0.95); }
 }
 
+/* =========================================================
+   DISEÑO AGS SHELL / HYPRLAND (DOCK LATERAL FLOTANTE)
+   ========================================================= */
+.app-layout-shell {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Dock Lateral AGS */
+.ags-sidebar {
+  width: 280px;
+  background: var(--card-bg);
+  border-right: 1px solid var(--card-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 25px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ags-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 20px;
+}
+
+.ags-logo-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--green-bright), var(--cyan-neon));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #030d0a;
+  box-shadow: 0 0 15px rgba(53, 229, 138, 0.4);
+}
+
+.ags-brand-text h3 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.ags-brand-text small {
+  font-size: 0.72rem;
+  color: var(--green-bright);
+  font-weight: 700;
+}
+
+/* Menú de Navegación Lateral */
+.ags-nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.ags-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.ags-nav-item i {
+  font-size: 1.1rem;
+  width: 24px;
+  color: var(--text-muted);
+  transition: color 0.25s ease;
+}
+
+.ags-nav-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-main);
+  border-color: var(--card-border);
+}
+
+.ags-nav-item:hover i {
+  color: var(--green-bright);
+}
+
+.ags-nav-item.active {
+  background: linear-gradient(135deg, rgba(53, 229, 138, 0.2), rgba(0, 240, 255, 0.1));
+  border-color: var(--card-border-glow);
+  color: var(--green-bright);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.ags-nav-item.active i {
+  color: var(--green-bright);
+}
+
+/* Widget de Clima & Sistema en Sidebar */
+.ags-sidebar-widget {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ags-weather-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+/* Contenido Principal desplazado a la derecha por el Dock */
+.main-content-wrapper {
+  flex: 1;
+  margin-left: 280px;
+  padding: 30px;
+  max-width: calc(100% - 280px);
+  box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+  .ags-sidebar {
+    transform: translateX(-100%);
+  }
+  .ags-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  .main-content-wrapper {
+    margin-left: 0;
+    max-width: 100%;
+    padding: 15px;
+  }
+}
+
 /* ANIMACIONES */
 @keyframes plantBounce {
   0%, 100% { transform: translateY(0) scale(1); }
@@ -325,8 +485,8 @@ body::before {
 .btn-hex-submit:hover { transform: translateY(-2px); box-shadow: 0 15px 35px rgba(53, 229, 138, 0.55); }
 .hidden { display: none !important; }
 
-/* CONTENEDOR PRINCIPAL */
-.app-container { max-width: 1200px; margin: 0 auto; padding: 20px; padding-bottom: 50px; }
+/* HEADER Y CONTENEDOR PRINCIPAL HUD */
+.app-container { max-width: 1200px; margin: 0 auto; padding: 0 20px 50px 20px; }
 
 .main-header { 
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 22px 28px; 
@@ -391,11 +551,6 @@ body::before {
 
 .status-banner { padding: 14px 20px; border-radius: 16px; font-size: 0.88rem; font-weight: 600; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; background: rgba(53, 229, 138, 0.08); border: 1px solid rgba(53, 229, 138, 0.3); color: var(--text-main); box-sizing: border-box; }
 
-.nav-sections-bar { display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px; }
-.nav-sec-btn { flex: 1; min-width: 160px; padding: 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); border-radius: 16px; color: var(--text-muted); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.88rem; transition: all 0.3s ease; white-space: nowrap; }
-.nav-sec-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
-.nav-sec-btn.active { background: var(--card-bg); border-color: var(--green-bright); color: var(--green-bright); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-
 .card { 
   background: var(--card-bg); border: 1px solid var(--card-border); 
   border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); 
@@ -426,89 +581,6 @@ body::before {
 .diag-list { display: flex; flex-direction: column; gap: 14px; margin-top: 15px; }
 .diag-row { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .diag-row strong { color: var(--text-main); }
-
-/* --- GESTOR DE CARPETAS Y CUADRILLAS DINÁMICAS (GLASSMORPHISM) --- */
-.folder-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 18px;
-  overflow: hidden;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
-  flex-shrink: 0 !important;
-  margin-bottom: 0 !important;
-}
-.folder-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 240, 255, 0.12);
-  border-color: var(--card-border-glow);
-}
-
-.folder-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px;
-  background: rgba(15, 23, 42, 0.6);
-  cursor: pointer;
-  backdrop-filter: blur(12px);
-}
-
-.folder-icon-glow {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  background: rgba(0, 240, 255, 0.1);
-  color: var(--cyan-neon);
-  border: 1px solid rgba(0, 240, 255, 0.25);
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
-  flex-shrink: 0;
-}
-
-/* --- CÁPSULA SCROLEABLE PARA LAS CARPETAS --- */
-.cuadrillas-container, #cuadrillasContainer {
-  max-height: 440px !important;
-  height: 440px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  -webkit-overflow-scrolling: touch !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: var(--green-bright) rgba(0, 0, 0, 0.3) !important;
-  padding-right: 8px !important;
-  padding-bottom: 10px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 14px !important;
-  box-sizing: border-box !important;
-  width: 100% !important;
-}
-
-.cuadrillas-container::-webkit-scrollbar, 
-#cuadrillasContainer::-webkit-scrollbar {
-  display: block !important;
-  width: 6px !important;
-}
-
-.cuadrillas-container::-webkit-scrollbar-track, 
-#cuadrillasContainer::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3) !important;
-  border-radius: 10px !important;
-}
-
-.cuadrillas-container::-webkit-scrollbar-thumb, 
-#cuadrillasContainer::-webkit-scrollbar-thumb {
-  background: var(--green-bright) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 0 8px var(--green-bright) !important;
-}
-
-.cuadrillas-container::-webkit-scrollbar-thumb:hover, 
-#cuadrillasContainer::-webkit-scrollbar-thumb:hover {
-  background: var(--cyan-neon) !important;
-}
 
 /* DIAGRAMA HIDRÁULICO AVANZADO */
 .hydraulic-card { overflow: hidden; }
@@ -557,34 +629,9 @@ body::before {
   to { left: 130%; }
 }
 
-/* PROGRAMADOR AUTOMÁTICO */
-.sched-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; color: var(--green-bright); }
-.sched-header i { font-size: 1.8rem; }
-.sched-header h4 { font-size: 1.05rem; color: var(--text-main); font-weight: 800; }
-.sched-header p { font-size: 0.8rem; color: var(--text-muted); }
-
-.sched-controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end; box-sizing: border-box; }
-.sched-field { display: flex; flex-direction: column; gap: 8px; }
-.sched-field label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
-
-.btn-sched-submit {
-  padding: 14px 20px; background: linear-gradient(135deg, var(--green-bright), var(--green-hover));
-  border: none; border-radius: 14px; color: #030d0a; font-weight: 800; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s ease;
-  font-size: 0.88rem;
-}
-.btn-sched-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(53, 229, 138, 0.4); }
-
 /* UMBRALES Y ALERTAS */
 .threshold-group { margin-bottom: 14px; width: 100%; box-sizing: border-box; }
 .threshold-group label { display: block; font-size: 0.82rem; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
-
-.alert-status-card {
-  padding: 18px; border-radius: 16px; background: rgba(0,0,0,0.3); 
-  border: 1px solid var(--card-border); font-size: 0.9rem; 
-  display: flex; align-items: center; gap: 12px; margin-top: 10px;
-  box-sizing: border-box; max-width: 100%; word-break: break-word;
-}
 
 .chart-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; box-sizing: border-box; }
 .select-metric { background: rgba(0,0,0,0.35); color: var(--text-main); border: 1px solid var(--card-border); padding: 10px 14px; border-radius: 14px; outline: none; cursor: pointer; font-size: 0.85rem; font-weight: 600; max-width: 100%; box-sizing: border-box; }
@@ -615,7 +662,6 @@ body.role-guest .admin-only { display: none !important; }
 body.role-guest .control-item .switch { pointer-events: none; opacity: 0.3; filter: grayscale(1); }
 
 .grid-2-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; box-sizing: border-box; }
-.bottom-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 22px; box-sizing: border-box; }
 
 .tracker-inputs-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; box-sizing: border-box; width: 100%; }
 .tracker-inputs-form input { padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; outline: none; font-size: 0.88rem; width: 100%; box-sizing: border-box; }
@@ -710,28 +756,10 @@ footer { text-align: center; color: var(--text-muted); font-size: 0.78rem; paddi
   .calendar-day-box > div:first-child {
     font-size: 0.75rem !important;
   }
-
-  .calendar-badge-mobile {
-    font-size: 0.58rem !important;
-    padding: 2px 3px !important;
-  }
-
-  .folder-content div[style*="display: flex"] {
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-
-  .folder-content input, 
-  .folder-content select, 
-  .folder-content button {
-    width: 100% !important;
-    min-width: 100% !important;
-  }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .main-header { flex-direction: column; text-align: center; padding: 18px; }
   .system-status-bar { justify-content: center; width: 100%; gap: 8px; }
-  .grid-2-cols, .bottom-grid { grid-template-columns: 1fr; }
-  .nav-sections-bar { justify-content: flex-start; }
+  .grid-2-cols { grid-template-columns: 1fr; }
 }

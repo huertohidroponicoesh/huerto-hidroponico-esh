@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   iniciarReloj();
   
   // Cargar y aplicar el tema visual guardado previamente
-  const savedTheme = localStorage.getItem("hidro_theme") || "theme-emerald";
+  const savedTheme = localStorage.getItem("hidro_theme") || "theme-midnight";
   cambiarTemaVisual(savedTheme, false);
   
   const themeSel = document.getElementById('themeSelector');
@@ -22,13 +22,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function cambiarTemaVisual(themeName, guardar = true) {
-  document.body.className = themeName;
+  document.body.className = "theme-" + themeName.replace("theme-", "");
   if (guardar) localStorage.setItem("hidro_theme", themeName);
 }
 
-function toggleMostrarPass() {
-  const pass = document.getElementById("passInput");
-  const icon = document.getElementById("togglePassword");
+function togglePasswordVisibility() {
+  const pass = document.getElementById("inputPassword");
+  const icon = document.querySelector(".toggle-password");
   if (!pass || !icon) return;
   
   if (pass.type === "password") { 
@@ -40,55 +40,67 @@ function toggleMostrarPass() {
   }
 }
 
-function seleccionarPerfil(user) {
-  const userInput = document.getElementById('userInput');
-  const userLabel = document.getElementById('selectedUserLabel');
-  const usersGrid = document.getElementById('hydeUsersGrid');
-  const loginForm = document.getElementById('loginForm');
-  const passInput = document.getElementById('passInput');
+let perfilSeleccionadoTemp = 'admin';
 
-  if (userInput) userInput.value = user;
-  if (userLabel) {
-    userLabel.innerText = user === 'H.A.G.D.R.' ? 'H.A.G.D.R. (Administrador)' : 'Hidrouser (Monitor)';
+function seleccionarPerfil(tipo) {
+  perfilSeleccionadoTemp = tipo;
+  const userSelectionStep = document.getElementById('userSelectionStep');
+  const loginFormStep = document.getElementById('loginFormStep');
+  const selectedRoleTitle = document.getElementById('selectedRoleTitle');
+  const selectedRoleIcon = document.getElementById('selectedRoleIcon');
+  const passInput = document.getElementById('inputPassword');
+
+  if (userSelectionStep) userSelectionStep.classList.add('hidden');
+  if (loginFormStep) loginFormStep.classList.remove('hidden');
+
+  if (selectedRoleTitle) {
+    selectedRoleTitle.innerText = tipo === 'admin' ? 'H.A.G.D.R. (Administrador)' : 'Hidrouser (Invitado)';
   }
-  if (usersGrid) usersGrid.classList.add('hidden');
-  if (loginForm) loginForm.classList.remove('hidden');
+  if (selectedRoleIcon) {
+    selectedRoleIcon.className = tipo === 'admin' ? 'fa-solid fa-user-gear' : 'fa-solid fa-eye';
+  }
   if (passInput) passInput.focus();
 }
 
-function regresarSeleccionUsuarios() {
-  const passInput = document.getElementById('passInput');
+function regresarSeleccionPerfil() {
+  const passInput = document.getElementById('inputPassword');
   const errorMsg = document.getElementById('loginErrorMsg');
-  const loginForm = document.getElementById('loginForm');
-  const usersGrid = document.getElementById('hydeUsersGrid');
+  const userSelectionStep = document.getElementById('userSelectionStep');
+  const loginFormStep = document.getElementById('loginFormStep');
 
   if (passInput) passInput.value = '';
   if (errorMsg) errorMsg.classList.add('hidden');
-  if (loginForm) loginForm.classList.add('hidden');
-  if (usersGrid) usersGrid.classList.remove('hidden');
+  if (loginFormStep) loginFormStep.classList.add('hidden');
+  if (userSelectionStep) userSelectionStep.classList.remove('hidden');
 }
 
-function autenticar() {
-  const userInputEl = document.getElementById("userInput");
-  const passInputEl = document.getElementById("passInput");
-  const rememberEl = document.getElementById("rememberMe");
-  const loginCard = document.getElementById("loginCard");
+function ejecutarLogin(event) {
+  if (event) event.preventDefault();
+  
+  const passInputEl = document.getElementById("inputPassword");
+  const rememberEl = document.getElementById("rememberSession");
+  const loginCard = document.querySelector(".login-hex-card");
   const loginErrorMsg = document.getElementById("loginErrorMsg");
 
-  if (!userInputEl || !passInputEl) return;
+  if (!passInputEl) return;
 
-  const user = userInputEl.value;
   const pass = passInputEl.value;
   const remember = rememberEl ? rememberEl.checked : false;
 
   // Credenciales oficiales del huerto hidropónico de la ESH (UAEH)
-  if (
-    (user === "H.A.G.D.R." && pass === "HidroESH#2026!") || 
-    (user === "Hidrouser" && pass === "HydroUser_2026*")
-  ) {
-    // CORRECCIÓN: Asignar explícitamente "admin" o "monitor"
-    userRole = (user === "H.A.G.D.R.") ? "admin" : "monitor";
-    
+  const passAdmin = "HidroESH#2026!";
+  const passGuest = "HydroUser_2026*";
+
+  let autenticadoValido = false;
+  if (perfilSeleccionadoTemp === 'admin' && pass === passAdmin) {
+    userRole = 'admin';
+    autenticadoValido = true;
+  } else if (perfilSeleccionadoTemp === 'guest' && pass === passGuest) {
+    userRole = 'guest';
+    autenticadoValido = true;
+  }
+
+  if (autenticadoValido) {
     if (remember) { 
       localStorage.setItem("hidro_logged_in", "true"); 
       localStorage.setItem("hidro_role", userRole); 
@@ -100,8 +112,9 @@ function autenticar() {
     mostrarInterfaz();
   } else {
     if (loginCard) {
-      loginCard.classList.add("shake");
-      setTimeout(() => loginCard.classList.remove("shake"), 500);
+      loginCard.style.animation = "none";
+      loginCard.offsetHeight; // trigger reflow
+      loginCard.style.animation = "slideUpCard 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards";
     }
     if (loginErrorMsg) loginErrorMsg.classList.remove("hidden");
   }
@@ -109,35 +122,31 @@ function autenticar() {
 
 function mostrarInterfaz() {
   const overlay = document.getElementById("loginOverlay");
-  const app = document.getElementById("appContainer");
-  const lblUserRole = document.getElementById('lblUserRole');
+  const roleBadgeText = document.getElementById('roleBadgeText');
 
   if (overlay) {
-    overlay.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+    overlay.style.transition = "opacity 0.4s ease, transform 0.4s ease";
     overlay.style.opacity = "0";
-    overlay.style.transform = "scale(1.05)";
+    overlay.style.transform = "scale(1.03)";
     
     setTimeout(() => {
       overlay.classList.add("hidden");
-      if (app) app.classList.remove("hidden");
-    }, 500);
-  } else if (app) {
-    app.classList.remove("hidden");
+    }, 400);
   }
 
-  const rolActivo = userRole || localStorage.getItem("hidro_role") || "monitor";
-  const roleText = rolActivo === 'admin' ? 'Administrador General' : 'Monitor de Campo';
+  const rolActivo = userRole || localStorage.getItem("hidro_role") || "guest";
+  const roleText = rolActivo === 'admin' ? 'Admin' : 'Guest';
   
-  if (lblUserRole) lblUserRole.innerText = roleText;
+  if (roleBadgeText) roleBadgeText.innerText = roleText;
 
-  if (rolActivo === 'monitor') {
+  if (rolActivo === 'guest') {
     document.body.classList.add('role-guest');
   } else {
     document.body.classList.remove('role-guest');
   }
 }
 
-function cerrarSesion() {
+function cerrarSesionSistema() {
   localStorage.removeItem("hidro_logged_in"); 
   localStorage.removeItem("hidro_role");
   location.reload();
@@ -145,13 +154,15 @@ function cerrarSesion() {
 
 function iniciarReloj() {
   setInterval(() => {
-    const reloj = document.getElementById("liveClock");
+    const reloj = document.getElementById("headerClock");
     if (reloj) {
-      reloj.innerText = new Date().toLocaleTimeString('es-MX', { 
+      const spanTime = reloj.querySelector("span");
+      const horaActual = new Date().toLocaleTimeString('es-MX', { 
         hour: '2-digit', 
         minute: '2-digit', 
         second: '2-digit' 
       });
+      if (spanTime) spanTime.innerText = horaActual;
     }
   }, 1000);
 }

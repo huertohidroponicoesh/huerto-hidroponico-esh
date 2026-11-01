@@ -2,7 +2,7 @@
 // MÓDULO DE INTEGRACIÓN METEOROLÓGICA - HUEJUTLA DE REYES
 // =========================================================
 
-// Coordenadas exactas de Huejutla de Reyes, Hidalgo
+// Coordenadas exactas de Huejutla de Reyes, Hidalgo (Residencia de Huss)
 const LAT_HUEJUTLA = 21.1411;
 const LON_HUEJUTLA = -98.4187;
 
@@ -48,20 +48,16 @@ function renderizarWidgetClima(clima) {
   // Determinar icono según el código del clima
   let iconoClima = 'fa-sun';
   let colorIcono = 'var(--warning)';
-  let estadoTexto = 'Despejado';
 
   if (lluvia > 0) {
     iconoClima = 'fa-cloud-showers-heavy';
     colorIcono = 'var(--cyan-neon)';
-    estadoTexto = 'Lluvia';
   } else if (clima.weather_code >= 1 && clima.weather_code <= 3) {
     iconoClima = 'fa-cloud-sun';
     colorIcono = 'var(--warning)';
-    estadoTexto = 'Parcialmente Nublado';
   } else if (clima.weather_code >= 45) {
     iconoClima = 'fa-smog';
     colorIcono = 'var(--text-muted)';
-    estadoTexto = 'Neblina / Nublado';
   }
 
   container.innerHTML = `

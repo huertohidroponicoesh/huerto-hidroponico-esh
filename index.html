@@ -148,6 +148,11 @@
           <i class="fa-solid fa-bell"></i>
         </button>
 
+        <!-- BOTÓN DE HARD REFRESH AGS -->
+        <button class="btn-action" onclick="ejecutarHardRefresh()" title="Hard Refresh / Reconectar Sockets">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+
         <button class="btn-action btn-logout" onclick="cerrarSesion()" title="Cerrar Sesión">
           <i class="fa-solid fa-power-off"></i>
         </button>
@@ -170,7 +175,7 @@
       <span>Sincronizando con base de datos en tiempo real...</span>
     </div>
 
-    <!-- NAVEGACIÓN POR PESTAÑAS SECCIONALES (CON MÓDULO UNIFICADO ALERTAS & BITÁCORA) -->
+    <!-- NAVEGACIÓN POR PESTAÑAS SECCIONALES -->
     <nav class="nav-sections-bar">
       <button class="nav-sec-btn active" id="sec-btn-sensors" onclick="mostrarSeccion('sensors')">
         <i class="fa-solid fa-chart-pie"></i> Monitoreo
@@ -362,8 +367,19 @@
 
         <div class="card hydraulic-card" style="margin-bottom: 20px;">
           <div class="hydraulic-title-box">
-            <h3><i class="fa-solid fa-project-diagram"></i> Diagrama de Flujo del Sistema</h3>
+            <h3><i class="fa-solid fa-project-diagram"></i> Diagrama de Flujo e Inyección Hidráulica</h3>
             <span class="hydraulic-badge"><i class="fa-solid fa-circle-nodes"></i> Circuito Activo</span>
+          </div>
+
+          <!-- CANVAS DE SIMULACIÓN DE FLUJO INTERACTIVO -->
+          <div style="position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.4); border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border); margin-bottom: 15px;">
+            <canvas id="bypassCanvasSimulation" width="800" height="120" style="width: 100%; height: 100%; display: block;"></canvas>
+            <div style="position: absolute; bottom: 8px; left: 12px; font-size: 0.75rem; color: var(--cyan-neon); font-weight: 700;">
+              Estado de Inyección: <span id="schemaStatusInyeccion" class="node-status text-muted">En Reposo</span>
+            </div>
+            <button class="btn-add" style="position: absolute; top: 8px; right: 12px; font-size: 0.72rem; padding: 6px 12px;" onclick="simularPulsoInyeccionNutrientes()">
+              <i class="fa-solid fa-syringe"></i> Simular Pulso
+            </button>
           </div>
 
           <div class="hydraulic-schema-box">
@@ -588,7 +604,7 @@
           <h2><i class="fa-solid fa-bell-concierge"></i> Centro Unificado: Bitácora, Calibración & Umbrales de Alerta</h2>
         </div>
 
-        <!-- 1. BLOQUE DE CONFIGURACIÓN DE UMBRALES (FUSIONADO AQUÍ) -->
+        <!-- 1. BLOQUE DE CONFIGURACIÓN DE UMBRALES -->
         <div class="card" style="margin-bottom: 20px; border-color: var(--card-border-glow);">
           <h3><i class="fa-solid fa-sliders"></i> Control Dinámico de Umbrales & Rangos de Seguridad</h3>
           <p class="card-subtitle">Ajuste los límites seguros. Se emitirá una alerta y notificación push si los parámetros salen de este rango.</p>
@@ -727,107 +743,70 @@
     </footer>
   </div>
 
-  <!-- MODAL DE CALIBRACIÓN GUIADA -->
+  <!-- MODALES DEL SISTEMA -->
   <div id="calibrationModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2000;">
     <div class="login-hex-card" style="max-width: 480px; text-align: left;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: var(--cyan-neon); font-size: 1.2rem;"><i class="fa-solid fa-flask-vial"></i> Asistente de Calibración Guiada</h3>
         <button onclick="cerrarModalCalibracion()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div id="calibStepContent" style="font-size: 0.92rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 15px;">
-      </div>
+      <div id="calibStepContent" style="font-size: 0.92rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 15px;"></div>
     </div>
   </div>
 
-  <!-- MODAL DE CONFIGURACIÓN DE DISPOSITIVO PUSH -->
   <div id="pushConfigModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2500; padding: 15px;">
-    <div class="animate-fade-in" style="background: rgba(15, 23, 42, 0.85); border: 1px solid var(--card-border-glow); border-radius: 24px; width: 100%; max-width: 420px; padding: 25px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); text-align: left; position: relative;">
-      
+    <div class="animate-fade-in" style="background: rgba(15, 23, 42, 0.85); border: 1px solid var(--card-border-glow); border-radius: 24px; width: 100%; max-width: 420px; padding: 25px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8); backdrop-filter: blur(30px); text-align: left; position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
         <h3 style="color: var(--cyan-neon); font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0;">
           <i class="fa-solid fa-bell" style="font-size: 1rem;"></i> Alertas Push 24/7
         </h3>
-        <button onclick="cerrarModalPush()" style="background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; padding: 4px;">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        <button onclick="cerrarModalPush()" style="background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; padding: 4px;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      
       <div style="display: flex; flex-direction: column; gap: 14px;">
         <div>
-          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">
-            <i class="fa-solid fa-laptop" style="color: var(--cyan-neon);"></i> Nombre del Dispositivo:
-          </label>
-          <input type="text" id="inputNombreDispositivo" placeholder="Ej. Celular Operador / Laptop Lab" style="width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box; transition: border-color 0.2s;">
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;"><i class="fa-solid fa-laptop" style="color: var(--cyan-neon);"></i> Nombre del Dispositivo:</label>
+          <input type="text" id="inputNombreDispositivo" placeholder="Ej. Celular Operador / Laptop Lab" style="width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
         </div>
-
         <div>
-          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">
-            <i class="fa-solid fa-user-shield" style="color: var(--cyan-neon);"></i> Responsable / Usuario:
-          </label>
-          <input type="text" id="inputNombreUsuario" placeholder="Ej. H.A.G.D.R. o Cuadrilla 1" style="width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box; transition: border-color 0.2s;">
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;"><i class="fa-solid fa-user-shield" style="color: var(--cyan-neon);"></i> Responsable / Usuario:</label>
+          <input type="text" id="inputNombreUsuario" placeholder="Ej. H.A.G.D.R. o Cuadrilla 1" style="width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
         </div>
       </div>
-
       <div style="display: flex; gap: 10px; margin-top: 24px;">
-        <button onclick="cerrarModalPush()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-muted); border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">
-          Cancelar
-        </button>
-        <button onclick="guardarDispositivoPersonalizado()" class="btn-add" style="flex: 1.2; padding: 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">
-          <i class="fa-solid fa-shield-halved"></i> Activar Alertas
-        </button>
+        <button onclick="cerrarModalPush()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-muted); border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">Cancelar</button>
+        <button onclick="guardarDispositivoPersonalizado()" class="btn-add" style="flex: 1.2; padding: 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"><i class="fa-solid fa-shield-halved"></i> Activar Alertas</button>
       </div>
-
     </div>
   </div>
 
-  <!-- MODAL DE RESUMEN OPERATIVO DEL CALENDARIO -->
   <div id="calendarSummaryModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2000;">
-    <div style="background: var(--card-bg); border: 1px solid var(--card-border-glow); border-radius: 28px; width: 100%; max-width: 450px; padding: 30px; box-shadow: 0 35px 70px rgba(0, 0, 0, 0.75); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); text-align: left; position: relative;">
-      
+    <div style="background: var(--card-bg); border: 1px solid var(--card-border-glow); border-radius: 28px; width: 100%; max-width: 450px; padding: 30px; box-shadow: 0 35px 70px rgba(0, 0, 0, 0.75); backdrop-filter: blur(35px); text-align: left; position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
-        <h3 style="color: var(--green-bright); font-size: 1.15rem;" id="modalCalTitle">
-          <i class="fa-regular fa-calendar-check"></i> Resumen de Jornada
-        </h3>
-        <button onclick="cerrarModalResumenCalendario()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        <h3 style="color: var(--green-bright); font-size: 1.15rem;" id="modalCalTitle"><i class="fa-regular fa-calendar-check"></i> Resumen de Jornada</h3>
+        <button onclick="cerrarModalResumenCalendario()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      
-      <div id="modalCalBody" style="font-size: 0.9rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 12px;">
-        <!-- Se llena dinámicamente -->
-      </div>
-
+      <div id="modalCalBody" style="font-size: 0.9rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 12px;"></div>
       <div style="margin-top: 20px; text-align: right;">
         <button onclick="cerrarModalResumenCalendario()" class="btn-add" style="padding: 10px 20px; border-radius: 12px; font-size: 0.85rem;">Cerrar</button>
       </div>
-
     </div>
   </div>
 
-  <!-- MODAL PARA EDITAR CUADRILLA -->
   <div id="editCuadrillaModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2200;">
-    <div style="background: var(--card-bg); border: 1px solid var(--card-border-glow); border-radius: 28px; width: 100%; max-width: 480px; padding: 25px; box-shadow: 0 35px 70px rgba(0, 0, 0, 0.75); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); text-align: left; position: relative;">
-      
+    <div style="background: var(--card-bg); border: 1px solid var(--card-border-glow); border-radius: 28px; width: 100%; max-width: 480px; padding: 25px; box-shadow: 0 35px 70px rgba(0, 0, 0, 0.75); backdrop-filter: blur(35px); text-align: left; position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
-        <h3 style="color: var(--cyan-neon); font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0;">
-          <i class="fa-solid fa-pen-to-square"></i> Editar Cuadrilla
-        </h3>
-        <button onclick="cerrarModalEditarCuadrilla()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        <h3 style="color: var(--cyan-neon); font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0;"><i class="fa-solid fa-pen-to-square"></i> Editar Cuadrilla</h3>
+        <button onclick="cerrarModalEditarCuadrilla()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-
       <div style="display: flex; flex-direction: column; gap: 14px;">
         <div>
           <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Nombre de la Cuadrilla:</label>
           <input type="text" id="editNombreCuadrilla" style="width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
         </div>
-
         <div>
           <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Integrantes:</label>
           <input type="text" id="editIntegrantesCuadrilla" style="width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
         </div>
-
         <div>
           <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Días de Labor Asignados:</label>
           <div style="display: flex; gap: 8px;">
@@ -836,18 +815,14 @@
           <div id="editFechasBadgesContainer" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;"></div>
         </div>
       </div>
-
       <div style="display: flex; gap: 10px; margin-top: 24px;">
         <button onclick="cerrarModalEditarCuadrilla()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-muted); border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">Cancelar</button>
-        <button onclick="guardarEdicionCuadrilla()" class="btn-add" style="flex: 1.2; padding: 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">
-          <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
-        </button>
+        <button onclick="guardarEdicionCuadrilla()" class="btn-add" style="flex: 1.2; padding: 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios</button>
       </div>
-
     </div>
   </div>
 
-  <!-- Scripts Modularizados -->
+  <!-- Scripts Modularizados (Incluyendo los nuevos módulos AGS Shell y Diagrama de Flujo) -->
   <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/sensors.js"></script>
@@ -856,5 +831,7 @@
   <script src="js/cuadrillas.js"></script>
   <script src="js/weather-integration.js"></script>
   <script src="js/excel-export.js"></script>
+  <script src="js/ui-ags-shell.js"></script>
+  <script src="js/diagram-flow.js"></script>
 </body>
 </html>

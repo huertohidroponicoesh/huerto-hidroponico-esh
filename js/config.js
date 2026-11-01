@@ -14,7 +14,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
   if (btnInstall) {
     btnInstall.classList.remove('hidden');
     
-    // Evitar múltiples listeners duplicados limpiando o asignando directamente
     btnInstall.onclick = () => {
       if (!deferredPrompt) return;
       deferredPrompt.prompt();
