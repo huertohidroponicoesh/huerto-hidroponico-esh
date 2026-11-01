@@ -1,5 +1,5 @@
 // =========================================================
-// MÓDULO DE INTERFAZ & SHELL AGS (CAELESTIA HUD) - BLINDADO MÓVIL
+// MÓDULO DE INTERFAZ & SHELL AGS (CAELESTIA HUD) - BLINDADO GLOBAL
 // =========================================================
 
 function iniciarShellAGSCompleto() {
@@ -11,9 +11,10 @@ function iniciarShellAGSCompleto() {
 
   // Verificar cambios de horario cada 10 minutos
   setInterval(verificarModoNocturnoAutomatico, 600000);
+  console.log("🚀 Shell AGS inicializado y operativo al 100%.");
 }
 
-// Ejecución segura sin importar el orden de carga del DOM
+// Inicialización automática robusta sin importar el estado del DOM
 if (document.readyState === 'loading') {
   document.addEventListener("DOMContentLoaded", iniciarShellAGSCompleto);
 } else {
@@ -21,13 +22,12 @@ if (document.readyState === 'loading') {
 }
 
 function inicializarShellAGS() {
-  console.log("🌌 Caelestia HUD Shell inicializado correctamente.");
   document.querySelectorAll('.card-glass, .panel-glass').forEach((el, index) => {
     el.style.animation = `tabFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.05}s forwards`;
   });
 }
 
-// Enlace directo y seguro para los botones de la barra superior
+// Enlace directo y absoluto para los botones de la barra superior
 function vincularBotonesSuperioresDirectamente() {
   // 1. Botón Hard Refresh
   const btnRefresh = document.querySelector('button[title*="Hard Refresh"]') || document.querySelector('button[onclick*="HardRefresh"]');
@@ -55,11 +55,9 @@ function vincularBotonesSuperioresDirectamente() {
       instalarAplicacionPWA();
     };
   }
-
-  console.log("🔗 Botones superiores vinculados correctamente por JS.");
 }
 
-// Lógica de apertura y cierre blindada para el Dock Lateral AGS en Móvil
+// Lógica de apertura y cierre para el menú lateral en dispositivos móviles
 function inicializarMenuMobileAGS() {
   const sidebar = document.querySelector('.ags-sidebar');
   const btnToggle = document.getElementById('btnToggleSidebar');
@@ -72,15 +70,11 @@ function inicializarMenuMobileAGS() {
       console.log("📱 Menú lateral móvil alternado:", sidebar.classList.contains('mobile-open'));
     };
 
-    // Limpiar y registrar eventos duales (click y touchstart) para respuesta inmediata en móvil
-    btnToggle.removeEventListener('click', toggleSidebarHandler);
-    btnToggle.removeEventListener('touchstart', toggleSidebarHandler);
-
-    btnToggle.addEventListener('click', toggleSidebarHandler);
-    btnToggle.addEventListener('touchstart', toggleSidebarHandler, { passive: false });
+    btnToggle.onclick = toggleSidebarHandler;
+    btnToggle.ontouchstart = toggleSidebarHandler;
   }
 
-  // Cerrar automáticamente el menú al hacer clic en cualquier opción de la navegación móvil
+  // Cerrar al hacer clic en opciones de navegación móvil
   document.querySelectorAll('.ags-nav-item').forEach(item => {
     item.addEventListener('click', () => {
       if (window.innerWidth <= 992 && sidebar) {
@@ -89,7 +83,7 @@ function inicializarMenuMobileAGS() {
     });
   });
 
-  // Cerrar el menú si se da clic fuera de él en dispositivos móviles
+  // Cerrar al hacer clic fuera del sidebar
   document.addEventListener('click', (e) => {
     if (window.innerWidth <= 992 && sidebar && sidebar.classList.contains('mobile-open')) {
       if (!sidebar.contains(e.target) && btnToggle && !btnToggle.contains(e.target)) {
@@ -114,12 +108,16 @@ window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   const btnInstall = document.getElementById('btnInstallPwa');
-  if (btnInstall) btnInstall.style.display = 'flex';
+  if (btnInstall) {
+    btnInstall.classList.remove('hidden');
+    btnInstall.style.display = 'flex';
+  }
 });
 
 setTimeout(() => {
   const btnInstall = document.getElementById('btnInstallPwa');
   if (btnInstall && !window.matchMedia('(display-mode: standalone)').matches) {
+    btnInstall.classList.remove('hidden');
     btnInstall.style.display = 'flex';
   }
 }, 800);
@@ -191,7 +189,7 @@ function cerrarModalPush() {
 window.cerrarModalPush = cerrarModalPush;
 
 // =========================================================
-// SISTEMA DE ALERTAS TOAST FLOTANTES
+// SISTEMA DE ALERTAS TOAST FLOTANTES (CONECTADO A ANIMATIONS.CSS)
 // =========================================================
 function mostrarToast(titulo, mensaje, tipo = 'success') {
   let container = document.getElementById('toastContainer');
@@ -205,12 +203,12 @@ function mostrarToast(titulo, mensaje, tipo = 'success') {
   const toast = document.createElement('div');
   toast.className = `toast-card ${tipo}`;
   
-  let iconClass = 'fa-solid fa-circle-check';
-  if (tipo === 'warning') iconClass = 'fa-solid fa-triangle-exclamation';
-  if (tipo === 'danger') iconClass = 'fa-solid fa-radiation';
+  let iconClass = 'fa-solid fa-circle-check toast-icon';
+  if (tipo === 'warning') iconClass = 'fa-solid fa-triangle-exclamation toast-icon';
+  if (tipo === 'danger') iconClass = 'fa-solid fa-radiation toast-icon';
 
   toast.innerHTML = `
-    <i class="${iconClass} toast-icon"></i>
+    <i class="${iconClass}"></i>
     <div class="toast-content">
       <strong>${titulo}</strong>
       <small>${mensaje}</small>
