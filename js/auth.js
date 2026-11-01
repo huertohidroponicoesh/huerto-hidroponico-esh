@@ -3,12 +3,13 @@
 // =========================================================
 
 let userRole = null;
+let perfilSeleccionadoTemp = 'H.A.G.D.R.';
 
 document.addEventListener("DOMContentLoaded", () => {
   iniciarReloj();
   
   // Cargar y aplicar el tema visual guardado previamente
-  const savedTheme = localStorage.getItem("hidro_theme") || "theme-midnight";
+  const savedTheme = localStorage.getItem("hidro_theme") || "theme-emerald";
   cambiarTemaVisual(savedTheme, false);
   
   const themeSel = document.getElementById('themeSelector');
@@ -22,13 +23,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function cambiarTemaVisual(themeName, guardar = true) {
-  document.body.className = "theme-" + themeName.replace("theme-", "");
+  document.body.className = themeName;
   if (guardar) localStorage.setItem("hidro_theme", themeName);
 }
 
-function togglePasswordVisibility() {
-  const pass = document.getElementById("inputPassword");
-  const icon = document.querySelector(".toggle-password");
+function toggleMostrarPass() {
+  const pass = document.getElementById("passInput");
+  const icon = document.getElementById("togglePassword");
   if (!pass || !icon) return;
   
   if (pass.type === "password") { 
@@ -40,46 +41,42 @@ function togglePasswordVisibility() {
   }
 }
 
-let perfilSeleccionadoTemp = 'admin';
-
 function seleccionarPerfil(tipo) {
   perfilSeleccionadoTemp = tipo;
-  const userSelectionStep = document.getElementById('userSelectionStep');
-  const loginFormStep = document.getElementById('loginFormStep');
-  const selectedRoleTitle = document.getElementById('selectedRoleTitle');
-  const selectedRoleIcon = document.getElementById('selectedRoleIcon');
-  const passInput = document.getElementById('inputPassword');
+  const usersGrid = document.getElementById('hydeUsersGrid');
+  const loginForm = document.getElementById('loginForm');
+  const selectedUserLabel = document.getElementById('selectedUserLabel');
+  const userInput = document.getElementById('userInput');
+  const passInput = document.getElementById('passInput');
 
-  if (userSelectionStep) userSelectionStep.classList.add('hidden');
-  if (loginFormStep) loginFormStep.classList.remove('hidden');
+  if (usersGrid) usersGrid.classList.add('hidden');
+  if (loginForm) loginForm.classList.remove('hidden');
 
-  if (selectedRoleTitle) {
-    selectedRoleTitle.innerText = tipo === 'admin' ? 'H.A.G.D.R. (Administrador)' : 'Hidrouser (Invitado)';
+  if (selectedUserLabel) {
+    selectedUserLabel.innerText = tipo;
   }
-  if (selectedRoleIcon) {
-    selectedRoleIcon.className = tipo === 'admin' ? 'fa-solid fa-user-gear' : 'fa-solid fa-eye';
+  if (userInput) {
+    userInput.value = tipo;
   }
   if (passInput) passInput.focus();
 }
 
-function regresarSeleccionPerfil() {
-  const passInput = document.getElementById('inputPassword');
+function regresarSeleccionUsuarios() {
+  const passInput = document.getElementById('passInput');
   const errorMsg = document.getElementById('loginErrorMsg');
-  const userSelectionStep = document.getElementById('userSelectionStep');
-  const loginFormStep = document.getElementById('loginFormStep');
+  const usersGrid = document.getElementById('hydeUsersGrid');
+  const loginForm = document.getElementById('loginForm');
 
   if (passInput) passInput.value = '';
   if (errorMsg) errorMsg.classList.add('hidden');
-  if (loginFormStep) loginFormStep.classList.add('hidden');
-  if (userSelectionStep) userSelectionStep.classList.remove('hidden');
+  if (loginForm) loginForm.classList.add('hidden');
+  if (usersGrid) usersGrid.classList.remove('hidden');
 }
 
-function ejecutarLogin(event) {
-  if (event) event.preventDefault();
-  
-  const passInputEl = document.getElementById("inputPassword");
-  const rememberEl = document.getElementById("rememberSession");
-  const loginCard = document.querySelector(".login-hex-card");
+function autenticar() {
+  const passInputEl = document.getElementById("passInput");
+  const rememberEl = document.getElementById("rememberMe");
+  const loginCard = document.getElementById("loginCard");
   const loginErrorMsg = document.getElementById("loginErrorMsg");
 
   if (!passInputEl) return;
@@ -92,10 +89,10 @@ function ejecutarLogin(event) {
   const passGuest = "HydroUser_2026*";
 
   let autenticadoValido = false;
-  if (perfilSeleccionadoTemp === 'admin' && pass === passAdmin) {
+  if (perfilSeleccionadoTemp === 'H.A.G.D.R.' && pass === passAdmin) {
     userRole = 'admin';
     autenticadoValido = true;
-  } else if (perfilSeleccionadoTemp === 'guest' && pass === passGuest) {
+  } else if (perfilSeleccionadoTemp === 'Hidrouser' && pass === passGuest) {
     userRole = 'guest';
     autenticadoValido = true;
   }
@@ -122,7 +119,7 @@ function ejecutarLogin(event) {
 
 function mostrarInterfaz() {
   const overlay = document.getElementById("loginOverlay");
-  const roleBadgeText = document.getElementById('roleBadgeText');
+  const lblUserRole = document.getElementById("lblUserRole");
 
   if (overlay) {
     overlay.style.transition = "opacity 0.4s ease, transform 0.4s ease";
@@ -134,19 +131,23 @@ function mostrarInterfaz() {
     }, 400);
   }
 
-  const rolActivo = userRole || localStorage.getItem("hidro_role") || "guest";
-  const roleText = rolActivo === 'admin' ? 'Admin' : 'Guest';
+  const rolActivo = userRole || localStorage.getItem("hidro_role") || "admin";
+  const roleText = rolActivo === 'admin' ? 'Administrador General' : 'Monitor de Sistema';
   
-  if (roleBadgeText) roleBadgeText.innerText = roleText;
+  if (lblUserRole) lblUserRole.innerText = roleText;
 
+  // Manejo de visibilidad para elementos de administrador en la interfaz
   if (rolActivo === 'guest') {
     document.body.classList.add('role-guest');
   } else {
     document.body.classList.remove('role-guest');
   }
+  
+  const appContainer = document.getElementById("appContainer");
+  if (appContainer) appContainer.classList.remove("hidden");
 }
 
-function cerrarSesionSistema() {
+function cerrarSesion() {
   localStorage.removeItem("hidro_logged_in"); 
   localStorage.removeItem("hidro_role");
   location.reload();
@@ -154,15 +155,14 @@ function cerrarSesionSistema() {
 
 function iniciarReloj() {
   setInterval(() => {
-    const reloj = document.getElementById("headerClock");
+    const reloj = document.getElementById("liveClock");
     if (reloj) {
-      const spanTime = reloj.querySelector("span");
       const horaActual = new Date().toLocaleTimeString('es-MX', { 
         hour: '2-digit', 
         minute: '2-digit', 
         second: '2-digit' 
       });
-      if (spanTime) spanTime.innerText = horaActual;
+      reloj.innerText = horaActual;
     }
   }, 1000);
 }
