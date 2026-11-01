@@ -1,0 +1,190 @@
+/* =========================================================
+   MÓDULO DE SENSORES Y MÉTRICAS (SENSORES.CSS)
+   ========================================================= */
+
+/* Selector de Huerto y Pestañas */
+.huerto-selector-bar { 
+  display: flex; 
+  gap: 12px; 
+  margin-bottom: 18px; 
+  background: rgba(0,0,0,0.25); 
+  padding: 6px; 
+  border-radius: 18px; 
+  border: 1px solid var(--card-border); 
+}
+
+.huerto-tab { 
+  flex: 1; 
+  background: transparent; 
+  border: none; 
+  padding: 12px; 
+  border-radius: 12px; 
+  color: var(--text-muted); 
+  font-weight: 700; 
+  cursor: pointer; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 10px; 
+  transition: all 0.3s ease; 
+}
+
+.huerto-tab.active { 
+  background: linear-gradient(135deg, rgba(53, 229, 138, 0.28), rgba(0, 240, 255, 0.18)); 
+  color: var(--green-bright); 
+  border: 1px solid var(--card-border-glow); 
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+}
+
+.status-banner { 
+  padding: 14px 20px; 
+  border-radius: 16px; 
+  font-size: 0.88rem; 
+  font-weight: 600; 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  margin-bottom: 20px; 
+  background: rgba(53, 229, 138, 0.08); 
+  border: 1px solid rgba(53, 229, 138, 0.3); 
+  color: var(--text-main); 
+  box-sizing: border-box; 
+}
+
+/* Tarjetas Glassmorphic de Sensores */
+.card { 
+  background: var(--card-bg); 
+  border: 1px solid var(--card-border); 
+  border-radius: var(--radius); 
+  padding: 24px; 
+  box-shadow: var(--shadow); 
+  backdrop-filter: blur(16px); 
+  -webkit-backdrop-filter: blur(16px); 
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; 
+  position: relative;
+  box-sizing: border-box; 
+  max-width: 100%; 
+  overflow: hidden;
+}
+
+.card:hover { 
+  transform: translateY(-3px); 
+  border-color: var(--card-border-glow); 
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.7); 
+}
+
+.card-subtitle { 
+  font-size: 0.82rem; 
+  color: var(--text-muted); 
+  margin-bottom: 16px; 
+}
+
+.section-heading { 
+  margin-bottom: 20px; 
+  font-size: 1.15rem; 
+  font-weight: 800; 
+  letter-spacing: 0.2px; 
+}
+
+.sensors-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+  gap: 18px; 
+  box-sizing: border-box; 
+}
+
+.metric-card .card-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  color: var(--text-muted); 
+  font-size: 0.88rem; 
+  font-weight: 600; 
+  margin-bottom: 12px; 
+}
+
+.icon-ph { color: var(--cyan-neon); font-size: 1.2rem; } 
+.icon-ce { color: var(--warning); font-size: 1.2rem; } 
+.icon-temp { color: var(--danger); font-size: 1.2rem; } 
+.icon-hum { color: var(--green-bright); font-size: 1.2rem; }
+
+.metric-value { 
+  font-size: 2.3rem; 
+  font-weight: 800; 
+  margin-bottom: 12px; 
+  letter-spacing: -0.5px; 
+}
+
+.metric-value small { 
+  font-size: 0.85rem; 
+  color: var(--text-muted); 
+  font-weight: 600; 
+}
+
+/* Barras de Progreso Dinámicas */
+.progress-bar { 
+  height: 8px; 
+  background: rgba(255, 255, 255, 0.08); 
+  border-radius: 10px; 
+  overflow: hidden; 
+  margin-bottom: 8px; 
+}
+
+.progress-fill { 
+  height: 100%; 
+  border-radius: 10px; 
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+}
+
+.fill-ph { background: linear-gradient(90deg, var(--cyan-neon), var(--green-bright)); box-shadow: 0 0 12px var(--cyan-neon); }
+.fill-ce { background: linear-gradient(90deg, var(--warning), #fb8500); box-shadow: 0 0 12px var(--warning); }
+.fill-temp { background: linear-gradient(90deg, var(--danger), #ff758f); box-shadow: 0 0 12px var(--danger); }
+.fill-hum { background: linear-gradient(90deg, var(--green-bright), var(--cyan-neon)); box-shadow: 0 0 12px var(--green-bright); }
+
+.metric-footer { 
+  display: flex; 
+  justify-content: space-between; 
+  color: var(--text-muted); 
+  font-size: 0.78rem; 
+}
+
+.metric-footer strong { 
+  color: var(--green-bright); 
+}
+
+.diag-list { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 14px; 
+  margin-top: 15px; 
+}
+
+.diag-row { 
+  display: flex; 
+  justify-content: space-between; 
+  font-size: 0.9rem; 
+  color: var(--text-muted); 
+  padding-bottom: 10px; 
+  border-bottom: 1px solid rgba(255,255,255,0.06); 
+}
+
+.diag-row strong { 
+  color: var(--text-main); 
+}
+
+.grid-2-cols { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+  gap: 20px; 
+  box-sizing: border-box; 
+}
+
+@media (max-width: 992px) {
+  .card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .grid-2-cols { 
+    grid-template-columns: 1fr; 
+  }
+}

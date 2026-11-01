@@ -1,0 +1,45 @@
+/* =========================================================
+   MÓDULO DE OPTIMIZACIÓN Y ANIMACIONES GLOBALES (OPTIMIZATIONS.CSS)
+   ========================================================= */
+
+/* Orbes ambientales flotantes */
+.ambient-glow { 
+  position: fixed; 
+  border-radius: 50%; 
+  filter: blur(140px); 
+  pointer-events: none; 
+  z-index: 0; 
+  opacity: 0.4; 
+  animation: floatOrb 14s infinite alternate ease-in-out; 
+}
+.orb-1 { width: 400px; height: 400px; background: var(--green-bright); top: -80px; right: -80px; }
+.orb-2 { width: 450px; height: 450px; background: var(--cyan-neon); bottom: -120px; left: -120px; animation-delay: -4s; }
+.orb-3 { width: 300px; height: 300px; background: var(--purple-neon); top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.2; animation-delay: -7s; }
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(35px, 45px) scale(1.12); }
+  100% { transform: translate(-35px, -25px) scale(0.92); }
+}
+
+/* Keyframes globales */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes plantBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.05); }
+}
+.plant-bounce { animation: plantBounce 3s infinite ease-in-out; }
+
+/* Optimización extrema para smartphones (Evita tirones y lag) */
+@media (max-width: 992px) {
+  .card, .main-header, .ags-sidebar, .login-hex-card, .reports-card-hud, .calendar-hud-wrapper, .scheduler-hud-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--card-bg) !important;
+  }
+}

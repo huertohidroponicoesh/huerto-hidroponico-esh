@@ -1,0 +1,211 @@
+/* =========================================================
+   MÓDULO DE ACTUADORES Y DIAGRAMA HIDRÁULICO (ACTUADORES.CSS)
+   ========================================================= */
+
+/* DIAGRAMA HIDRÁULICO AVANZADO */
+.hydraulic-card { 
+  overflow: hidden; 
+}
+
+.hydraulic-title-box { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 20px; 
+  flex-wrap: wrap; 
+  gap: 10px; 
+}
+
+.hydraulic-badge { 
+  font-size: 0.75rem; 
+  background: rgba(53, 229, 138, 0.12); 
+  border: 1px solid var(--card-border); 
+  padding: 5px 14px; 
+  border-radius: 14px; 
+  color: var(--green-bright); 
+  font-weight: 700; 
+}
+
+.hydraulic-schema-box {
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
+  padding: 25px 15px; 
+  background: rgba(0,0,0,0.35); 
+  border-radius: 20px;
+  border: 1px solid var(--card-border); 
+  position: relative;
+  overflow-x: auto; 
+  gap: 10px; 
+  box-sizing: border-box;
+}
+
+.schema-node {
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 6px;
+  font-size: 0.78rem; 
+  font-weight: 700; 
+  color: var(--text-main);
+  background: rgba(255,255,255,0.03); 
+  padding: 14px 16px; 
+  border-radius: 18px;
+  border: 1px solid var(--card-border); 
+  min-width: 110px; 
+  text-align: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.schema-icon-circle {
+  width: 42px; 
+  height: 42px; 
+  border-radius: 14px; 
+  background: rgba(53, 229, 138, 0.12);
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 1.2rem; 
+  color: var(--green-bright);
+}
+.schema-icon-circle.bypass-icon { background: rgba(255, 209, 102, 0.15); color: var(--warning); }
+.schema-icon-circle.cold-icon { background: rgba(0, 240, 255, 0.15); color: var(--cyan-neon); }
+
+.node-status { 
+  font-size: 0.68rem; 
+  font-weight: 600; 
+}
+
+.schema-pipe {
+  flex: 1; 
+  height: 4px; 
+  background: rgba(255, 255, 255, 0.1);
+  position: relative; 
+  overflow: hidden; 
+  min-width: 30px; 
+  border-radius: 4px;
+}
+
+.flow-particle {
+  position: absolute; 
+  width: 14px; 
+  height: 100%;
+  background: var(--green-bright); 
+  box-shadow: 0 0 10px var(--green-bright);
+  animation: moveFlow 1.8s linear infinite; 
+  display: none;
+}
+.flow-active .flow-particle { display: block; }
+
+@keyframes moveFlow {
+  from { left: -30%; }
+  to { left: 130%; }
+}
+
+/* Panel de Control de Actuadores y Switches */
+.control-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+  gap: 18px; 
+  margin-top: 15px; 
+  box-sizing: border-box; 
+}
+
+.control-item { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  background: rgba(255, 255, 255, 0.025); 
+  border: 1px solid var(--card-border); 
+  padding: 18px; 
+  border-radius: 18px; 
+  box-sizing: border-box; 
+  gap: 10px; 
+}
+
+.actuator-info { 
+  display: flex; 
+  align-items: center; 
+  gap: 15px; 
+  min-width: 0; 
+  flex: 1; 
+}
+
+.actuator-icon-wrapper { 
+  width: 44px; 
+  height: 44px; 
+  border-radius: 14px; 
+  background: rgba(53, 229, 138, 0.1); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 1.4rem; 
+  color: var(--green-bright); 
+  flex-shrink: 0; 
+}
+.icon-peltier { color: var(--cyan-neon); }
+
+.actuator-info strong { 
+  display: block; 
+  font-size: 0.95rem; 
+}
+
+.actuator-info span { 
+  font-size: 0.78rem; 
+  color: var(--text-muted); 
+  display: block; 
+}
+
+.actuator-status { 
+  font-size: 0.75rem; 
+  margin-top: 4px; 
+  font-weight: 700; 
+  color: var(--text-muted); 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+}
+
+/* Interruptor Estilo Toggle Switch */
+.switch { 
+  position: relative; 
+  display: inline-block; 
+  width: 52px; 
+  height: 28px; 
+  flex-shrink: 0; 
+}
+.switch input { 
+  opacity: 0; 
+  width: 0; 
+  height: 0; 
+}
+.slider { 
+  position: absolute; 
+  cursor: pointer; 
+  inset: 0; 
+  background-color: #1f3830; 
+  transition: 0.3s; 
+  border-radius: 30px; 
+}
+.slider:before { 
+  position: absolute; 
+  content: ""; 
+  height: 22px; 
+  width: 22px; 
+  left: 3px; 
+  bottom: 3px; 
+  background-color: white; 
+  transition: 0.3s; 
+  border-radius: 50%; 
+}
+input:checked + .slider { 
+  background-color: var(--green-hover); 
+}
+input:checked + .slider:before { 
+  transform: translateX(24px); 
+}
+
+/* Control para Invitados */
+body.role-guest .admin-only { display: none !important; }
+body.role-guest .control-item .switch { pointer-events: none; opacity: 0.3; filter: grayscale(1); }

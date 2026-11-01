@@ -1,0 +1,116 @@
+/* =========================================================
+   MÓDULO DE FORMULARIOS E INPUTS (FORMULARIOS.CSS)
+   ========================================================= */
+
+/* Contenedores y Formularios Generales */
+.tracker-inputs-form { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 10px; 
+  margin-bottom: 20px; 
+  box-sizing: border-box; 
+  width: 100%; 
+}
+
+.tracker-inputs-form input,
+.tracker-inputs-form select { 
+  padding: 12px; 
+  background: rgba(0,0,0,0.3); 
+  border: 1px solid var(--card-border); 
+  color: var(--text-main); 
+  border-radius: 12px; 
+  outline: none; 
+  font-size: 0.88rem; 
+  width: 100%; 
+  box-sizing: border-box; 
+  transition: all 0.3s ease;
+}
+
+.tracker-inputs-form input:focus,
+.tracker-inputs-form select:focus {
+  border-color: var(--green-bright);
+  box-shadow: 0 0 12px rgba(53, 229, 138, 0.25);
+}
+
+.tracker-inputs-row { 
+  display: flex; 
+  gap: 10px; 
+  width: 100%; 
+  box-sizing: border-box; 
+  flex-wrap: wrap; 
+}
+
+.tracker-inputs-row input { 
+  flex: 1; 
+  min-width: 120px; 
+}
+
+/* Botones personalizados del sistema */
+.btn-add { 
+  background: var(--green-bright); 
+  border: none; 
+  color: #030d0a; 
+  padding: 12px 18px; 
+  border-radius: 14px; 
+  cursor: pointer; 
+  font-weight: 800; 
+  transition: all 0.2s ease; 
+  white-space: nowrap; 
+  flex-shrink: 0; 
+  box-shadow: 0 4px 15px rgba(53,229,138,0.3); 
+}
+.btn-add:hover { 
+  transform: scale(1.03); 
+  box-shadow: 0 6px 20px rgba(53,229,138,0.5); 
+}
+
+.btn-export { 
+  background: var(--cyan-neon); 
+  border: none; 
+  color: #030d0a; 
+  padding: 8px 14px; 
+  border-radius: 12px; 
+  cursor: pointer; 
+  font-weight: 800; 
+  font-size: 0.8rem; 
+  white-space: nowrap; 
+  transition: all 0.2s ease;
+}
+.btn-export:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-danger-custom { 
+  background: var(--danger); 
+  border: none; 
+  color: #fff; 
+  padding: 8px 12px; 
+  border-radius: 12px; 
+  cursor: pointer; 
+  font-size: 0.8rem; 
+  white-space: nowrap; 
+  transition: all 0.2s ease;
+}
+.btn-danger-custom:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Selectores de métricas y dropdowns generales */
+.select-metric { 
+  background: rgba(0,0,0,0.4); 
+  color: var(--text-main); 
+  border: 1px solid var(--card-border); 
+  padding: 10px 14px; 
+  border-radius: 14px; 
+  outline: none; 
+  cursor: pointer; 
+  font-size: 0.85rem; 
+  font-weight: 600; 
+  transition: all 0.3s ease;
+}
+.select-metric:focus {
+  border-color: var(--green-bright);
+  box-shadow: 0 0 12px rgba(53,229,138,0.3);
+}

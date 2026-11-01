@@ -1,0 +1,190 @@
+/* =========================================================
+   MÓDULO DE BARRA LATERAL - AGS SHELL / HYPRLAND (SIDEBAR.CSS)
+   ========================================================= */
+
+.app-layout-shell {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+/* Dock Lateral AGS */
+.ags-sidebar {
+  width: 290px;
+  min-width: 290px;
+  background: var(--card-bg);
+  border-right: 1px solid var(--card-border);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 18px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+.ags-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 16px;
+}
+
+.ags-logo-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--green-bright), var(--cyan-neon));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #030d0a;
+  box-shadow: 0 0 18px rgba(53, 229, 138, 0.45);
+}
+
+.ags-brand-text h3 {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.ags-brand-text small {
+  font-size: 0.72rem;
+  color: var(--green-bright);
+  font-weight: 700;
+}
+
+/* Menú de Navegación Lateral */
+.ags-nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ags-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  width: 100%;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ags-nav-item i {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  transition: color 0.25s ease;
+}
+
+.nav-arrow {
+  font-size: 0.72rem !important;
+  color: var(--text-muted);
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.ags-nav-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-main);
+  border-color: var(--card-border);
+}
+
+.ags-nav-item:hover i {
+  color: var(--green-bright);
+}
+
+.ags-nav-item:hover .nav-arrow {
+  transform: translateX(3px);
+  color: var(--green-bright);
+}
+
+.ags-nav-item:active {
+  background: rgba(255, 255, 255, 0.02) !important;
+  transform: scale(0.98);
+}
+
+.ags-nav-item.active {
+  background: linear-gradient(135deg, rgba(53, 229, 138, 0.22), rgba(0, 240, 255, 0.12));
+  border-color: var(--card-border-glow);
+  color: var(--green-bright);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+}
+
+.ags-nav-item.active i,
+.ags-nav-item.active .nav-arrow {
+  color: var(--green-bright);
+  transform: translateX(4px);
+}
+
+/* Widget de Clima & Sistema en Sidebar */
+.ags-sidebar-widget {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 12px 14px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.05);
+}
+
+.ags-weather-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+/* Contenido Principal desplazado a la derecha */
+.main-content-wrapper {
+  flex: 1;
+  margin-left: 290px;
+  padding: 30px;
+  max-width: calc(100% - 290px);
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Responsive para la barra lateral en móviles */
+@media (max-width: 992px) {
+  .ags-sidebar {
+    transform: translateX(-100%);
+  }
+  .ags-sidebar.mobile-open {
+    transform: translateX(0);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--card-bg) !important;
+  }
+  .main-content-wrapper {
+    margin-left: 0;
+    max-width: 100%;
+    padding: 12px;
+  }
+  .mobile-only {
+    display: flex !important;
+  }
+}
