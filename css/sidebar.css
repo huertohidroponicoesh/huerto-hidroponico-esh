@@ -82,11 +82,12 @@
   font-weight: 700;
   font-size: 0.86rem;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   text-align: left;
   width: 100%;
   outline: none !important;
   -webkit-tap-highlight-color: transparent !important;
+  user-select: none;
 }
 
 .ags-nav-item i {
@@ -116,18 +117,26 @@
   color: var(--green-bright);
 }
 
-/* Corrección estricta para evitar que se quede pegado el estado activo al tocar en móvil */
-.ags-nav-item:active,
-.ags-nav-item:focus {
+/* ==========================================================================
+   BLINDAJE MÓVIL: Evita que el navegador mantenga el foco o brillo permanente
+   ========================================================================== */
+.ags-nav-item:focus,
+.ags-nav-item:active {
   background: rgba(255, 255, 255, 0.02) !important;
-  color: var(--text-muted);
+  border-color: transparent !important;
+  color: var(--text-muted) !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
-.ags-nav-item.active {
+/* Excepción estricta: Si el ítem es activo, mantiene su gradiente corporativo sin interferencias */
+.ags-nav-item.active,
+.ags-nav-item.active:focus,
+.ags-nav-item.active:active {
   background: linear-gradient(135deg, rgba(53, 229, 138, 0.22), rgba(0, 240, 255, 0.12)) !important;
-  border-color: var(--card-border-glow);
+  border-color: var(--card-border-glow) !important;
   color: var(--green-bright) !important;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35) !important;
 }
 
 .ags-nav-item.active i,

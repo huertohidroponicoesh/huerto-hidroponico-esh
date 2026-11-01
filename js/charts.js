@@ -5,6 +5,7 @@
 let sensorChart;
 const historyData = { ph: [], temperatura: [], ec: [], humedad: [] };
 const labelsHora = [];
+let rawFirebaseEntries = []; // Almacena datos en crudo para filtrado temporal local
 
 const configMap = {
   ph: { label: 'pH del Agua', color: '#00f0ff', bg: 'rgba(0, 240, 255, 0.15)' },
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function inicializarGraficaDual() {
-  const canvas = document.getElementById('sensorChartCanvas');
+  const canvas = document.getElementById('sensorChart');
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
@@ -119,13 +120,11 @@ function calcularEstadisticasMetrica(metric) {
   const elMin = document.getElementById('statMin');
   const elAvg = document.getElementById('statAvg');
   const elMax = document.getElementById('statMax');
-  const elTotal = document.getElementById('statTotal');
 
   if (!arr || arr.length === 0) {
     if (elMin) elMin.innerText = '--';
     if (elAvg) elAvg.innerText = '--';
     if (elMax) elMax.innerText = '--';
-    if (elTotal) elTotal.innerText = '0';
     return;
   }
   
@@ -139,13 +138,13 @@ function calcularEstadisticasMetrica(metric) {
   if (elMin) elMin.innerText = min.toFixed(1);
   if (elAvg) elAvg.innerText = avg.toFixed(1);
   if (elMax) elMax.innerText = max.toFixed(1);
-  if (elTotal) elTotal.innerText = filtered.length;
 }
 
 function cargarHistorialFirebase() {
   if (typeof database === 'undefined') return;
 
-  database.ref('historial').limitToLast(50).on('value', (snap) => {
+  // Solicitamos un bloque amplio (hasta 500 registros) para filtrar localmente por el selector temporal
+  database.ref('historial').limitToLast(500).on('value', (snap) => {
     const data = snap.val();
     const tbody = document.getElementById('tablaHistorialBody');
     if (!tbody) return;
@@ -155,37 +154,70 @@ function cargarHistorialFirebase() {
       return; 
     }
 
-    labelsHora.length = 0; 
-    Object.keys(historyData).forEach(k => historyData[k].length = 0);
-    tbody.innerHTML = '';
-
-    const entries = Object.entries(data);
-    
-    entries.forEach(([k, r]) => {
-      const fechaLegible = r.timestamp ? new Date(r.timestamp).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : "Auto";
-      
-      labelsHora.push(fechaLegible);
-      historyData.ph.push(Number(r.ph) || 0); 
-      historyData.temperatura.push(Number(r.temperatura) || 0);
-      historyData.ec.push(Number(r.ec) || 0); 
-      historyData.humedad.push(Number(r.humedad) || 0);
-
-      const fila = document.createElement('tr');
-      fila.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
-      fila.innerHTML = `
-        <td style="padding: 10px; color: var(--text-main); font-weight: 600;">${fechaLegible}</td>
-        <td style="padding: 10px; color: var(--cyan-neon);">${r.ph !== undefined ? Number(r.ph).toFixed(1) : '--'}</td>
-        <td style="padding: 10px; color: var(--warning);">${r.ec !== undefined ? Number(r.ec).toFixed(1) : '--'}</td>
-        <td style="padding: 10px; color: var(--danger);">${r.temperatura !== undefined ? Number(r.temperatura).toFixed(1) : '--'} °C</td>
-        <td style="padding: 10px; color: var(--green-bright);">${r.humedad !== undefined ? Math.round(r.humedad) : '--'} %</td>
-      `;
-      tbody.prepend(fila);
-    });
-
-    const activeMetricSel = document.getElementById('metricSelector');
-    const currentMetric = activeMetricSel ? activeMetricSel.value : 'ph';
-    actualizarGraficaMetrica(currentMetric);
+    rawFirebaseEntries = Object.entries(data);
+    procesarDatosYFiltrar();
   });
+}
+
+function actualizarRangoTemporalGrafica(rango) {
+  console.log("Cambiando rango temporal de gráfica a:", rango);
+  procesarDatosYFiltrar();
+}
+
+function procesarDatosYFiltrar() {
+  const tbody = document.getElementById('tablaHistorialBody');
+  if (!tbody) return;
+
+  const timeRangeSelect = document.getElementById('chartTimeRange');
+  const rango = timeRangeSelect ? timeRangeSelect.value : '24h';
+
+  const ahora = Date.now();
+  let limiteMs = 24 * 60 * 60 * 1000; // Por defecto 24 horas
+
+  if (rango === '1h') {
+    limiteMs = 60 * 60 * 1000;
+  } else if (rango === '7d') {
+    limiteMs = 7 * 24 * 60 * 60 * 1000;
+  }
+
+  labelsHora.length = 0; 
+  Object.keys(historyData).forEach(k => historyData[k].length = 0);
+  tbody.innerHTML = '';
+
+  // Filtrado de registros en base al rango temporal seleccionado
+  const filtradas = rawFirebaseEntries.filter(([k, r]) => {
+    if (!r.timestamp) return true;
+    return (ahora - r.timestamp) <= limiteMs;
+  });
+
+  if (filtradas.length === 0 && rawFirebaseEntries.length > 0) {
+    filtradas.push(rawFirebaseEntries[rawFirebaseEntries.length - 1]);
+  }
+
+  filtradas.forEach(([k, r]) => {
+    const fechaLegible = r.timestamp ? new Date(r.timestamp).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : "Auto";
+    
+    labelsHora.push(fechaLegible);
+    historyData.ph.push(Number(r.ph) || 0); 
+    historyData.temperatura.push(Number(r.temperatura) || 0);
+    historyData.ec.push(Number(r.ec) || 0); 
+    historyData.humedad.push(Number(r.humedad) || 0);
+
+    const fila = document.createElement('tr');
+    fila.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+    fila.innerHTML = `
+      <td style="padding: 10px; color: var(--text-main); font-weight: 600;">${fechaLegible}</td>
+      <td style="padding: 10px; color: var(--cyan-neon);">${r.ph !== undefined ? Number(r.ph).toFixed(1) : '--'}</td>
+      <td style="padding: 10px; color: var(--warning);">${r.ec !== undefined ? Number(r.ec).toFixed(1) : '--'}</td>
+      <td style="padding: 10px; color: var(--danger);">${r.temperatura !== undefined ? Number(r.temperatura).toFixed(1) : '--'} °C</td>
+      <td style="padding: 10px; color: var(--green-bright);">${r.humedad !== undefined ? Math.round(r.humedad) : '--'} %</td>
+    `;
+    tbody.prepend(fila);
+  });
+
+  const activeMetricSel = document.getElementById('chartSelectY1');
+  const currentMetric = activeMetricSel ? activeMetricSel.value : 'ph';
+  actualizarGraficaMetrica(currentMetric);
 }
 
 function exportarCSV() {

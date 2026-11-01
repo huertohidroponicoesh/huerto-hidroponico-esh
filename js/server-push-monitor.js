@@ -20,131 +20,145 @@ admin.initializeApp({
 
 const db = admin.database();
 
-console.log("Servidor de Notificaciones Push activado y escuchando cambios en Firebase...");
+console.log("Servidor de Notificaciones Push 24/7 activado y escuchando eventos en tiempo real...");
+
+// Función auxiliar unificada para enviar notificaciones a todos los tokens FCM registrados
+async function dispararNotificacionGlobal(tituloAlerta, cuerpoAlerta) {
+  try {
+    const tokensSnap = await db.ref('fcm_tokens').once('value');
+    const tokensObj = tokensSnap.val();
+
+    if (!tokensObj) {
+      console.log("⚠️ No hay tokens de dispositivos registrados en fcm_tokens.");
+      return;
+    }
+
+    const tokensMap = {};
+    const tokens = [];
+
+    Object.entries(tokensObj).forEach(([key, item]) => {
+      let tokenVal = (typeof item === 'string') ? item : (item && item.token);
+      if (tokenVal) {
+        tokens.push(tokenVal);
+        tokensMap[tokenVal] = key;
+      }
+    });
+
+    if (tokens.length === 0) {
+      console.log("⚠️ No se encontraron tokens válidos en fcm_tokens.");
+      return;
+    }
+
+    console.log(`🚨 Disparando alerta FCM global: ${tituloAlerta}`);
+
+    const message = {
+      tokens: tokens,
+      notification: {
+        title: `🚨 Huerto ESH: ${tituloAlerta}`,
+        body: cuerpoAlerta
+      },
+      webpush: {
+        notification: {
+          icon: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png'
+        }
+      }
+    };
+
+    const response = await admin.messaging().sendEachForMulticast(message);
+    console.log(`✅ Notificaciones FCM enviadas. Exitosas: ${response.successCount}, Fallidas: ${response.failureCount}`);
+
+    if (response.failureCount > 0) {
+      response.responses.forEach(async (resp, idx) => {
+        if (!resp.success) {
+          const failedToken = tokens[idx];
+          const dbKey = tokensMap[failedToken];
+          console.error(`❌ Error en token FCM [${idx}] (${failedToken}):`, resp.error.message);
+
+          if (
+            resp.error.code === 'messaging/registration-token-not-registered' || 
+            resp.error.code === 'messaging/invalid-registration-token' ||
+            resp.error.message.includes('404')
+          ) {
+            console.log(`🗑️ Eliminando token FCM obsoleto/inválido de Firebase: ${dbKey}`);
+            if (dbKey) {
+              await db.ref(`fcm_tokens/${dbKey}`).remove();
+            }
+          }
+        }
+      });
+    }
+  } catch (error) {
+    console.error('❌ Error al enviar notificación FCM global:', error);
+  }
+}
 
 // =========================================================
-// 2. MONITOREO Y EVALUACIÓN AISLADA DE SENSORES
+// 2. MONITOREO DE SENSORES (pH, CE, Temperatura)
 // =========================================================
 db.ref('sensores').on('value', async (snapshot) => {
   const data = snapshot.val();
-  if (!data) {
-    console.log("⚠️ No se encontraron datos en el nodo sensores.");
-    return;
-  }
-
-  console.log("📊 Datos recibidos de sensores:", JSON.stringify(data));
+  if (!data) return;
 
   const phVal = Number(data.ph);
   const ecVal = Number(data.ec);
   const tempVal = Number(data.temperatura);
 
-  const alertasDetectadas = [];
-
-  // Rango seguro pH: 5.5 - 6.5
   if (phVal < 5.5 || phVal > 6.5) {
-    alertasDetectadas.push({
-      titulo: "¡pH Fuera de Rango! 🧪",
-      cuerpo: `Nivel crítico actual: ${phVal} pH (Óptimo: 5.5 - 6.5). Requiere ajuste en solución.`
-    });
+    await dispararNotificacionGlobal("¡pH Fuera de Rango! 🧪", `Nivel crítico actual: ${phVal} pH (Óptimo: 5.5 - 6.5).`);
   }
-
-  // Rango seguro CE: 2.0 - 2.5
   if (ecVal < 2.0 || ecVal > 2.5) {
-    alertasDetectadas.push({
-      titulo: "¡Conductividad (CE) Anómala! ⚡",
-      cuerpo: `Nivel actual: ${ecVal} mS/cm (Óptimo: 2.0 - 2.5 mS/cm).`
-    });
+    await dispararNotificacionGlobal("¡Conductividad (CE) Anómala! ⚡", `Nivel actual: ${ecVal} mS/cm (Óptimo: 2.0 - 2.5 mS/cm).`);
   }
-
-  // Rango seguro Temperatura: 18.0°C - 24.0°C
   if (tempVal < 18.0 || tempVal > 24.0) {
-    alertasDetectadas.push({
-      titulo: "¡Alerta Térmica en Agua! 🌡️",
-      cuerpo: `Temperatura actual: ${tempVal}°C (Óptima: 18°C - 24°C). Verifique placa Peltier.`
-    });
-  }
-
-  if (alertasDetectadas.length > 0) {
-    try {
-      const tokensSnap = await db.ref('fcm_tokens').once('value');
-      const tokensObj = tokensSnap.val();
-
-      if (!tokensObj) {
-        console.log("⚠️ No hay tokens de dispositivos registrados en fcm_tokens.");
-        return;
-      }
-
-      const tokensMap = {};
-      const tokens = [];
-
-      Object.entries(tokensObj).forEach(([key, item]) => {
-        let tokenVal = (typeof item === 'string') ? item : (item && item.token);
-        if (tokenVal) {
-          tokens.push(tokenVal);
-          tokensMap[tokenVal] = key;
-        }
-      });
-
-      if (tokens.length === 0) {
-        console.log("⚠️ No se encontraron tokens válidos en fcm_tokens.");
-        return;
-      }
-
-      for (const alerta of alertasDetectadas) {
-        console.log(`🚨 Disparando alerta aislada FCM: ${alerta.titulo}`);
-
-        const message = {
-          tokens: tokens,
-          notification: {
-            title: `🚨 Huerto ESH: ${alerta.titulo}`,
-            body: alerta.cuerpo
-          },
-          webpush: {
-            notification: {
-              icon: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png'
-            }
-          }
-        };
-
-        const response = await admin.messaging().sendEachForMulticast(message);
-        console.log(`✅ Notificaciones FCM enviadas. Exitosas: ${response.successCount}, Fallidas: ${response.failureCount}`);
-
-        if (response.failureCount > 0) {
-          response.responses.forEach(async (resp, idx) => {
-            if (!resp.success) {
-              const failedToken = tokens[idx];
-              const dbKey = tokensMap[failedToken];
-              console.error(`❌ Error en token FCM [${idx}] (${failedToken}):`, resp.error.message);
-
-              if (
-                resp.error.code === 'messaging/registration-token-not-registered' || 
-                resp.error.code === 'messaging/invalid-registration-token' ||
-                resp.error.message.includes('404')
-              ) {
-                console.log(`🗑️ Eliminando token FCM obsoleto/inválido de Firebase: ${dbKey}`);
-                if (dbKey) {
-                  await db.ref(`fcm_tokens/${dbKey}`).remove();
-                }
-              }
-            }
-          });
-        }
-      }
-
-    } catch (error) {
-      console.error('❌ Error general al procesar notificaciones FCM:', error);
-    }
-  } else {
-    console.log("✔️ Todos los parámetros (pH, CE, Temperatura) dentro de rangos normales. Sin alertas.");
+    await dispararNotificacionGlobal("¡Alerta Térmica en Agua! 🌡️", `Temperatura actual: ${tempVal}°C (Óptima: 18°C - 24°C).`);
   }
 });
 
 // =========================================================
-// 3. SERVIDOR HTTP BÁSICO (EXIGIDO POR RENDER)
+// 3. MONITOREO DE TRACKERS DE CULTIVO (Nuevos lotes)
+// =========================================================
+let primerCargaTrackers = true;
+db.ref('trackers').on('child_added', (snapshot) => {
+  if (primerCargaTrackers) return; // Evita notificar los ya existentes al arrancar el servidor
+  const tracker = snapshot.val();
+  if (tracker && tracker.nombre) {
+    dispararNotificacionGlobal("🌱 Nuevo Lote / Tracker Creado", `Se ha integrado el lote: "${tracker.nombre}" al sistema.`);
+  }
+});
+setTimeout(() => { primerCargaTrackers = false; }, 4000);
+
+// =========================================================
+// 4. MONITOREO DE TAREAS / CHECKLIST (Nuevas actividades)
+// =========================================================
+let primerCargaTareas = true;
+db.ref('tareas').on('child_added', (snapshot) => {
+  if (primerCargaTareas) return;
+  const tarea = snapshot.val();
+  if (tarea && tarea.texto) {
+    dispararNotificacionGlobal("📋 Nueva Tarea en Checklist", `Se añadió: "${tarea.texto}"`);
+  }
+});
+setTimeout(() => { primerCargaTareas = false; }, 4000);
+
+// =========================================================
+// 5. MONITOREO DE CUADRILLAS Y REPORTES
+// =========================================================
+let primerCargaCuadrillas = true;
+db.ref('cuadrillas').on('child_added', (snapshot) => {
+  if (primerCargaCuadrillas) return;
+  const cuadrilla = snapshot.val();
+  if (cuadrilla && cuadrilla.nombre) {
+    dispararNotificacionGlobal("📁 Nueva Cuadrilla Integrada", `Se creó la carpeta para: "${cuadrilla.nombre}"`);
+  }
+});
+setTimeout(() => { primerCargaCuadrillas = false; }, 4000);
+
+// =========================================================
+// 6. SERVIDOR HTTP BÁSICO (EXIGIDO POR RENDER)
 // =========================================================
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Huerto ESH Monitor Push 24/7 activo\n');
+  res.end('Huerto ESH Monitor Push 24/7 activo con eventos globales\n');
 });
 
 const PORT = process.env.PORT || 10000;

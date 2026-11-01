@@ -5,6 +5,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   inicializarShellAGS();
   inicializarMenuMobileAGS();
+  verificarModoNocturnoAutomatico();
+  // Verificar cambios de horario cada 10 minutos
+  setInterval(verificarModoNocturnoAutomatico, 600000);
 });
 
 function inicializarShellAGS() {
@@ -47,6 +50,33 @@ function inicializarMenuMobileAGS() {
       }
     }
   });
+}
+
+// =========================================================
+// MODO NOCTURNO AUTOMÁTICO - ORBES AMBIENTALES
+// =========================================================
+function verificarModoNocturnoAutomatico() {
+  const horaActual = new Date().getHours();
+  // Horario nocturno: de 19:00 (7 PM) a 06:00 (6 AM)
+  const esNoche = horaActual >= 19 || horaActual < 6;
+
+  const orb1 = document.querySelector('.orb-1');
+  const orb2 = document.querySelector('.orb-2');
+  const orb3 = document.querySelector('.orb-3');
+
+  if (orb1 && orb2 && orb3) {
+    if (esNoche) {
+      // Atenuamos un 50% el brillo de fondo para comodidad nocturna
+      orb1.style.opacity = '0.25';
+      orb2.style.opacity = '0.20';
+      orb3.style.opacity = '0.22';
+    } else {
+      // Intensidad estándar diurna
+      orb1.style.opacity = '0.55';
+      orb2.style.opacity = '0.45';
+      orb3.style.opacity = '0.50';
+    }
+  }
 }
 
 // Función para simular un "Hard Refresh" de telemetría y reconexión limpia

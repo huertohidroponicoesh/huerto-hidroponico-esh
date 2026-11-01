@@ -207,6 +207,9 @@
           <div class="brand-badge"><i class="fa-solid fa-graduation-cap"></i> UAEH · ESH</div>
           <h1>SISTEMA AUTOMATIZADO DE MONITOREO HIDROPÓNICO</h1>
           <h2>PROPÉDUTICO CIENCIAS BÁSICAS E INGENIERÍA · <strong>HUss</strong></h2>
+          
+          <!-- WIDGET CLIMÁTICO REUBICADO DEBAJO DEL TÍTULO -->
+          <div id="weatherWidgetContainer" style="margin-top: 12px; width: 100%;"></div>
         </div>
 
         <div class="system-status-bar">
@@ -215,10 +218,7 @@
             <span id="statusText">ESP32 Desconectado</span>
           </div>
 
-          <!-- WIDGET CLIMÁTICO DE HUEJUTLA -->
-          <div id="weatherWidgetContainer"></div>
-
-          <!-- Botón de las 3 líneas integrado junto a los iconos en la barra superior móvil -->
+          <!-- Botones de acción unificados y simétricos -->
           <button id="btnToggleSidebar" class="btn-action mobile-only" title="Abrir / Cerrar Menú Lateral">
             <i class="fa-solid fa-bars"></i>
           </button>
@@ -308,7 +308,7 @@
               <div class="chart-header">
                 <h3><i class="fa-solid fa-chart-line"></i> Gráficas de Rendimiento</h3>
                 <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                  <select id="chartSelectY1" class="select-metric" title="Eje Y1 (Izquierda)">
+                  <select id="chartSelectY1" class="select-metric" title="Eje Y1 (Izquierda)" onchange="actualizarGraficaMetrica(this.value)">
                     <option value="ph">Y1: pH del Agua</option>
                     <option value="temperatura">Y1: Temperatura (°C)</option>
                     <option value="ec">Y1: Conductividad (CE)</option>
@@ -321,14 +321,22 @@
                     <option value="temperatura">Y2: Temperatura (°C)</option>
                     <option value="humedad">Y2: Humedad (%)</option>
                   </select>
+                  
+                  <!-- NUEVO SELECTOR DE RANGO TEMPORAL -->
+                  <select id="chartTimeRange" class="select-metric" onchange="actualizarRangoTemporalGrafica(this.value)" title="Rango Temporal">
+                    <option value="1h">Última hora</option>
+                    <option value="24h" selected>Últimas 24h</option>
+                    <option value="7d">Última semana</option>
+                  </select>
+
                   <button class="btn-export" onclick="exportarGraficaPNG()" title="Descargar Gráfica PNG"><i class="fa-solid fa-image"></i> PNG</button>
                 </div>
               </div>
               <div class="chart-container"><canvas id="sensorChart"></canvas></div>
               <div class="stats-summary-bar">
-                <div class="stat-box"><span>Mínimo (Y1)</span><strong id="statMin">--</strong></div>
-                <div class="stat-box"><span>Promedio (Y1)</span><strong id="statAvg">--</strong></div>
-                <div class="stat-box"><span>Máximo (Y1)</span><strong id="statMax">--</strong></div>
+                <div class="stat-box"><span>Mínimo</span><strong id="statMin">--</strong></div>
+                <div class="stat-box"><span>Promedio</span><strong id="statAvg">--</strong></div>
+                <div class="stat-box"><span>Máximo</span><strong id="statMax">--</strong></div>
               </div>
             </div>
 
