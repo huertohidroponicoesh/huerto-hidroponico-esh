@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   inicializarShellAGS();
   inicializarMenuMobileAGS();
   verificarModoNocturnoAutomatico();
+  registrarServiceWorkerPWA();
+
   // Verificar cambios de horario cada 10 minutos
   setInterval(verificarModoNocturnoAutomatico, 600000);
 });
@@ -50,6 +52,46 @@ function inicializarMenuMobileAGS() {
       }
     }
   });
+}
+
+// =========================================================
+// REGISTRO DE SERVICE WORKER PARA PWA E INSTALACIÓN NATIVA
+// =========================================================
+let deferredPrompt;
+
+function registrarServiceWorkerPWA() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./firebase-messaging-sw.js')
+      .then((reg) => {
+        console.log('✅ Service Worker PWA registrado en scope:', reg.scope);
+      })
+      .catch((err) => {
+        console.error('❌ Error al registrar Service Worker PWA:', err);
+      });
+  }
+}
+
+// Captura el evento para instalar la PWA como aplicación nativa
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log("📲 Aplicación lista para instalar como PWA.");
+});
+
+function instalarAplicacionPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('El usuario instaló la aplicación PWA.');
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    if (typeof mostrarToast === 'function') {
+      mostrarToast("PWA Instalación", "Abre el menú de tu navegador y selecciona 'Instalar aplicación' o 'Agregar al inicio'.", "warning");
+    }
+  }
 }
 
 // =========================================================

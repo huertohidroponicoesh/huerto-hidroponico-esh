@@ -1,6 +1,6 @@
 {
   "name": "huerto-esh-backend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Backend de notificaciones push automatizadas para el Huerto Hidroponico ESH",
   "main": "js/server-push-monitor.js",
   "scripts": {

@@ -6,19 +6,19 @@
   "display": "standalone",
   "orientation": "any",
   "background_color": "#030d0a",
-  "theme_color": "#35e58a",
+  "theme_color": "#030d0a",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/192/1892/1892751.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "https://cdn-icons-png.flaticon.com/512/1892/1892751.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
   "shortcuts": [

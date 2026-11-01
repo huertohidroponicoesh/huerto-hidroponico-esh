@@ -20,7 +20,7 @@ admin.initializeApp({
 
 const db = admin.database();
 
-console.log("Servidor de Notificaciones Push 24/7 activado y escuchando eventos en tiempo real...");
+console.log("🚀 Servidor de Notificaciones Push 24/7 activado y escuchando eventos globales...");
 
 // Función auxiliar unificada para enviar notificaciones a todos los tokens FCM registrados
 async function dispararNotificacionGlobal(tituloAlerta, cuerpoAlerta) {
@@ -114,39 +114,46 @@ db.ref('sensores').on('value', async (snapshot) => {
   }
 });
 
-// Control de tiempo de inicio del servidor para evitar falsos positivos al arrancar
-const tiempoInicioServidor = Date.now();
+// Flag para ignorar la carga inicial de registros históricos al arrancar el servidor
+let cargandoInicialTrackers = true;
+let cargandoInicialTasks = true;
+let cargandoInicialCuadrillas = true;
 
 // =========================================================
 // 3. MONITOREO DE TRACKERS DE CULTIVO (Nuevos lotes)
 // =========================================================
 db.ref('trackers').on('child_added', (snapshot) => {
+  if (cargandoInicialTrackers) return;
   const tracker = snapshot.val();
-  // Solo notifica si el registro es realmente posterior al encendido del servidor en Render
   if (tracker && tracker.title) {
-    dispararNotificacionGlobal("🌱 Nuevo Lote / Tracker Creado", `Se ha integrado el lote: "${tracker.title}" al sistema.`);
+    dispararNotificacionGlobal("🌱 Nuevo Lote Creado", `Se agregó el lote de cultivo: "${tracker.title}"`);
   }
 });
+setTimeout(() => { cargandoInicialTrackers = false; }, 3000);
 
 // =========================================================
-// 4. MONITOREO DE TAREAS / CHECKLIST (Nuevas actividades en 'tasks')
+// 4. MONITOREO DE TAREAS / CHECKLIST (Nuevas tareas en 'tasks')
 // =========================================================
 db.ref('tasks').on('child_added', (snapshot) => {
+  if (cargandoInicialTasks) return;
   const tarea = snapshot.val();
   if (tarea && tarea.text) {
-    dispararNotificacionGlobal("📋 Nueva Tarea en Checklist", `Se añadió un nuevo pendiente: "${tarea.text}"`);
+    dispararNotificacionGlobal("📋 Nueva Tarea en Checklist", `Se añadió: "${tarea.text}"`);
   }
 });
+setTimeout(() => { cargandoInicialTasks = false; }, 3000);
 
 // =========================================================
 // 5. MONITOREO DE CUADRILLAS Y REPORTES
 // =========================================================
 db.ref('cuadrillas_sistema').on('child_added', (snapshot) => {
+  if (cargandoInicialCuadrillas) return;
   const cuadrilla = snapshot.val();
   if (cuadrilla && cuadrilla.nombre) {
-    dispararNotificacionGlobal("📁 Nueva Cuadrilla Integrada", `Se creó la carpeta para la cuadrilla: "${cuadrilla.nombre}"`);
+    dispararNotificacionGlobal("📁 Nueva Cuadrilla Integrada", `Se creó la carpeta: "${cuadrilla.nombre}"`);
   }
 });
+setTimeout(() => { cargandoInicialCuadrillas = false; }, 3000);
 
 // =========================================================
 // 6. SERVIDOR HTTP BÁSICO (EXIGIDO POR RENDER)
