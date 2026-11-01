@@ -95,7 +95,7 @@ function instalarAplicacionPWA() {
       deferredPrompt = null;
     });
   } else {
-    // Guía interactiva si el navegador no expone prompt directo (como en iOS Safari)
+    // Guía interactiva si el navegador no expone prompt directo (como en iOS Safari o navegadores de escritorio)
     if (typeof mostrarToast === 'function') {
       mostrarToast("Instalación PWA", "Abre el menú de tu navegador y selecciona 'Instalar aplicación' o 'Agregar a la pantalla de inicio'.", "warning");
     } else {

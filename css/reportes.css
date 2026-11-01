@@ -42,23 +42,47 @@
   box-shadow: 0 0 18px var(--card-border-glow);
 }
 
-/* Cuadrillas Activas: Aprovechamiento vertical optimizado del scrolleable */
+/* =========================================================
+   CUADRILLAS ACTIVAS: CONTENEDOR SCROLLEABLE Y ESTRUCTURADO
+   ========================================================= */
 .cuadrillas-container {
   margin-top: 15px;
-  max-height: 520px !important;
-  min-height: 350px;
-  overflow-y: auto;
-  padding-right: 6px;
+  max-height: 480px !important;
+  min-height: 280px;
+  overflow-y: auto !important;
+  padding-right: 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  box-sizing: border-box;
 }
 
+/* Barra de desplazamiento (Scrollbar) personalizada estilo Caelestia HUD */
+.cuadrillas-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cuadrillas-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+}
+
+.cuadrillas-container::-webkit-scrollbar-thumb {
+  background: var(--card-border-glow);
+  border-radius: 8px;
+}
+
+.cuadrillas-container::-webkit-scrollbar-thumb:hover {
+  background: var(--green-bright);
+  box-shadow: 0 0 10px var(--green-bright);
+}
+
+/* TARJETAS DE CARPETAS / CUADRILLAS */
 .folder-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 18px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
@@ -67,7 +91,7 @@
 .folder-card:hover {
   border-color: var(--card-border-glow);
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
 .folder-header {
@@ -101,12 +125,14 @@
 
 .folder-content {
   padding: 18px 20px;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.25);
   border-top: 1px solid var(--card-border);
   animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Planificador Mensual & Calendario Operativo Reestructurado */
+/* =========================================================
+   PLANIFICADOR MENSUAL & CALENDARIO OPERATIVO
+   ========================================================= */
 .calendar-hud-wrapper {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -178,7 +204,7 @@
   color: var(--text-main);
 }
 
-/* Estados de días en el calendario con indicadores visuales limpios */
+/* Estados de días en el calendario */
 .calendar-day-pendiente {
   border: 1px solid var(--warning) !important;
   background: rgba(255, 209, 102, 0.15) !important;
@@ -201,7 +227,7 @@
   width: 100%;
   background: rgba(0, 0, 0, 0.6);
   border-radius: 6px;
-  padding: 2px;
+  padding: 2px 4px;
   font-size: 0.6rem;
   font-weight: 700;
   text-align: center;

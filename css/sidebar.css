@@ -70,15 +70,16 @@
   gap: 8px;
 }
 
+/* BLINDAJE ABSOLUTO DE BOTONES INACTIVOS EN EL MENÚ */
 .ags-nav-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 13px 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid transparent !important;
   border-radius: 14px;
-  color: var(--text-muted);
+  color: var(--text-muted) !important;
   font-weight: 700;
   font-size: 0.86rem;
   cursor: pointer;
@@ -86,6 +87,7 @@
   text-align: left;
   width: 100%;
   outline: none !important;
+  box-shadow: none !important;
   -webkit-tap-highlight-color: transparent !important;
   user-select: none;
 }
@@ -102,26 +104,19 @@
   transition: transform 0.3s ease, color 0.3s ease;
 }
 
-/* Efecto hover solo en elementos inactivos */
+/* Efecto hover limpio solo para elementos NO activos */
 .ags-nav-item:not(.active):hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-main);
-  border-color: var(--card-border);
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: var(--text-main) !important;
+  border-color: var(--card-border) !important;
 }
 
-.ags-nav-item:not(.active):hover i {
-  color: var(--green-bright);
-}
-
+.ags-nav-item:not(.active):hover i,
 .ags-nav-item:not(.active):hover .nav-arrow {
-  transform: translateX(3px);
-  color: var(--green-bright);
+  color: var(--green-bright) !important;
 }
 
-/* ==========================================================================
-   BLINDAJE MÓVIL Y DE CLIC: Evita que el navegador mantenga el foco o brillo 
-   en los botones inactivos al presionarlos
-   ========================================================================== */
+/* Neutralización total de estados focus/active que causaban que se quedaran iluminados */
 .ags-nav-item:not(.active):focus,
 .ags-nav-item:not(.active):active {
   background: rgba(255, 255, 255, 0.02) !important;
@@ -131,7 +126,7 @@
   outline: none !important;
 }
 
-/* Estado Activo Exclusivo */
+/* ESTADO ACTIVO EXCLUSIVO */
 .ags-nav-item.active,
 .ags-nav-item.active:focus,
 .ags-nav-item.active:active {
