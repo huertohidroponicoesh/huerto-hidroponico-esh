@@ -14,71 +14,85 @@
 
 .toast-card {
   pointer-events: auto;
-  background: rgba(12, 38, 30, 0.92);
-  border: 1px solid var(--danger);
-  color: var(--text-main);
+  background: var(--bg-card, rgba(15, 23, 42, 0.90));
+  border: 1px solid var(--danger, #ef4444);
+  color: var(--text-main, #f8fafc);
   padding: 14px 18px;
   border-radius: 16px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(15px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(239, 68, 68, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   display: flex;
   align-items: center;
   gap: 14px;
-  min-width: 300px;
-  max-width: 380px;
+  min-width: 310px;
+  max-width: 400px;
   animation: slideInToast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.toast-card.success { border-color: var(--green-bright); }
-.toast-card.warning { border-color: var(--warning); }
+.toast-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+}
+
+.toast-card.success { 
+  border-color: var(--green-bright, #10b981); 
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(16, 185, 129, 0.2);
+}
+
+.toast-card.warning { 
+  border-color: var(--warning, #f59e0b); 
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(245, 158, 11, 0.2);
+}
 
 @keyframes slideInToast {
-  from { transform: translateX(120%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from { transform: translateX(120%) scale(0.9); opacity: 0; }
+  to { transform: translateX(0) scale(1); opacity: 1; }
 }
 
 @keyframes fadeOutToast {
-  to { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(120%) scale(0.85); opacity: 0; }
 }
 
-.toast-icon { font-size: 1.4rem; color: var(--danger); }
-.toast-card.success .toast-icon { color: var(--green-bright); }
-.toast-card.warning .toast-icon { color: var(--warning); }
+.toast-icon { font-size: 1.4rem; color: var(--danger, #ef4444); }
+.toast-card.success .toast-icon { color: var(--green-bright, #10b981); }
+.toast-card.warning .toast-icon { color: var(--warning, #f59e0b); }
 .toast-content { flex: 1; display: flex; flex-direction: column; }
-.toast-content strong { font-size: 0.9rem; font-weight: 700; }
-.toast-content small { font-size: 0.75rem; color: var(--text-muted); }
-.toast-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; }
-.toast-close:hover { color: var(--text-main); }
+.toast-content strong { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.3px; }
+.toast-content small { font-size: 0.78rem; color: var(--text-muted, #94a3b8); margin-top: 2px; }
+.toast-close { background: none; border: none; color: var(--text-muted, #94a3b8); cursor: pointer; font-size: 1.1rem; transition: color 0.2s; }
+.toast-close:hover { color: var(--text-main, #ffffff); }
 
 
 /* =========================================================
    2. ANIMACIONES Y EFECTOS LÍQUIDOS PARA INDICADORES DE ESTADO (ESP32)
    ========================================================= */
 
-/* ESTADO ONLINE: Resplandor verde intermitente / respiración */
+/* ESTADO ONLINE: Resplandor verde neón intermitente / respiración */
 .status-indicator.online .dot {
-  background-color: var(--green-bright);
-  box-shadow: 0 0 10px var(--green-bright), 0 0 20px var(--green-bright);
+  background-color: var(--green-bright, #10b981);
+  box-shadow: 0 0 10px var(--green-bright, #10b981), 0 0 20px var(--green-bright, #10b981);
   animation: pulseGlowOnline 2s infinite ease-in-out;
 }
 
 @keyframes pulseGlowOnline {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 0 8px var(--green-bright), 0 0 15px var(--green-bright);
+    box-shadow: 0 0 8px var(--green-bright, #10b981), 0 0 15px rgba(16, 185, 129, 0.5);
     opacity: 0.9;
   }
   50% {
-    transform: scale(1.25);
-    box-shadow: 0 0 14px var(--green-bright), 0 0 28px var(--green-bright);
+    transform: scale(1.3);
+    box-shadow: 0 0 16px var(--green-bright, #10b981), 0 0 30px rgba(16, 185, 129, 0.8);
     opacity: 1;
   }
 }
 
 /* ESTADO OFFLINE: Parpadeo de advertencia rojo neón */
 .status-indicator.offline .dot {
-  background-color: var(--danger);
-  box-shadow: 0 0 10px var(--danger);
+  background-color: var(--danger, #ef4444);
+  box-shadow: 0 0 10px var(--danger, #ef4444);
   animation: blinkOffline 1.6s infinite ease-in-out;
 }
 
@@ -86,19 +100,19 @@
   0%, 100% {
     opacity: 1;
     transform: scale(1);
-    box-shadow: 0 0 10px var(--danger);
+    box-shadow: 0 0 12px var(--danger, #ef4444);
   }
   50% {
-    opacity: 0.35;
+    opacity: 0.3;
     transform: scale(0.85);
-    box-shadow: 0 0 2px var(--danger);
+    box-shadow: 0 0 2px var(--danger, #ef4444);
   }
 }
 
-/* ESTADO CONNECTING: Pulsación fluida en color ámbar/amarillo */
+/* ESTADO CONNECTING: Pulsación fluida en color ámbar */
 .status-indicator.connecting .dot {
-  background-color: var(--warning);
-  box-shadow: 0 0 10px var(--warning);
+  background-color: var(--warning, #f59e0b);
+  box-shadow: 0 0 10px var(--warning, #f59e0b);
   animation: pulseConnecting 1.2s infinite ease-in-out;
 }
 
@@ -106,12 +120,12 @@
   0%, 100% {
     transform: scale(0.85);
     opacity: 0.5;
-    box-shadow: 0 0 4px var(--warning);
+    box-shadow: 0 0 4px var(--warning, #f59e0b);
   }
   50% {
-    transform: scale(1.3);
+    transform: scale(1.35);
     opacity: 1;
-    box-shadow: 0 0 14px var(--warning);
+    box-shadow: 0 0 16px var(--warning, #f59e0b);
   }
 }
 
@@ -137,5 +151,46 @@
 
 @keyframes liquidBounce {
   0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1.2); }
+  40% { transform: scale(1.3); }
+}
+
+
+/* =========================================================
+   3. NUEVAS ANIMACIONES PARA INTERFAZ GLASSMORPHIC & IOT NEÓN
+   ========================================================= */
+
+/* Efecto de actualización sutil en las tarjetas de monitoreo en vivo */
+.value-update-flash {
+  animation: valuePulse 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes valuePulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.04); filter: brightness(1.3); text-shadow: 0 0 12px var(--accent-cyan, #06b6d4); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+/* Resplandor pulsante para alertas críticas en tablas */
+.badge-alert-pulse {
+  animation: badgeAlertGlow 1.8s infinite ease-in-out;
+}
+
+@keyframes badgeAlertGlow {
+  0%, 100% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 14px rgba(239, 68, 68, 0.9); }
+}
+
+/* Transición suave global al cambiar de tema (Nocturno, Esmeralda, Cálido, etc.) */
+body, .card-glass, header, nav, table, input, select, button {
+  transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, color 0.25s ease;
+}
+
+/* Efecto de entrada para pestañas al cambiar de vista */
+.tab-section-fade {
+  animation: tabFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

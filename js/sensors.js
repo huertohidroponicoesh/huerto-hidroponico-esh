@@ -1,5 +1,5 @@
 // =========================================================
-// MÓDULO DE SENsores, TELEMETRÍA Y CONTROL - HUERTO ESH V3
+// MÓDULO DE SENSORES, TELEMETRÍA Y CONTROL - HUERTO ESH V3
 // =========================================================
 
 let huertoActivo = 'nft';
@@ -293,7 +293,7 @@ function guardarUmbrales() {
 
   database.ref('umbrales').set(currentThresholds).then(() => {
     if (typeof mostrarToast === 'function') {
-      mostrarToast("Umbrales Actualizados", "Lmites guardados correctamente en Firebase", "success");
+      mostrarToast("Umbrales Actualizados", "Límites guardados correctamente en Firebase", "success");
     } else {
       alert("¡Umbrales actualizados con éxito en Firebase!");
     }
@@ -348,7 +348,7 @@ function evaluarAlertasAnomalias(d) {
   } else {
     alertBox.style.background = "rgba(0,0,0,0.3)";
     alertBox.style.borderColor = "var(--card-border)";
-    alertBox.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--green-bright);"></i> Todos los parámetros se encuentran dentro de los rangos óptimos.`;
+    alertBox.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--green-bright);"></i> Estado Global: Todos los parámetros se encuentran dentro de los rangos óptimos.`;
   }
 }
 

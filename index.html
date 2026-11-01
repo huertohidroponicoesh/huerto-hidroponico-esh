@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Huerto Hidropónico IoT | ESH</title>
+  <title>Huerto Hidropónico IoT | ESH · UAEH</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#030d0a">
@@ -43,9 +43,9 @@
             <i class="fa-solid fa-seedling plant-bounce"></i>
           </div>
         </div>
-        <span class="hex-badge-label"><i class="fa-solid fa-shield-halved"></i> IoT ESH</span>
+        <span class="hex-badge-label"><i class="fa-solid fa-shield-halved"></i> IoT ESH · UAEH</span>
         <h2>SISTEMA HIDROPÓNICO</h2>
-        <p class="login-subtitle">Seleccione su perfil de usuario</p>
+        <p class="login-subtitle">Seleccione su perfil de usuario autorizado</p>
       </div>
 
       <div class="hyde-users-grid" id="hydeUsersGrid">
@@ -62,7 +62,7 @@
           <div class="user-pill-icon guest-icon"><i class="fa-solid fa-binoculars"></i></div>
           <div class="user-pill-text">
             <strong>Hidrouser</strong>
-            <small>Monitor</small>
+            <small>Monitor de Sistema</small>
           </div>
           <i class="fa-solid fa-chevron-right pill-arrow"></i>
         </div>
@@ -93,12 +93,12 @@
           <label class="remember-me">
             <input type="checkbox" id="rememberMe">
             <span class="custom-checkbox"></span>
-            <span>Recordar sesión</span>
+            <span>Recordar sesión activa</span>
           </label>
         </div>
 
         <button type="submit" class="btn-hex-submit" id="btnLogin">
-          <span>INGRESAR</span>
+          <span>ACCEDER AL SISTEMA</span>
           <i class="fa-solid fa-arrow-right-to-bracket"></i>
         </button>
       </form>
@@ -134,14 +134,14 @@
         </div>
 
         <select id="themeSelector" class="select-metric" onchange="cambiarTemaVisual(this.value)" title="Seleccionar Tema">
-          <option value="theme-emerald">Esmeralda</option>
-          <option value="theme-cyberpunk">Neón</option>
-          <option value="theme-midnight">Nocturno</option>
-          <option value="theme-sunset">Cálido</option>
-          <option value="theme-matrix">Terminal</option>
-          <option value="theme-aurora">Boreal</option>
-          <option value="theme-solarized">SoTech</option>
-          <option value="theme-crimson">Crimson</option>
+          <option value="theme-emerald">Esmeralda (Biófilo)</option>
+          <option value="theme-cyberpunk">Neón Cyberpunk</option>
+          <option value="theme-midnight">Nocturno Deep</option>
+          <option value="theme-sunset">Cálido Sunset</option>
+          <option value="theme-matrix">Terminal Matrix</option>
+          <option value="theme-aurora">Boreal Aurora</option>
+          <option value="theme-solarized">SoTech Lab</option>
+          <option value="theme-crimson">Crimson Red</option>
         </select>
 
         <button class="btn-action btn-notify" id="btnNotify" onclick="abrirModalPush()" title="Configurar Notificaciones">
@@ -170,7 +170,7 @@
       <span>Sincronizando con base de datos en tiempo real...</span>
     </div>
 
-    <!-- NAVEGACIÓN POR PESTAÑAS SECCIONALES -->
+    <!-- NAVEGACIÓN POR PESTAÑAS SECCIONALES (CON MÓDULO UNIFICADO ALERTAS & BITÁCORA) -->
     <nav class="nav-sections-bar">
       <button class="nav-sec-btn active" id="sec-btn-sensors" onclick="mostrarSeccion('sensors')">
         <i class="fa-solid fa-chart-pie"></i> Monitoreo
@@ -181,14 +181,11 @@
       <button class="nav-sec-btn" id="sec-btn-actuators" onclick="mostrarSeccion('actuators')">
         <i class="fa-solid fa-toggle-on"></i> Sistema de Control
       </button>
-      <button class="nav-sec-btn" id="sec-btn-thresholds" onclick="mostrarSeccion('thresholds')">
-        <i class="fa-solid fa-sliders"></i> Alertas
-      </button>
       <button class="nav-sec-btn" id="sec-btn-crops" onclick="mostrarSeccion('crops')">
         <i class="fa-solid fa-leaf"></i> Trackers
       </button>
       <button class="nav-sec-btn" id="sec-btn-history" onclick="mostrarSeccion('history')">
-        <i class="fa-solid fa-database"></i> Bitácora
+        <i class="fa-solid fa-bell-concierge"></i> Bitácora & Alertas
       </button>
     </nav>
 
@@ -223,7 +220,7 @@
 
           <div class="card metric-card card-temp">
             <div class="card-header">
-              <span>Temperatura Agua </span>
+              <span>Temperatura Agua</span>
               <i class="fa-solid fa-temperature-half icon-temp thermal-glow"></i>
             </div>
             <div class="metric-value"><span id="tempValue">--</span> <small>°C</small></div>
@@ -245,7 +242,7 @@
         <div class="grid-2-cols" style="margin-top: 20px;">
           <div class="card chart-card">
             <div class="chart-header">
-              <h3><i class="fa-solid fa-chart-line"></i> Gráficas</h3>
+              <h3><i class="fa-solid fa-chart-line"></i> Gráficas de Rendimiento</h3>
               <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                 <select id="chartSelectY1" class="select-metric" title="Eje Y1 (Izquierda)">
                   <option value="ph">Y1: pH del Agua</option>
@@ -273,7 +270,7 @@
 
           <div class="card diagnostics-card">
             <h3><i class="fa-solid fa-microchip"></i> Telemetría ESP32</h3>
-            <p class="card-subtitle">Diagnóstico del microcontrolador y conectividad</p>
+            <p class="card-subtitle">Diagnóstico de conectividad y estado del hardware</p>
             <div class="diag-list">
               <div class="diag-row">
                 <span><i class="fa-solid fa-wifi"></i> Señal Wi-Fi (RSSI):</span>
@@ -303,7 +300,7 @@
       <!-- SECCIÓN: CUADRILLAS, REPORTES DRIVE Y CALENDARIO -->
       <section id="section-cuadrillas" class="app-section hidden">
         <div class="section-heading">
-          <h2><i class="fa-solid fa-users-rectangle"></i> Gestión de Reportes & Calendario</h2>
+          <h2><i class="fa-solid fa-users-rectangle"></i> Gestión de Reportes & Calendario Operativo</h2>
         </div>
 
         <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA -->
@@ -325,10 +322,10 @@
         </div>
 
         <div class="grid-2-cols">
-          <!-- LISTADO DE CARPETAS DE CUADRILLAS (CÁPSULA SCROLEABLE INTEGRADA) -->
+          <!-- LISTADO DE CARPETAS DE CUADRILLAS -->
           <div class="card">
             <div class="chart-header">
-              <h3><i class="fa-solid fa-folder-tree"></i> Cuadrillas</h3>
+              <h3><i class="fa-solid fa-folder-tree"></i> Cuadrillas Activas</h3>
               <button class="btn-action" onclick="cargarCuadrillasFirebase()" title="Recargar"><i class="fa-solid fa-rotate"></i></button>
             </div>
             <p class="card-subtitle">Despliegue cada cuadrilla para adjuntar y consultar enlaces de reportes PDF en Google Drive.</p>
@@ -344,7 +341,7 @@
               <h3><i class="fa-regular fa-calendar-days"></i> Planificador Mensual</h3>
               <input type="month" id="mesPlanificadorInput" class="select-metric" onchange="renderizarCalendarioMensual()" title="Seleccionar Mes">
             </div>
-            <p class="card-subtitle">Amarillo = Asignado (Esperando Reporte). Verde = Reporte Cumplido (Clic para ver PDF).</p>
+            <p class="card-subtitle">Amarillo = Asignado (Pendiente). Verde = Reporte Cumplido (Clic para ver PDF).</p>
             
             <div class="calendar-days-header" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--cyan-neon); margin-top: 12px; margin-bottom: 6px;">
               <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
@@ -365,7 +362,7 @@
 
         <div class="card hydraulic-card" style="margin-bottom: 20px;">
           <div class="hydraulic-title-box">
-            <h3><i class="fa-solid fa-project-diagram"></i> Diagrama de Flujo</h3>
+            <h3><i class="fa-solid fa-project-diagram"></i> Diagrama de Flujo del Sistema</h3>
             <span class="hydraulic-badge"><i class="fa-solid fa-circle-nodes"></i> Circuito Activo</span>
           </div>
 
@@ -444,7 +441,7 @@
               <div class="actuator-info">
                 <div class="actuator-icon-wrapper"><i class="fa-solid fa-code-branch actuator-icon" style="color: var(--warning);"></i></div>
                 <div>
-                  <strong>Válvula Bypass</strong>
+                  <strong>Válvula Bypass (Plástico)</strong>
                   <span>Retorno Directo</span>
                   <div class="actuator-status" id="statusBypass"><span class="status-dot"></span> APAGADA</div>
                 </div>
@@ -456,8 +453,8 @@
               <div class="actuator-info">
                 <div class="actuator-icon-wrapper"><i class="fa-solid fa-syringe actuator-icon syringe-pulse" style="color: var(--cyan-neon);"></i></div>
                 <div>
-                  <strong>Inyección Solución Nutritiva</strong>
-                  <span>Dosificación A+B / pH</span>
+                  <strong>Bombas Kamoer (A+B / pH)</strong>
+                  <span>Dosificación de Precisión</span>
                   <div class="actuator-status" id="statusInyeccion"><span class="status-dot"></span> APAGADA</div>
                 </div>
               </div>
@@ -504,7 +501,7 @@
                 <strong id="pidPhError" style="color: var(--cyan-neon);">0.0 pH</strong>
               </div>
               <div class="stat-box" style="padding: 15px;">
-                <span>Salida Bomba A+B (PWM)</span>
+                <span>Salida Kamoer A+B (PWM)</span>
                 <strong id="pidPwmOutput" style="color: var(--warning);">0 %</strong>
               </div>
               <div class="stat-box" style="padding: 15px;">
@@ -551,60 +548,7 @@
         </div>
       </section>
 
-      <!-- SECCIÓN 3: CONFIGURACIÓN DINÁMICA DE UMBRALES Y ALERTAS -->
-      <section id="section-thresholds" class="app-section hidden">
-        <div class="section-heading">
-          <h2><i class="fa-solid fa-triangle-exclamation"></i> Control Dinámico de Umbrales & Alertas Flotantes</h2>
-        </div>
-
-        <div class="grid-2-cols">
-          <div class="card threshold-card">
-            <h3><i class="fa-solid fa-sliders"></i> Definir Rangos Aceptables</h3>
-            <p class="card-subtitle">Ajuste los límites seguros. Se emitirá una alerta si el agua sale de este rango.</p>
-            
-            <div class="tracker-inputs-form admin-only" style="margin-top: 15px;">
-              <div class="threshold-group">
-                <label><i class="fa-solid fa-flask icon-ph"></i> pH del Agua (Mín / Máx)</label>
-                <div class="tracker-inputs-row">
-                  <input type="number" step="0.1" id="threshPhMin" value="5.5" placeholder="Mín 5.5">
-                  <input type="number" step="0.1" id="threshPhMax" value="6.5" placeholder="Máx 6.5">
-                </div>
-              </div>
-
-              <div class="threshold-group">
-                <label><i class="fa-solid fa-bolt icon-ce"></i> Conductividad CE (mS/cm)</label>
-                <div class="tracker-inputs-row">
-                  <input type="number" step="0.1" id="threshEcMin" value="2.0" placeholder="Mín 2.0">
-                  <input type="number" step="0.1" id="threshEcMax" value="2.5" placeholder="Máx 2.5">
-                </div>
-              </div>
-
-              <div class="threshold-group">
-                <label><i class="fa-solid fa-temperature-half icon-temp"></i> Temperatura Agua (°C)</label>
-                <div class="tracker-inputs-row">
-                  <input type="number" step="0.5" id="threshTempMin" value="18.0" placeholder="Mín 18°C">
-                  <input type="number" step="0.5" id="threshTempMax" value="24.0" placeholder="Máx 24°C">
-                </div>
-              </div>
-
-              <button class="btn-hex-submit" onclick="guardarUmbrales()" style="margin-top: 15px; width: 100%; border-radius: 14px;">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Umbrales en Firebase
-              </button>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3><i class="fa-solid fa-shield-halved"></i> Estado Global de Alertas</h3>
-            <p class="card-subtitle">Monitoreo de anomalías en el sistema.</p>
-            <div id="alertStatusBox" class="alert-status-card">
-              <i class="fa-solid fa-circle-check" style="color: var(--green-bright); font-size: 1.2rem;"></i>
-              <span>Todos los parámetros se encuentran dentro de los rangos óptimos.</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECCIÓN 4: TRACKERS & CHECKLIST -->
+      <!-- SECCIÓN 3: TRACKERS & CHECKLIST -->
       <section id="section-crops" class="app-section hidden">
         <div class="section-heading">
           <h2><i class="fa-solid fa-seedling"></i> Gestión de Lotes y Tareas</h2>
@@ -628,9 +572,9 @@
 
           <div class="card checklist-card">
             <h3><i class="fa-solid fa-list-check"></i> Checklist</h3>
-            <p class="card-subtitle">Tareas de mantenimiento</p>
+            <p class="card-subtitle">Tareas de mantenimiento preventivo</p>
             <div class="input-group-add admin-only">
-              <input type="text" id="task-input" placeholder="Ej: Revisar nivel de solución A+B...">
+              <input type="text" id="task-input" placeholder="Ej: Revisar nivel tanques A+B (HDPE)...">
               <button class="btn-add" onclick="addTask()"><i class="fa-solid fa-plus"></i></button>
             </div>
             <div class="task-list" id="task-container"></div>
@@ -638,21 +582,67 @@
         </div>
       </section>
 
-      <!-- SECCIÓN 5: BITÁCORA, CALIBRACIÓN Y EXPORTACIÓN PDF / EXCEL -->
+      <!-- SECCIÓN 4 (UNIFICADA): BITÁCORA, CALIBRACIÓN & ALERTAS PUSH -->
       <section id="section-history" class="app-section hidden">
         <div class="section-heading">
-          <h2><i class="fa-solid fa-box-archive"></i> Bitácora Histórica, Calibración & Alertas Push</h2>
+          <h2><i class="fa-solid fa-bell-concierge"></i> Centro Unificado: Bitácora, Calibración & Umbrales de Alerta</h2>
         </div>
 
+        <!-- 1. BLOQUE DE CONFIGURACIÓN DE UMBRALES (FUSIONADO AQUÍ) -->
+        <div class="card" style="margin-bottom: 20px; border-color: var(--card-border-glow);">
+          <h3><i class="fa-solid fa-sliders"></i> Control Dinámico de Umbrales & Rangos de Seguridad</h3>
+          <p class="card-subtitle">Ajuste los límites seguros. Se emitirá una alerta y notificación push si los parámetros salen de este rango.</p>
+          
+          <div class="grid-2-cols" style="margin-top: 15px; align-items: flex-end;">
+            <div class="tracker-inputs-form admin-only" style="margin-bottom: 0;">
+              <div class="threshold-group">
+                <label><i class="fa-solid fa-flask icon-ph"></i> pH del Agua (Mín / Máx)</label>
+                <div class="tracker-inputs-row">
+                  <input type="number" step="0.1" id="threshPhMin" value="5.5" placeholder="Mín 5.5">
+                  <input type="number" step="0.1" id="threshPhMax" value="6.5" placeholder="Máx 6.5">
+                </div>
+              </div>
+
+              <div class="threshold-group" style="margin-top: 12px;">
+                <label><i class="fa-solid fa-bolt icon-ce"></i> Conductividad CE (mS/cm)</label>
+                <div class="tracker-inputs-row">
+                  <input type="number" step="0.1" id="threshEcMin" value="2.0" placeholder="Mín 2.0">
+                  <input type="number" step="0.1" id="threshEcMax" value="2.5" placeholder="Máx 2.5">
+                </div>
+              </div>
+            </div>
+
+            <div class="tracker-inputs-form admin-only" style="margin-bottom: 0;">
+              <div class="threshold-group">
+                <label><i class="fa-solid fa-temperature-half icon-temp"></i> Temperatura Agua (°C)</label>
+                <div class="tracker-inputs-row">
+                  <input type="number" step="0.5" id="threshTempMin" value="18.0" placeholder="Mín 18°C">
+                  <input type="number" step="0.5" id="threshTempMax" value="24.0" placeholder="Máx 24°C">
+                </div>
+              </div>
+
+              <button class="btn-hex-submit" onclick="guardarUmbrales()" style="margin-top: 16px; width: 100%; border-radius: 12px; padding: 12px;">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Umbrales en Firebase
+              </button>
+            </div>
+          </div>
+
+          <div id="alertStatusBox" class="alert-status-card" style="margin-top: 15px;">
+            <i class="fa-solid fa-circle-check" style="color: var(--green-bright); font-size: 1.2rem;"></i>
+            <span>Estado Global: Todos los parámetros se encuentran dentro de los rangos óptimos.</span>
+          </div>
+        </div>
+
+        <!-- 2. BLOQUE DE BITÁCORA HISTÓRICA Y CALIBRACIÓN -->
         <div class="grid-2-cols">
           <div class="card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-database"></i> Bitácora Histórica</h3>
-              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                 <button class="btn-action" onclick="cargarHistorialFirebase()" title="Recargar"><i class="fa-solid fa-rotate"></i></button>
                 <button class="btn-export" onclick="exportarCSV()"><i class="fa-solid fa-file-csv"></i> CSV</button>
                 <button class="btn-export" onclick="exportarReporteExcelEjecutivo()" style="background: #107c41; color: #fff;"><i class="fa-solid fa-file-excel"></i> Excel .xlsx</button>
-                <button class="btn-export" onclick="exportarReportePDF()" style="background: var(--purple-neon); color: #fff;"><i class="fa-solid fa-file-pdf"></i> Reporte PDF</button>
+                <button class="btn-export" onclick="exportarReportePDF()" style="background: var(--purple-neon); color: #fff;"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                 <button class="btn-danger-custom admin-only" onclick="purgarBitacoraFirebase()" title="Borrar Historial"><i class="fa-solid fa-trash-can"></i></button>
               </div>
             </div>
@@ -701,6 +691,7 @@
           </div>
         </div>
 
+        <!-- 3. BLOQUE DE HISTORIAL DE ALERTAS PUSH -->
         <div class="card" style="margin-top: 20px;">
           <div class="chart-header">
             <h3><i class="fa-solid fa-bell" style="color: var(--warning);"></i> Historial de Alertas & Anomalías Recientes</h3>
@@ -709,7 +700,7 @@
               <button class="btn-danger-custom admin-only" onclick="purgarAlertasFirebase()" title="Limpiar Historial de Alertas"><i class="fa-solid fa-trash-can"></i> Limpiar</button>
             </div>
           </div>
-          <p class="card-subtitle">Registro de advertencias críticas y notificaciones push enviadas.</p>
+          <p class="card-subtitle">Registro de advertencias críticas y notificaciones push enviadas al equipo.</p>
           <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; background: rgba(0,0,0,0.3);">
             <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
               <thead>
@@ -778,7 +769,7 @@
       </div>
 
       <div style="display: flex; gap: 10px; margin-top: 24px;">
-        <button onclick="cerrarModalPush()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-muted); border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.2s;">
+        <button onclick="cerrarModalPush()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-muted); border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">
           Cancelar
         </button>
         <button onclick="guardarDispositivoPersonalizado()" class="btn-add" style="flex: 1.2; padding: 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">
@@ -813,7 +804,7 @@
     </div>
   </div>
 
-  <!-- MODAL PARA EDITAR CUADRILLA (SOLO ADMINISTRADOR) -->
+  <!-- MODAL PARA EDITAR CUADRILLA -->
   <div id="editCuadrillaModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2200;">
     <div style="background: var(--card-bg); border: 1px solid var(--card-border-glow); border-radius: 28px; width: 100%; max-width: 480px; padding: 25px; box-shadow: 0 35px 70px rgba(0, 0, 0, 0.75); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); text-align: left; position: relative;">
       

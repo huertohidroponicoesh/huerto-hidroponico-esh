@@ -121,7 +121,6 @@ body.theme-crimson {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Corrección global y prevención de distorsión en iconos FontAwesome */
 i.fa-solid, i.fa-regular, i.fa-brands {
   display: inline-flex !important;
   align-items: center;
@@ -133,7 +132,7 @@ i.fa-solid, i.fa-regular, i.fa-brands {
 html, body {
   background-color: var(--bg-dark); color: var(--text-main); 
   min-height: 100vh; width: 100%; overflow-x: hidden; 
-  position: relative; transition: background 0.5s ease;
+  position: relative; transition: background 0.5s ease, color 0.3s ease;
 }
 
 body::before { 
@@ -469,25 +468,24 @@ body::before {
   flex-shrink: 0;
 }
 
-/* --- CÁPSULA SCROLEABLE PARA LAS CARPETAS (SOPORTE TANTO PARA ID Y CLASE) --- */
+/* --- CÁPSULA SCROLEABLE PARA LAS CARPETAS --- */
 .cuadrillas-container, #cuadrillasContainer {
   max-height: 440px !important;
   height: 440px !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
-  -webkit-overflow-scrolling: touch !important; /* Scroll suave en móviles (iOS/Android) */
+  -webkit-overflow-scrolling: touch !important;
   scrollbar-width: thin !important;
   scrollbar-color: var(--green-bright) rgba(0, 0, 0, 0.3) !important;
   padding-right: 8px !important;
   padding-bottom: 10px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 14px !important; /* Espaciado entre carpetas */
+  gap: 14px !important;
   box-sizing: border-box !important;
   width: 100% !important;
 }
 
-/* Personalización de la barra de desplazamiento Neón (PC / Laptop) */
 .cuadrillas-container::-webkit-scrollbar, 
 #cuadrillasContainer::-webkit-scrollbar {
   display: block !important;
