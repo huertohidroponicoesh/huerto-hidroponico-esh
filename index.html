@@ -24,9 +24,9 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
 </head>
-<body class="theme-emerald">
+<body class="theme-cachyos">
 
-  <!-- Orbes ambientales de fondo -->
+  <!-- Orbes ambientales de fondo estilo Hyprland -->
   <div class="ambient-glow orb-1"></div>
   <div class="ambient-glow orb-2"></div>
   <div class="ambient-glow orb-3"></div>
@@ -108,34 +108,54 @@
   <!-- CONTENEDOR PRINCIPAL CON LAYOUT AGS SHELL -->
   <div id="appContainer" class="app-layout-shell hidden">
     
-    <!-- DOCK LATERAL AGS (ESTILO HYPRLAND) -->
+    <!-- DOCK LATERAL AGS (ESTILO HYPRLAND / CAELESTIA SHELL) -->
     <aside class="ags-sidebar">
       <div>
         <div class="ags-sidebar-brand">
           <div class="ags-logo-box">
-            <i class="fa-solid fa-seedling"></i>
+            <i class="fa-solid fa-leaf"></i>
           </div>
           <div class="ags-brand-text">
             <h3>CAELESTIA HUD</h3>
-            <small>UAEH · ESH v3.0</small>
+            <small>Huejutla · ESH v3.2</small>
           </div>
         </div>
 
-        <nav class="ags-nav-menu">
+        <!-- Menú Lateral Unificado con flechas y animación de selección única -->
+        <nav class="ags-nav-menu" id="agsNavMenu">
           <button class="ags-nav-item active" id="sec-btn-sensors" onclick="mostrarSeccion('sensors')">
-            <i class="fa-solid fa-chart-pie"></i> Monitoreo
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-chart-pie"></i> Monitoreo HUD
+            </div>
+            <i class="fa-solid fa-chevron-right nav-arrow"></i>
           </button>
+
           <button class="ags-nav-item" id="sec-btn-cuadrillas" onclick="mostrarSeccion('cuadrillas')">
-            <i class="fa-solid fa-users-rectangle"></i> Reportes
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-folder-tree"></i> Reportes & Archivos
+            </div>
+            <i class="fa-solid fa-chevron-right nav-arrow"></i>
           </button>
+
           <button class="ags-nav-item" id="sec-btn-actuators" onclick="mostrarSeccion('actuators')">
-            <i class="fa-solid fa-toggle-on"></i> Sistema de Control
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-toggle-on"></i> Actuadores & Bypass
+            </div>
+            <i class="fa-solid fa-chevron-right nav-arrow"></i>
           </button>
+
           <button class="ags-nav-item" id="sec-btn-crops" onclick="mostrarSeccion('crops')">
-            <i class="fa-solid fa-leaf"></i> Trackers
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-seedling"></i> Trackers & Cultivo
+            </div>
+            <i class="fa-solid fa-chevron-right nav-arrow"></i>
           </button>
+
           <button class="ags-nav-item" id="sec-btn-history" onclick="mostrarSeccion('history')">
-            <i class="fa-solid fa-bell-concierge"></i> Bitácora & Alertas
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-bell-concierge"></i> Bitácora & Alertas
+            </div>
+            <i class="fa-solid fa-chevron-right nav-arrow"></i>
           </button>
         </nav>
       </div>
@@ -159,7 +179,7 @@
         <div class="header-branding">
           <div class="brand-badge"><i class="fa-solid fa-graduation-cap"></i> UAEH · ESH</div>
           <h1>SISTEMA AUTOMATIZADO DE MONITOREO HIDROPÓNICO</h1>
-          <h2>PROPEDÉUTICO CIENCIAS BÁSICAS E INGENIERÍA</h2>
+          <h2>PROPÉDUTICO CIENCIAS BÁSICAS E INGENIERÍA · <strong>HUss</strong></h2>
         </div>
 
         <div class="system-status-bar">
@@ -172,7 +192,7 @@
           <div id="weatherWidgetContainer"></div>
 
           <select id="themeSelector" class="select-metric" onchange="cambiarTemaVisual(this.value)" title="Seleccionar Tema">
-            <option value="theme-emerald">Esmeralda (Biófilo)</option>
+            <option value="theme-cachyos">CachyOS Emerald</option>
             <option value="theme-cyberpunk">Neón Cyberpunk</option>
             <option value="theme-midnight">Nocturno Deep</option>
             <option value="theme-sunset">Cálido Sunset</option>
@@ -196,13 +216,13 @@
         </div>
       </header>
 
-      <!-- SELECTOR DE HUERTO -->
+      <!-- SELECTOR DE HUERTO (NFT vs Raíces Flotantes) -->
       <div class="huerto-selector-bar">
         <button class="huerto-tab active" id="tab-nft" onclick="cambiarHuerto('nft')">
-          <i class="fa-solid fa-water"></i> Huerto NFT Principal
+          <i class="fa-solid fa-water"></i> Huerto NFT Principal (Hielera)
         </button>
         <button class="huerto-tab" id="tab-raices" onclick="cambiarHuerto('raices')">
-          <i class="fa-solid fa-seedling"></i> Raíces Flotantes
+          <i class="fa-solid fa-seedling"></i> Raíces Flotantes (Caja DWC)
         </button>
       </div>
 
@@ -323,7 +343,7 @@
         <!-- SECCIÓN: CUADRILLAS, REPORTES DRIVE Y CALENDARIO -->
         <section id="section-cuadrillas" class="app-section hidden">
           <div class="section-heading">
-            <h2><i class="fa-solid fa-users-rectangle"></i> Gestión de Reportes & Calendario Operativo</h2>
+            <h2><i class="fa-solid fa-folder-tree"></i> Gestión de Reportes & Cápsula Scrolleable</h2>
           </div>
 
           <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA -->
@@ -353,7 +373,7 @@
               </div>
               <p class="card-subtitle">Despliegue cada cuadrilla para adjuntar y consultar enlaces de reportes PDF en Google Drive.</p>
               
-              <div id="cuadrillasContainer" class="cuadrillas-container" style="margin-top: 15px;">
+              <div id="cuadrillasContainer" class="cuadrillas-container" style="margin-top: 15px; max-height: 350px; overflow-y: auto;">
                 <p style="text-align: center; color: var(--text-muted); padding: 20px;">Cargando cuadrillas...</p>
               </div>
             </div>
@@ -705,15 +725,15 @@
               <div style="font-size: 0.88rem; display: flex; flex-direction: column; gap: 14px; color: var(--text-muted);">
                 <div class="diag-row">
                   <span>Calibración pH Buffer:</span>
-                  <strong id="calibPhDate" style="color: var(--text-main);">01/10/2026</strong>
+                  <strong id="calibPhDate" style="color: var(--text-main);">01/11/2026</strong>
                 </div>
                 <div class="diag-row">
                   <span>Calibración CE Estándar:</span>
-                  <strong id="calibEcDate" style="color: var(--text-main);">01/10/2026</strong>
+                  <strong id="calibEcDate" style="color: var(--text-main);">01/11/2026</strong>
                 </div>
                 <div class="diag-row">
                   <span>Offset Temp DS18B20:</span>
-                  <strong id="calibTempDate" style="color: var(--text-main);">01/10/2026</strong>
+                  <strong id="calibTempDate" style="color: var(--text-main);">01/11/2026</strong>
                 </div>
 
                 <div class="admin-only" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
@@ -757,7 +777,7 @@
 
       <footer>
         <p>Huerto Hidropónico Inteligente IoT · Escuela Superior de Huejutla · UAEH</p>
-        <p style="font-size: 0.72rem; margin-top: 4px; opacity: 0.7;">Desarrollado por la Cuadrilla de Programación</p>
+        <p style="font-size: 0.72rem; margin-top: 4px; opacity: 0.7;">Desarrollado por la Cuadrilla de Programación (HUss)</p>
       </footer>
     </div>
   </div>
@@ -841,7 +861,7 @@
     </div>
   </div>
 
-  <!-- Scripts Modularizados (Incluyendo los nuevos módulos AGS Shell y Diagrama de Flujo) -->
+  <!-- Scripts Modularizados -->
   <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/sensors.js"></script>

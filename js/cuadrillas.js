@@ -1,5 +1,6 @@
 // =========================================================
 // MÓDULO DE GESTIÓN DE CUADRILLAS, DRAG & DROP Y EDICIÓN (ADMIN)
+// Estilo Caelestia Shell / Hyprland UI
 // =========================================================
 
 let fechasSeleccionadasCuadrilla = [];
