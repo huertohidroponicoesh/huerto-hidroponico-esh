@@ -1,5 +1,5 @@
 // =========================================================
-// MÓDULO DE INTERFAZ & SHELL AGS (CAELESTIA HUD) - AUToejecutable
+// MÓDULO DE INTERFAZ & SHELL AGS (CAELESTIA HUD) - BLINDADO MÓVIL
 // =========================================================
 
 function iniciarShellAGSCompleto() {
@@ -30,7 +30,7 @@ function inicializarShellAGS() {
 // Enlace directo y seguro para los botones de la barra superior
 function vincularBotonesSuperioresDirectamente() {
   // 1. Botón Hard Refresh
-  const btnRefresh = document.querySelector('button[title*="Hard Refresh"]');
+  const btnRefresh = document.querySelector('button[title*="Hard Refresh"]') || document.querySelector('button[onclick*="HardRefresh"]');
   if (btnRefresh) {
     btnRefresh.onclick = (e) => {
       e.preventDefault();
@@ -59,7 +59,7 @@ function vincularBotonesSuperioresDirectamente() {
   console.log("🔗 Botones superiores vinculados correctamente por JS.");
 }
 
-// Lógica de apertura y cierre para el Dock Lateral AGS
+// Lógica de apertura y cierre blindada para el Dock Lateral AGS en Móvil
 function inicializarMenuMobileAGS() {
   const sidebar = document.querySelector('.ags-sidebar');
   const btnToggle = document.getElementById('btnToggleSidebar');
@@ -69,16 +69,33 @@ function inicializarMenuMobileAGS() {
       e.preventDefault();
       e.stopPropagation();
       sidebar.classList.toggle('mobile-open');
+      console.log("📱 Menú lateral móvil alternado:", sidebar.classList.contains('mobile-open'));
     };
-    btnToggle.onclick = toggleSidebarHandler;
+
+    // Limpiar y registrar eventos duales (click y touchstart) para respuesta inmediata en móvil
+    btnToggle.removeEventListener('click', toggleSidebarHandler);
+    btnToggle.removeEventListener('touchstart', toggleSidebarHandler);
+
+    btnToggle.addEventListener('click', toggleSidebarHandler);
+    btnToggle.addEventListener('touchstart', toggleSidebarHandler, { passive: false });
   }
 
+  // Cerrar automáticamente el menú al hacer clic en cualquier opción de la navegación móvil
   document.querySelectorAll('.ags-nav-item').forEach(item => {
     item.addEventListener('click', () => {
       if (window.innerWidth <= 992 && sidebar) {
         sidebar.classList.remove('mobile-open');
       }
     });
+  });
+
+  // Cerrar el menú si se da clic fuera de él en dispositivos móviles
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 992 && sidebar && sidebar.classList.contains('mobile-open')) {
+      if (!sidebar.contains(e.target) && btnToggle && !btnToggle.contains(e.target)) {
+        sidebar.classList.remove('mobile-open');
+      }
+    }
   });
 }
 
