@@ -137,7 +137,7 @@
   color: var(--danger); 
 }
 
-/* --- ADAPTACIÓN MÓVIL SIMÉTRICA DEL HEADER --- */
+/* --- ADAPTACIÓN MÓVIL SIMÉTRICA Y UNIFICADA DEL HEADER --- */
 @media (max-width: 992px) {
   .main-header {
     display: flex;
@@ -168,6 +168,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     gap: 8px;
     width: 100%;
   }
@@ -189,5 +190,10 @@
     justify-content: center;
     align-items: center;
     border-radius: 14px;
+  }
+
+  /* Forzar que los botones de acción (menú, campana, refresh, apagado) queden perfectamente alineados abajo en fila */
+  .btn-action.mobile-only {
+    display: flex !important;
   }
 }
