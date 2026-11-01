@@ -2,7 +2,6 @@
    MÓDULO DE SENSORES Y MÉTRICAS (SENSORES.CSS)
    ========================================================= */
 
-/* Selector de Huerto y Pestañas */
 .huerto-selector-bar { 
   display: flex; 
   gap: 12px; 
@@ -51,7 +50,6 @@
   box-sizing: border-box; 
 }
 
-/* Tarjetas Glassmorphic de Sensores */
 .card { 
   background: var(--card-bg); 
   border: 1px solid var(--card-border); 
@@ -121,7 +119,6 @@
   font-weight: 600; 
 }
 
-/* Barras de Progreso Dinámicas */
 .progress-bar { 
   height: 8px; 
   background: rgba(255, 255, 255, 0.08); 
@@ -150,6 +147,63 @@
 
 .metric-footer strong { 
   color: var(--green-bright); 
+}
+
+/* --- ESTILOS DE GRÁFICAS Y CÁPSULAS STAT-BOX --- */
+.chart-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.chart-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  flex-wrap: wrap; 
+  gap: 12px; 
+  margin-bottom: 20px; 
+  box-sizing: border-box; 
+}
+
+.chart-container { 
+  position: relative; 
+  height: 280px; 
+  width: 100%; 
+  box-sizing: border-box; 
+  background: rgba(0,0,0,0.25); 
+  border-radius: 16px; 
+  padding: 12px; 
+  border: 1px solid rgba(255,255,255,0.04); 
+}
+
+.stats-summary-bar { 
+  display: flex; 
+  gap: 12px; 
+  margin-top: 18px; 
+  flex-wrap: wrap; 
+  box-sizing: border-box; 
+}
+
+.stat-box { 
+  flex: 1; 
+  min-width: 90px; 
+  background: rgba(0,0,0,0.3); 
+  border: 1px solid var(--card-border); 
+  padding: 12px; 
+  border-radius: 14px; 
+  text-align: center; 
+  font-size: 0.78rem; 
+  color: var(--text-muted); 
+  box-sizing: border-box; 
+}
+
+.stat-box strong { 
+  display: block; 
+  font-size: 1.1rem; 
+  color: var(--green-bright); 
+  margin-top: 4px; 
 }
 
 .diag-list { 

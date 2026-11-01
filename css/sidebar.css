@@ -9,7 +9,6 @@
   position: relative;
 }
 
-/* Dock Lateral AGS */
 .ags-sidebar {
   width: 290px;
   min-width: 290px;
@@ -65,7 +64,6 @@
   font-weight: 700;
 }
 
-/* Menú de Navegación Lateral */
 .ags-nav-menu {
   display: flex;
   flex-direction: column;
@@ -88,7 +86,7 @@
   text-align: left;
   width: 100%;
   outline: none !important;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .ags-nav-item i {
@@ -118,25 +116,26 @@
   color: var(--green-bright);
 }
 
-.ags-nav-item:active {
+/* Corrección estricta para evitar que se quede pegado el estado activo al tocar en móvil */
+.ags-nav-item:active,
+.ags-nav-item:focus {
   background: rgba(255, 255, 255, 0.02) !important;
-  transform: scale(0.98);
+  color: var(--text-muted);
 }
 
 .ags-nav-item.active {
-  background: linear-gradient(135deg, rgba(53, 229, 138, 0.22), rgba(0, 240, 255, 0.12));
+  background: linear-gradient(135deg, rgba(53, 229, 138, 0.22), rgba(0, 240, 255, 0.12)) !important;
   border-color: var(--card-border-glow);
-  color: var(--green-bright);
+  color: var(--green-bright) !important;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
 }
 
 .ags-nav-item.active i,
 .ags-nav-item.active .nav-arrow {
-  color: var(--green-bright);
+  color: var(--green-bright) !important;
   transform: translateX(4px);
 }
 
-/* Widget de Clima & Sistema en Sidebar */
 .ags-sidebar-widget {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--card-border);
@@ -158,7 +157,6 @@
   font-weight: 700;
 }
 
-/* Contenido Principal desplazado a la derecha */
 .main-content-wrapper {
   flex: 1;
   margin-left: 290px;
@@ -168,7 +166,6 @@
   box-sizing: border-box;
 }
 
-/* Responsive para la barra lateral en móviles */
 @media (max-width: 992px) {
   .ags-sidebar {
     transform: translateX(-100%);

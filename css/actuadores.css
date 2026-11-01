@@ -2,7 +2,6 @@
    MÓDULO DE ACTUADORES Y DIAGRAMA HIDRÁULICO (ACTUADORES.CSS)
    ========================================================= */
 
-/* DIAGRAMA HIDRÁULICO AVANZADO */
 .hydraulic-card { 
   overflow: hidden; 
 }
@@ -103,7 +102,6 @@
   to { left: 130%; }
 }
 
-/* Panel de Control de Actuadores y Switches */
 .control-grid { 
   display: grid; 
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -167,7 +165,6 @@
   gap: 6px; 
 }
 
-/* Interruptor Estilo Toggle Switch */
 .switch { 
   position: relative; 
   display: inline-block; 
@@ -206,6 +203,107 @@ input:checked + .slider:before {
   transform: translateX(24px); 
 }
 
-/* Control para Invitados */
+/* --- REDISEÑO PREMIUM: PROGRAMADOR AUTOMÁTICO --- */
+.scheduler-hud-card {
+  background: rgba(12, 35, 28, 0.75);
+  border: 1px solid var(--card-border-glow);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-top: 25px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(20px);
+}
+
+.scheduler-hud-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 14px;
+}
+
+.scheduler-hud-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--green-bright), var(--cyan-neon));
+  color: #030d0a;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(53, 229, 138, 0.4);
+}
+
+.scheduler-hud-header h4 {
+  font-size: 1.05rem;
+  color: var(--text-main);
+  font-weight: 800;
+}
+.scheduler-hud-header p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.scheduler-hud-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.sched-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sched-field label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sched-field select, .sched-field input {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  border-radius: 14px;
+  font-size: 0.88rem;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+.sched-field select:focus, .sched-field input:focus {
+  border-color: var(--green-bright);
+  box-shadow: 0 0 15px rgba(53, 229, 138, 0.3);
+}
+
+.btn-sched-submit {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--green-bright), var(--green-hover));
+  border: none;
+  border-radius: 14px;
+  color: #030d0a;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(53, 229, 138, 0.35);
+  font-size: 0.9rem;
+}
+.btn-sched-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(53, 229, 138, 0.55);
+}
+
 body.role-guest .admin-only { display: none !important; }
 body.role-guest .control-item .switch { pointer-events: none; opacity: 0.3; filter: grayscale(1); }
