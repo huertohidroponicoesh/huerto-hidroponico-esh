@@ -79,9 +79,9 @@ function renderTrackerItem(key, item) {
   // Calcular días transcurridos desde la fecha de inicio
   const diffDays = Math.floor(Math.max(0, new Date() - new Date(fechaValida)) / (1000 * 60 * 60 * 24));
   let currentDay = Math.min(totalDays, Math.max(1, 1 + diffDays));
-  const percentage = Math.min(100, Math.max(0, (currentDay / totalDays) * 100));
+  const percentage = Math.min(100, Math.max(0, (currentDay / totalDays) * 100)).toFixed(1);
 
-  // Distribución de fases por defecto
+  // Distribución inteligente de fases por defecto
   const diasAgua = Math.min(7, totalDays);
   const dias50 = Math.min(7, Math.max(0, totalDays - 7));
   const dias100 = Math.max(0, totalDays - 14);
@@ -91,9 +91,9 @@ function renderTrackerItem(key, item) {
   const w100 = ((dias100 / totalDays) * 100).toFixed(2);
 
   let stagesHTML = `
-    <div class="tracker-stage-segment stage-agua" style="width: ${wAgua}%; background: rgba(0, 240, 255, 0.25); border-right: 1px solid rgba(255,255,255,0.1); padding: 6px; font-size: 0.72rem; font-weight: 700; color: var(--cyan-neon); text-align: center;">Agua (${diasAgua}d)</div>
-    <div class="tracker-stage-segment stage-sol50" style="width: ${w50}%; background: rgba(255, 209, 102, 0.25); border-right: 1px solid rgba(255,255,255,0.1); padding: 6px; font-size: 0.72rem; font-weight: 700; color: var(--warning); text-align: center;">Sol. 50% (${dias50}d)</div>
-    <div class="tracker-stage-segment stage-sol100" style="width: ${w100}%; background: rgba(53, 229, 138, 0.25); padding: 6px; font-size: 0.72rem; font-weight: 700; color: var(--green-bright); text-align: center;">Sol. 100% (${dias100}d)</div>
+    <div class="tracker-stage-segment" style="width: ${wAgua}%; background: rgba(0, 240, 255, 0.18); border-right: 1px solid rgba(255,255,255,0.08); padding: 8px 4px; font-size: 0.7rem; font-weight: 700; color: var(--cyan-neon); text-align: center; display: flex; align-items: center; justify-content: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Agua (${diasAgua}d)</div>
+    <div class="tracker-stage-segment" style="width: ${w50}%; background: rgba(255, 209, 102, 0.18); border-right: 1px solid rgba(255,255,255,0.08); padding: 8px 4px; font-size: 0.7rem; font-weight: 700; color: var(--warning); text-align: center; display: flex; align-items: center; justify-content: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Sol. 50% (${dias50}d)</div>
+    <div class="tracker-stage-segment" style="width: ${w100}%; background: rgba(53, 229, 138, 0.18); padding: 8px 4px; font-size: 0.7rem; font-weight: 700; color: var(--green-bright); text-align: center; display: flex; align-items: center; justify-content: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Sol. 100% (${dias100}d)</div>
   `;
 
   const div = document.createElement('div');
@@ -101,20 +101,29 @@ function renderTrackerItem(key, item) {
   div.innerHTML = `
     <div class="tracker-item-header">
       <strong><i class="fa-solid fa-seedling" style="color: var(--green-bright);"></i> ${item.title}</strong>
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 0.8rem; font-weight: 700; background: rgba(53,229,138,0.1); border: 1px solid var(--card-border); padding: 4px 10px; border-radius: 10px; color: var(--green-bright);">Día ${currentDay} / ${totalDays}</span>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 0.78rem; font-weight: 800; background: rgba(53,229,138,0.12); border: 1px solid var(--card-border); padding: 4px 10px; border-radius: 12px; color: var(--green-bright);">Día ${currentDay} de ${totalDays}</span>
         ${isAdmin ? `<button class="btn-danger-custom" style="padding: 6px 10px;" onclick="eliminarTracker('${key}')" title="Eliminar Lote"><i class="fa-solid fa-xmark"></i></button>` : ''}
       </div>
     </div>
     
-    <div class="tracker-visual-bar" style="position: relative; display: flex; height: 32px; background: rgba(0,0,0,0.4); border-radius: 10px; overflow: hidden; border: 1px solid var(--card-border);">
+    <!-- Barra Visual de Fases Multietapa -->
+    <div class="tracker-visual-bar" style="position: relative; display: flex; height: 36px; background: rgba(0,0,0,0.45); border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border);">
       ${stagesHTML}
-      <div class="tracker-cursor" style="position: absolute; top: 0; bottom: 0; width: 3px; background: #fff; box-shadow: 0 0 10px #fff; left: ${percentage}%; transition: left 0.5s ease;"></div>
+      <!-- Cursor / Pin indicador del día actual -->
+      <div class="tracker-cursor" style="position: absolute; top: 0; bottom: 0; width: 3px; background: #fff; box-shadow: 0 0 12px #fff; left: ${percentage}%; transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1); z-index: 3;">
+        <span style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: #030d0a; font-size: 0.62rem; font-weight: 800; padding: 1px 5px; border-radius: 6px; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.4);">${percentage}%</span>
+      </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
-      <span><i class="fa-regular fa-calendar"></i> Inicio: ${fechaValida}</span>
-      <span><i class="fa-solid fa-flag-checkered" style="color: var(--cyan-neon);"></i> Cosecha estimada: +${totalDays} días</span>
+    <!-- Barra de progreso lineal inferior complementaria con gradiente -->
+    <div style="width: 100%; background: rgba(255,255,255,0.06); height: 6px; border-radius: 6px; overflow: hidden; margin-top: -4px;">
+      <div style="width: ${percentage}%; height: 100%; background: linear-gradient(90deg, var(--cyan-neon), var(--green-bright)); border-radius: 6px; box-shadow: 0 0 10px rgba(53,229,138,0.5); transition: width 0.6s ease;"></div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted); margin-top: -2px;">
+      <span><i class="fa-regular fa-calendar" style="margin-right: 4px;"></i> Inicio: ${fechaValida}</span>
+      <span style="color: var(--cyan-neon); font-weight: 600;"><i class="fa-solid fa-flag-checkered" style="margin-right: 4px;"></i> Cosecha estimada: +${totalDays} días</span>
     </div>
   `;
   container.appendChild(div);

@@ -43,7 +43,7 @@
             <i class="fa-solid fa-seedling plant-bounce"></i>
           </div>
         </div>
-        <span class="hex-badge-label"><i class="fa-solid fa-shield-halved"></i> IoT ESH · UAEH</span>
+        <span class="hex-badge-label"><i class="fa-solid fa-shield-halved"></i> ESH · UAEH</span>
         <h2>SISTEMA HIDROPÓNICO</h2>
         <p class="login-subtitle">Seleccione su perfil de usuario autorizado</p>
       </div>
@@ -116,8 +116,8 @@
             <i class="fa-solid fa-leaf"></i>
           </div>
           <div class="ags-brand-text">
-            <h3>CAELESTIA HUD</h3>
-            <small>Huejutla · ESH v3.2</small>
+            <h3>SISTEMA HIDROPÓNICO</h3>
+            <small>UAEH · ESH</small>
           </div>
         </div>
 
@@ -125,14 +125,14 @@
         <nav class="ags-nav-menu" id="agsNavMenu">
           <button class="ags-nav-item active" id="sec-btn-sensors" onclick="mostrarSeccion('sensors')">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <i class="fa-solid fa-chart-pie"></i> Monitoreo HUD
+              <i class="fa-solid fa-chart-pie"></i> Monitoreo
             </div>
             <i class="fa-solid fa-chevron-right nav-arrow"></i>
           </button>
 
           <button class="ags-nav-item" id="sec-btn-cuadrillas" onclick="mostrarSeccion('cuadrillas')">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <i class="fa-solid fa-folder-tree"></i> Reportes & Archivos
+              <i class="fa-solid fa-folder-tree"></i> Reportes
             </div>
             <i class="fa-solid fa-chevron-right nav-arrow"></i>
           </button>
@@ -146,7 +146,7 @@
 
           <button class="ags-nav-item" id="sec-btn-crops" onclick="mostrarSeccion('crops')">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <i class="fa-solid fa-seedling"></i> Trackers & Cultivo
+              <i class="fa-solid fa-seedling"></i> Trackers
             </div>
             <i class="fa-solid fa-chevron-right nav-arrow"></i>
           </button>
@@ -166,14 +166,14 @@
           <span><i class="fa-solid fa-palette"></i> Tema Visual:</span>
         </div>
         <select id="themeSelector" class="select-metric" style="width: 100%; font-size: 0.78rem; padding: 8px 10px;" onchange="cambiarTemaVisual(this.value)" title="Seleccionar Tema">
-          <option value="theme-cachyos">CachyOS Emerald</option>
-          <option value="theme-cyberpunk">Neón Cyberpunk</option>
-          <option value="theme-midnight">Nocturno Deep</option>
-          <option value="theme-sunset">Cálido Sunset</option>
-          <option value="theme-matrix">Terminal Matrix</option>
-          <option value="theme-aurora">Boreal Aurora</option>
-          <option value="theme-solarized">SoTech Lab</option>
-          <option value="theme-crimson">Crimson Red</option>
+          <option value="theme-cachyos">Emerald</option>
+          <option value="theme-cyberpunk">Neón</option>
+          <option value="theme-midnight">Deep</option>
+          <option value="theme-sunset">Sunset</option>
+          <option value="theme-matrix">Terminal</option>
+          <option value="theme-aurora">Boreal</option>
+          <option value="theme-solarized">SoTech</option>
+          <option value="theme-crimson">Crimson</option>
         </select>
       </div>
 
@@ -304,7 +304,7 @@
                     <option value="humedad">Y1: Humedad (%)</option>
                   </select>
                   <select id="chartSelectY2" class="select-metric" title="Eje Y2 (Derecha)">
-                    <option value="none">-- Modo Individual (Ocultar Y2) --</option>
+                    <option value="none">-- Modo Individual --</option>
                     <option value="ec" selected>Y2: Conductividad (CE)</option>
                     <option value="ph">Y2: pH del Agua</option>
                     <option value="temperatura">Y2: Temperatura (°C)</option>
@@ -353,13 +353,13 @@
         <!-- SECCIÓN: CUADRILLAS, REPORTES DRIVE Y CALENDARIO -->
         <section id="section-cuadrillas" class="app-section hidden">
           <div class="section-heading">
-            <h2><i class="fa-solid fa-folder-tree"></i> Gestión de Reportes & Cápsula Scrolleable</h2>
+            <h2><i class="fa-solid fa-folder-tree"></i> Gestión de Reportes</h2>
           </div>
 
           <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA -->
           <div class="card admin-only" style="margin-bottom: 20px;">
             <h3><i class="fa-solid fa-folder-plus"></i> Integrar Cuadrilla</h3>
-            <p class="card-subtitle">Asigne nombre, días de labor múltiples y miembros del equipo (Solo Administrador)</p>
+            <p class="card-subtitle">Asigne nombre, días de labor múltiples y miembros del equipo</p>
             
             <div class="tracker-inputs-form" style="margin-top: 15px;">
               <div class="tracker-inputs-row">
@@ -482,7 +482,7 @@
                   <div class="actuator-icon-wrapper pump-spin"><i class="fa-solid fa-shower actuator-icon"></i></div>
                   <div>
                     <strong>Bomba Waterblock</strong>
-                    <span>Circuito Enfriamiento Hielera</span>
+                    <span>Enfriamiento Hielera</span>
                     <div class="actuator-status" id="statusBomba2"><span class="status-dot"></span> APAGADA</div>
                   </div>
                 </div>
@@ -505,7 +505,7 @@
                 <div class="actuator-info">
                   <div class="actuator-icon-wrapper"><i class="fa-solid fa-code-branch actuator-icon" style="color: var(--warning);"></i></div>
                   <div>
-                    <strong>Válvula Bypass (Plástico)</strong>
+                    <strong>Válvula Bypass</strong>
                     <span>Retorno Directo</span>
                     <div class="actuator-status" id="statusBypass"><span class="status-dot"></span> APAGADA</div>
                   </div>
@@ -580,7 +580,7 @@
               <div class="scheduler-hud-header">
                 <div class="scheduler-hud-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
                 <div>
-                  <h4>Programador Automático Inteligente</h4>
+                  <h4>Programador Automático</h4>
                   <p>Automatización horaria de relés y actuadores del huerto</p>
                 </div>
               </div>
@@ -591,7 +591,7 @@
                   <select id="schedActuator" class="select-metric">
                     <option value="bomba_principal">Bomba Principal NFT</option>
                     <option value="peltier">Placa Peltier Enfriador</option>
-                    <option value="bypass">Válvula Bypass Desvío</option>
+                    <option value="bypass">Válvula Bypass</option>
                   </select>
                 </div>
 
@@ -623,7 +623,7 @@
             <!-- TRACKERS DE CULTIVO REDISEÑADOS -->
             <div class="card tracker-card-hud">
               <div class="chart-header">
-                <h3><i class="fa-solid fa-leaf"></i> Trackers de Cultivo Avanzados</h3>
+                <h3><i class="fa-solid fa-leaf"></i> Trackers de Cultivo</h3>
                 <span class="hydraulic-badge">Fase 1: Agua (7d) | Fase 2: Solución 50% (7d) | Fase 3: Solución 100% (Resto)</span>
               </div>
               
@@ -654,7 +654,7 @@
         <!-- SECCIÓN 4 (UNIFICADA): BITÁCORA, CALIBRACIÓN & ALERTAS PUSH -->
         <section id="section-history" class="app-section hidden">
           <div class="section-heading">
-            <h2><i class="fa-solid fa-bell-concierge"></i> Centro Unificado: Bitácora, Calibración & Umbrales de Alerta</h2>
+            <h2><i class="fa-solid fa-bell-concierge"></i> Bitácora, Calibración & Umbrales de Alerta</h2>
           </div>
 
           <!-- 1. BLOQUE DE CONFIGURACIÓN DE UMBRALES -->
@@ -763,7 +763,7 @@
           <!-- 3. BLOQUE DE HISTORIAL DE ALERTAS PUSH -->
           <div class="card" style="margin-top: 20px;">
             <div class="chart-header">
-              <h3><i class="fa-solid fa-bell" style="color: var(--warning);"></i> Historial de Alertas & Anomalías Recientes</h3>
+              <h3><i class="fa-solid fa-bell" style="color: var(--warning);"></i> Historial de Alertas & Anomalías</h3>
               <div style="display: flex; gap: 8px;">
                 <button class="btn-action" onclick="cargarHistorialAlertasFirebase()" title="Recargar Alertas"><i class="fa-solid fa-rotate"></i></button>
                 <button class="btn-danger-custom admin-only" onclick="purgarAlertasFirebase()" title="Limpiar Historial de Alertas"><i class="fa-solid fa-trash-can"></i> Limpiar</button>
@@ -791,8 +791,8 @@
       </main>
 
       <footer>
-        <p>Huerto Hidropónico Inteligente IoT · Escuela Superior de Huejutla · UAEH</p>
-        <p style="font-size: 0.72rem; margin-top: 4px; opacity: 0.7;">Desarrollado por la Cuadrilla de Programación (HUss)</p>
+        <p>Huerto Hidropónico IoT · Escuela Superior de Huejutla · UAEH</p>
+        <p style="font-size: 0.72rem; margin-top: 4px; opacity: 0.7;">Desarrollado por la Cuadrilla de Programación</p>
       </footer>
     </div>
   </div>
@@ -862,7 +862,7 @@
           <input type="text" id="editIntegrantesCuadrilla" style="width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
         </div>
         <div>
-          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Días de Labor Asignados:</label>
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Días Asignados:</label>
           <div style="display: flex; gap: 8px;">
             <input type="date" id="editFechaPicker" onchange="agregarFechaEdicion()" style="flex: 1; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none;">
           </div>
