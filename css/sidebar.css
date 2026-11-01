@@ -116,9 +116,11 @@
   color: var(--green-bright) !important;
 }
 
-/* Neutralización total de estados focus/active que causaban que se quedaran iluminados */
+/* ANULACIÓN TOTAL DE FOCUS, ACTIVE Y HOVER RESIDUAL EN BOTONES NO ACTIVOS */
 .ags-nav-item:not(.active):focus,
-.ags-nav-item:not(.active):active {
+.ags-nav-item:not(.active):active,
+.ags-nav-item:not(.active):focus-visible,
+.ags-nav-item:not(.active):focus-within {
   background: rgba(255, 255, 255, 0.02) !important;
   border-color: transparent !important;
   color: var(--text-muted) !important;
@@ -126,10 +128,11 @@
   outline: none !important;
 }
 
-/* ESTADO ACTIVO EXCLUSIVO */
+/* ESTADO ACTIVO EXCLUSIVO (Único que se ilumina y se queda fijo) */
 .ags-nav-item.active,
 .ags-nav-item.active:focus,
-.ags-nav-item.active:active {
+.ags-nav-item.active:active,
+.ags-nav-item.active:hover {
   background: linear-gradient(135deg, rgba(53, 229, 138, 0.22), rgba(0, 240, 255, 0.12)) !important;
   border-color: var(--card-border-glow) !important;
   color: var(--green-bright) !important;
