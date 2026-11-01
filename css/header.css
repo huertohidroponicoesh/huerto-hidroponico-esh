@@ -137,6 +137,19 @@
   color: var(--danger); 
 }
 
+/* Estilo destacado del botón universal de instalación PWA */
+#btnInstallPwa {
+  background: rgba(53, 229, 138, 0.12);
+  border: 1px solid var(--card-border-glow);
+  color: var(--green-bright);
+}
+
+#btnInstallPwa:hover {
+  background: rgba(53, 229, 138, 0.25);
+  box-shadow: 0 0 14px rgba(53, 229, 138, 0.4);
+  color: var(--green-bright);
+}
+
 /* --- ADAPTACIÓN MÓVIL SIMÉTRICA Y UNIFICADA DEL HEADER --- */
 @media (max-width: 992px) {
   .main-header {

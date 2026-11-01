@@ -42,12 +42,23 @@
   box-shadow: 0 0 18px var(--card-border-glow);
 }
 
-/* Cuadrillas Activas: Tarjetas de Carpetas */
+/* Cuadrillas Activas: Aprovechamiento vertical optimizado del scrolleable */
+.cuadrillas-container {
+  margin-top: 15px;
+  max-height: 520px !important;
+  min-height: 350px;
+  overflow-y: auto;
+  padding-right: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .folder-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 18px;
-  margin-bottom: 14px;
+  margin-bottom: 4px;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
@@ -73,7 +84,6 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
-/* Contenedor del ícono adaptado al color dinámico del tema */
 .folder-icon-glow {
   width: 44px;
   height: 44px;
@@ -96,7 +106,7 @@
   animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Planificador Mensual & Calendario Operativo */
+/* Planificador Mensual & Calendario Operativo Reestructurado */
 .calendar-hud-wrapper {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -133,14 +143,16 @@
   gap: 6px;
 }
 
+/* Celdas del calendario optimizadas para evitar saturación */
 .calendar-day-box {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--card-border);
-  border-radius: 14px;
-  padding: 8px;
-  min-height: 76px;
+  border-radius: 12px;
+  aspect-ratio: 1;
+  padding: 6px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
   position: relative;
   box-sizing: border-box;
@@ -159,17 +171,24 @@
   transform: scale(0.95);
 }
 
-/* Estados de días en el calendario sincronizados con las variables del tema */
+/* Número del día centrado o superior limpio */
+.calendar-day-box .dia-num {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+/* Estados de días en el calendario con indicadores visuales limpios */
 .calendar-day-pendiente {
   border: 1px solid var(--warning) !important;
   background: rgba(255, 209, 102, 0.15) !important;
-  box-shadow: 0 0 12px rgba(255, 209, 102, 0.25);
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.2);
 }
 
 .calendar-day-cumplido {
   border: 1px solid var(--green-bright) !important;
-  background: rgba(53, 229, 138, 0.25) !important;
-  box-shadow: 0 0 16px var(--card-border-glow);
+  background: rgba(53, 229, 138, 0.22) !important;
+  box-shadow: 0 0 12px var(--card-border-glow);
   cursor: pointer;
 }
 
@@ -177,12 +196,17 @@
   filter: brightness(1.2);
 }
 
+/* Insignia minimalista para evitar desbordes de texto */
 .calendar-badge-mobile {
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
-  padding: 3px 6px;
-  margin-top: auto;
-  border: 1px solid var(--card-border);
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  padding: 2px;
+  font-size: 0.6rem;
+  font-weight: 700;
   text-align: center;
-  backdrop-filter: blur(5px);
+  border: 1px solid var(--card-border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

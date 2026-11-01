@@ -55,7 +55,7 @@ function inicializarMenuMobileAGS() {
 }
 
 // =========================================================
-// REGISTRO DE SERVICE WORKER PARA PWA E INSTALACIÓN NATIVA
+// REGISTRO DE SERVICE WORKER Y GESTIÓN DE PWA (INSTALACIÓN)
 // =========================================================
 let deferredPrompt;
 
@@ -71,10 +71,15 @@ function registrarServiceWorkerPWA() {
   }
 }
 
-// Captura el evento para instalar la PWA como aplicación nativa
+// Captura el evento para habilitar el botón universal de instalación PWA
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
+  
+  const btnInstall = document.getElementById('btnInstallPwa');
+  if (btnInstall) {
+    btnInstall.classList.remove('hidden'); // Muestra el botón en la barra superior
+  }
   console.log("📲 Aplicación lista para instalar como PWA.");
 });
 
@@ -83,16 +88,27 @@ function instalarAplicacionPWA() {
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === 'accepted') {
-        console.log('El usuario instaló la aplicación PWA.');
+        console.log('✅ El usuario aceptó instalar la aplicación PWA.');
+        const btnInstall = document.getElementById('btnInstallPwa');
+        if (btnInstall) btnInstall.classList.add('hidden');
       }
       deferredPrompt = null;
     });
   } else {
+    // Guía interactiva si el navegador no expone prompt directo (como en iOS Safari)
     if (typeof mostrarToast === 'function') {
-      mostrarToast("PWA Instalación", "Abre el menú de tu navegador y selecciona 'Instalar aplicación' o 'Agregar al inicio'.", "warning");
+      mostrarToast("Instalación PWA", "Abre el menú de tu navegador y selecciona 'Instalar aplicación' o 'Agregar a la pantalla de inicio'.", "warning");
+    } else {
+      alert("Para instalar la app, abre las opciones de tu navegador y selecciona 'Instalar aplicación'.");
     }
   }
 }
+
+window.addEventListener('appinstalled', (evt) => {
+  console.log('🎉 PWA instalada con éxito.');
+  const btnInstall = document.getElementById('btnInstallPwa');
+  if (btnInstall) btnInstall.classList.add('hidden');
+});
 
 // =========================================================
 // MODO NOCTURNO AUTOMÁTICO - ORBES AMBIENTALES
