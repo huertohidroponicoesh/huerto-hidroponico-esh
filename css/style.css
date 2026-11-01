@@ -163,11 +163,13 @@ body::before {
   display: flex;
   min-height: 100vh;
   width: 100%;
+  position: relative;
 }
 
 /* Dock Lateral AGS */
 .ags-sidebar {
   width: 280px;
+  min-width: 280px;
   background: var(--card-bg);
   border-right: 1px solid var(--card-border);
   backdrop-filter: blur(20px);
@@ -299,6 +301,7 @@ body::before {
   margin-left: 280px;
   padding: 30px;
   max-width: calc(100% - 280px);
+  min-width: 0;
   box-sizing: border-box;
 }
 

@@ -105,642 +105,661 @@
     </div>
   </div>
 
-  <!-- CONTENEDOR PRINCIPAL -->
-  <div id="appContainer" class="app-container hidden">
+  <!-- CONTENEDOR PRINCIPAL CON LAYOUT AGS SHELL -->
+  <div id="appContainer" class="app-layout-shell hidden">
     
-    <header class="main-header">
-      <div class="header-branding">
-        <div class="brand-badge"><i class="fa-solid fa-graduation-cap"></i> UAEH · ESH</div>
-        <h1>SISTEMA AUTOMATIZADO DE MONITOREO HIDROPÓNICO</h1>
-        <h2>PROPEDÉUTICO CIENCIAS BÁSICAS E INGENIERÍA</h2>
+    <!-- DOCK LATERAL AGS (ESTILO HYPRLAND) -->
+    <aside class="ags-sidebar">
+      <div>
+        <div class="ags-sidebar-brand">
+          <div class="ags-logo-box">
+            <i class="fa-solid fa-seedling"></i>
+          </div>
+          <div class="ags-brand-text">
+            <h3>CAELESTIA HUD</h3>
+            <small>UAEH · ESH v3.0</small>
+          </div>
+        </div>
+
+        <nav class="ags-nav-menu">
+          <button class="ags-nav-item active" id="sec-btn-sensors" onclick="mostrarSeccion('sensors')">
+            <i class="fa-solid fa-chart-pie"></i> Monitoreo
+          </button>
+          <button class="ags-nav-item" id="sec-btn-cuadrillas" onclick="mostrarSeccion('cuadrillas')">
+            <i class="fa-solid fa-users-rectangle"></i> Reportes
+          </button>
+          <button class="ags-nav-item" id="sec-btn-actuators" onclick="mostrarSeccion('actuators')">
+            <i class="fa-solid fa-toggle-on"></i> Sistema de Control
+          </button>
+          <button class="ags-nav-item" id="sec-btn-crops" onclick="mostrarSeccion('crops')">
+            <i class="fa-solid fa-leaf"></i> Trackers
+          </button>
+          <button class="ags-nav-item" id="sec-btn-history" onclick="mostrarSeccion('history')">
+            <i class="fa-solid fa-bell-concierge"></i> Bitácora & Alertas
+          </button>
+        </nav>
       </div>
 
-      <div class="system-status-bar">
-        <div class="role-badge" id="userRoleBadge">
-          <i class="fa-solid fa-user-gear"></i> <span id="lblUserRole">Cargando...</span>
+      <div class="ags-sidebar-widget">
+        <div class="ags-weather-row">
+          <span><i class="fa-solid fa-user-gear"></i> Rol:</span>
+          <span id="lblUserRole" style="color: var(--cyan-neon);">Cargando...</span>
         </div>
-
-        <div class="status-indicator offline" id="statusBadge">
-          <span class="dot"></span>
-          <span id="statusText">ESP32 Desconectado</span>
-        </div>
-
-        <!-- WIDGET CLIMÁTICO DE HUEJUTLA -->
-        <div id="weatherWidgetContainer"></div>
-
-        <div class="time-display">
-          <i class="fa-regular fa-clock"></i>
+        <div class="ags-weather-row">
+          <span><i class="fa-regular fa-clock"></i> Hora:</span>
           <span id="liveClock">00:00:00</span>
         </div>
+      </div>
+    </aside>
 
-        <select id="themeSelector" class="select-metric" onchange="cambiarTemaVisual(this.value)" title="Seleccionar Tema">
-          <option value="theme-emerald">Esmeralda (Biófilo)</option>
-          <option value="theme-cyberpunk">Neón Cyberpunk</option>
-          <option value="theme-midnight">Nocturno Deep</option>
-          <option value="theme-sunset">Cálido Sunset</option>
-          <option value="theme-matrix">Terminal Matrix</option>
-          <option value="theme-aurora">Boreal Aurora</option>
-          <option value="theme-solarized">SoTech Lab</option>
-          <option value="theme-crimson">Crimson Red</option>
-        </select>
+    <!-- CONTENIDO PRINCIPAL DESPLAZADO A LA DERECHA -->
+    <div class="main-content-wrapper">
+      
+      <header class="main-header">
+        <div class="header-branding">
+          <div class="brand-badge"><i class="fa-solid fa-graduation-cap"></i> UAEH · ESH</div>
+          <h1>SISTEMA AUTOMATIZADO DE MONITOREO HIDROPÓNICO</h1>
+          <h2>PROPEDÉUTICO CIENCIAS BÁSICAS E INGENIERÍA</h2>
+        </div>
 
-        <button class="btn-action btn-notify" id="btnNotify" onclick="abrirModalPush()" title="Configurar Notificaciones">
-          <i class="fa-solid fa-bell"></i>
+        <div class="system-status-bar">
+          <div class="status-indicator offline" id="statusBadge">
+            <span class="dot"></span>
+            <span id="statusText">ESP32 Desconectado</span>
+          </div>
+
+          <!-- WIDGET CLIMÁTICO DE HUEJUTLA -->
+          <div id="weatherWidgetContainer"></div>
+
+          <select id="themeSelector" class="select-metric" onchange="cambiarTemaVisual(this.value)" title="Seleccionar Tema">
+            <option value="theme-emerald">Esmeralda (Biófilo)</option>
+            <option value="theme-cyberpunk">Neón Cyberpunk</option>
+            <option value="theme-midnight">Nocturno Deep</option>
+            <option value="theme-sunset">Cálido Sunset</option>
+            <option value="theme-matrix">Terminal Matrix</option>
+            <option value="theme-aurora">Boreal Aurora</option>
+            <option value="theme-solarized">SoTech Lab</option>
+            <option value="theme-crimson">Crimson Red</option>
+          </select>
+
+          <button class="btn-action btn-notify" id="btnNotify" onclick="abrirModalPush()" title="Configurar Notificaciones">
+            <i class="fa-solid fa-bell"></i>
+          </button>
+
+          <button class="btn-action" onclick="ejecutarHardRefresh()" title="Hard Refresh / Reconectar Sockets">
+            <i class="fa-solid fa-rotate"></i>
+          </button>
+
+          <button class="btn-action btn-logout" onclick="cerrarSesion()" title="Cerrar Sesión">
+            <i class="fa-solid fa-power-off"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- SELECTOR DE HUERTO -->
+      <div class="huerto-selector-bar">
+        <button class="huerto-tab active" id="tab-nft" onclick="cambiarHuerto('nft')">
+          <i class="fa-solid fa-water"></i> Huerto NFT Principal
         </button>
-
-        <!-- BOTÓN DE HARD REFRESH AGS -->
-        <button class="btn-action" onclick="ejecutarHardRefresh()" title="Hard Refresh / Reconectar Sockets">
-          <i class="fa-solid fa-rotate"></i>
-        </button>
-
-        <button class="btn-action btn-logout" onclick="cerrarSesion()" title="Cerrar Sesión">
-          <i class="fa-solid fa-power-off"></i>
+        <button class="huerto-tab" id="tab-raices" onclick="cambiarHuerto('raices')">
+          <i class="fa-solid fa-seedling"></i> Raíces Flotantes
         </button>
       </div>
-    </header>
 
-    <!-- SELECTOR DE HUERTO -->
-    <div class="huerto-selector-bar">
-      <button class="huerto-tab active" id="tab-nft" onclick="cambiarHuerto('nft')">
-        <i class="fa-solid fa-water"></i> Huerto NFT Principal
-      </button>
-      <button class="huerto-tab" id="tab-raices" onclick="cambiarHuerto('raices')">
-        <i class="fa-solid fa-seedling"></i> Raíces Flotantes
-      </button>
-    </div>
+      <!-- BANNER DE ESTADO -->
+      <div class="status-banner" id="systemBanner">
+        <i class="fa-solid fa-wifi pulse-icon"></i>
+        <span>Sincronizando con base de datos en tiempo real...</span>
+      </div>
 
-    <!-- BANNER DE ESTADO -->
-    <div class="status-banner" id="systemBanner">
-      <i class="fa-solid fa-wifi pulse-icon"></i>
-      <span>Sincronizando con base de datos en tiempo real...</span>
-    </div>
+      <main class="dashboard-content">
 
-    <!-- NAVEGACIÓN POR PESTAÑAS SECCIONALES -->
-    <nav class="nav-sections-bar">
-      <button class="nav-sec-btn active" id="sec-btn-sensors" onclick="mostrarSeccion('sensors')">
-        <i class="fa-solid fa-chart-pie"></i> Monitoreo
-      </button>
-      <button class="nav-sec-btn" id="sec-btn-cuadrillas" onclick="mostrarSeccion('cuadrillas')">
-        <i class="fa-solid fa-users-rectangle"></i> Reportes
-      </button>
-      <button class="nav-sec-btn" id="sec-btn-actuators" onclick="mostrarSeccion('actuators')">
-        <i class="fa-solid fa-toggle-on"></i> Sistema de Control
-      </button>
-      <button class="nav-sec-btn" id="sec-btn-crops" onclick="mostrarSeccion('crops')">
-        <i class="fa-solid fa-leaf"></i> Trackers
-      </button>
-      <button class="nav-sec-btn" id="sec-btn-history" onclick="mostrarSeccion('history')">
-        <i class="fa-solid fa-bell-concierge"></i> Bitácora & Alertas
-      </button>
-    </nav>
-
-    <main class="dashboard-content">
-
-      <!-- SECCIÓN 1: SENSORES & MONITOREO DUAL -->
-      <section id="section-sensors" class="app-section">
-        <div class="section-heading">
-          <h2><i class="fa-solid fa-satellite-dish pulse-icon"></i> Monitoreo en Tiempo Real (<span id="currentHuertoTitle">Huerto NFT Principal</span>)</h2>
-        </div>
-
-        <div class="sensors-grid">
-          <div class="card metric-card card-ph">
-            <div class="card-header">
-              <span>pH del Agua</span>
-              <i class="fa-solid fa-flask icon-ph chemical-bubble"></i>
-            </div>
-            <div class="metric-value"><span id="phValue">--</span> <small>pH</small></div>
-            <div class="progress-bar"><div class="progress-fill fill-ph" id="phBar" style="width: 0%;"></div></div>
-            <div class="metric-footer"><span>Óptimo: <strong id="phRangeLabel">5.5 - 6.5</strong></span></div>
+        <!-- SECCIÓN 1: SENSORES & MONITOREO DUAL -->
+        <section id="section-sensors" class="app-section">
+          <div class="section-heading">
+            <h2><i class="fa-solid fa-satellite-dish pulse-icon"></i> Monitoreo en Tiempo Real (<span id="currentHuertoTitle">Huerto NFT Principal</span>)</h2>
           </div>
 
-          <div class="card metric-card card-ce" id="cardCeWrapper">
-            <div class="card-header">
-              <span>Conductividad (CE)</span>
-              <i class="fa-solid fa-bolt icon-ce electric-pulse"></i>
-            </div>
-            <div class="metric-value"><span id="ecValue">--</span> <small>mS/cm</small></div>
-            <div class="progress-bar"><div class="progress-fill fill-ce" id="ecBar" style="width: 0%;"></div></div>
-            <div class="metric-footer"><span>Óptimo: <strong id="ecRangeLabel">2.0 - 2.5</strong></span></div>
-          </div>
-
-          <div class="card metric-card card-temp">
-            <div class="card-header">
-              <span>Temperatura Agua</span>
-              <i class="fa-solid fa-temperature-half icon-temp thermal-glow"></i>
-            </div>
-            <div class="metric-value"><span id="tempValue">--</span> <small>°C</small></div>
-            <div class="progress-bar"><div class="progress-fill fill-temp" id="tempBar" style="width: 0%;"></div></div>
-            <div class="metric-footer"><span>Óptimo: <strong id="tempRangeLabel">18°C - 24°C</strong></span></div>
-          </div>
-
-          <div class="card metric-card card-hum">
-            <div class="card-header">
-              <span>Humedad Ambiente</span>
-              <i class="fa-solid fa-droplet icon-hum water-drop-anim"></i>
-            </div>
-            <div class="metric-value"><span id="humValue">--</span> <small>%</small></div>
-            <div class="progress-bar"><div class="progress-fill fill-hum" id="humBar" style="width: 0%;"></div></div>
-            <div class="metric-footer"><span>Ambiente Exterior</span></div>
-          </div>
-        </div>
-
-        <div class="grid-2-cols" style="margin-top: 20px;">
-          <div class="card chart-card">
-            <div class="chart-header">
-              <h3><i class="fa-solid fa-chart-line"></i> Gráficas de Rendimiento</h3>
-              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <select id="chartSelectY1" class="select-metric" title="Eje Y1 (Izquierda)">
-                  <option value="ph">Y1: pH del Agua</option>
-                  <option value="temperatura">Y1: Temperatura (°C)</option>
-                  <option value="ec">Y1: Conductividad (CE)</option>
-                  <option value="humedad">Y1: Humedad (%)</option>
-                </select>
-                <select id="chartSelectY2" class="select-metric" title="Eje Y2 (Derecha)">
-                  <option value="none">-- Modo Individual (Ocultar Y2) --</option>
-                  <option value="ec" selected>Y2: Conductividad (CE)</option>
-                  <option value="ph">Y2: pH del Agua</option>
-                  <option value="temperatura">Y2: Temperatura (°C)</option>
-                  <option value="humedad">Y2: Humedad (%)</option>
-                </select>
-                <button class="btn-export" onclick="exportarGraficaPNG()" title="Descargar Gráfica PNG"><i class="fa-solid fa-image"></i> PNG</button>
+          <div class="sensors-grid">
+            <div class="card metric-card card-ph">
+              <div class="card-header">
+                <span>pH del Agua</span>
+                <i class="fa-solid fa-flask icon-ph chemical-bubble"></i>
               </div>
+              <div class="metric-value"><span id="phValue">--</span> <small>pH</small></div>
+              <div class="progress-bar"><div class="progress-fill fill-ph" id="phBar" style="width: 0%;"></div></div>
+              <div class="metric-footer"><span>Óptimo: <strong id="phRangeLabel">5.5 - 6.5</strong></span></div>
             </div>
-            <div class="chart-container"><canvas id="sensorChart"></canvas></div>
-            <div class="stats-summary-bar">
-              <div class="stat-box"><span>Mínimo (Y1)</span><strong id="statMin">--</strong></div>
-              <div class="stat-box"><span>Promedio (Y1)</span><strong id="statAvg">--</strong></div>
-              <div class="stat-box"><span>Máximo (Y1)</span><strong id="statMax">--</strong></div>
-            </div>
-          </div>
 
-          <div class="card diagnostics-card">
-            <h3><i class="fa-solid fa-microchip"></i> Telemetría ESP32</h3>
-            <p class="card-subtitle">Diagnóstico de conectividad y estado del hardware</p>
-            <div class="diag-list">
-              <div class="diag-row">
-                <span><i class="fa-solid fa-wifi"></i> Señal Wi-Fi (RSSI):</span>
-                <strong id="diagRssi">-- dBm</strong>
+            <div class="card metric-card card-ce" id="cardCeWrapper">
+              <div class="card-header">
+                <span>Conductividad (CE)</span>
+                <i class="fa-solid fa-bolt icon-ce electric-pulse"></i>
               </div>
-              <div class="diag-row">
-                <span><i class="fa-solid fa-clock-rotate-left"></i> Tiempo Activo:</span>
-                <strong id="diagUptime">-- min</strong>
+              <div class="metric-value"><span id="ecValue">--</span> <small>mS/cm</small></div>
+              <div class="progress-bar"><div class="progress-fill fill-ce" id="ecBar" style="width: 0%;"></div></div>
+              <div class="metric-footer"><span>Óptimo: <strong id="ecRangeLabel">2.0 - 2.5</strong></span></div>
+            </div>
+
+            <div class="card metric-card card-temp">
+              <div class="card-header">
+                <span>Temperatura Agua</span>
+                <i class="fa-solid fa-temperature-half icon-temp thermal-glow"></i>
               </div>
-              <div class="diag-row">
-                <span><i class="fa-solid fa-memory"></i> RAM Libre:</span>
-                <strong id="diagHeap">-- KB</strong>
+              <div class="metric-value"><span id="tempValue">--</span> <small>°C</small></div>
+              <div class="progress-bar"><div class="progress-fill fill-temp" id="tempBar" style="width: 0%;"></div></div>
+              <div class="metric-footer"><span>Óptimo: <strong id="tempRangeLabel">18°C - 24°C</strong></span></div>
+            </div>
+
+            <div class="card metric-card card-hum">
+              <div class="card-header">
+                <span>Humedad Ambiente</span>
+                <i class="fa-solid fa-droplet icon-hum water-drop-anim"></i>
               </div>
-            </div>
-
-            <div class="admin-only" style="margin-top: 20px; border-top: 1px solid var(--card-border); padding-top: 15px;">
-              <h4 style="font-size: 0.85rem; color: var(--cyan-neon); margin-bottom: 10px;"><i class="fa-solid fa-terminal"></i> Comandos Remotos OTA</h4>
-              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button class="btn-add" style="font-size: 0.78rem; padding: 10px 14px; flex: 1;" onclick="enviarComandoRemotoESP32('reinicio')"><i class="fa-solid fa-rotate"></i> Reiniciar ESP32</button>
-                <button class="btn-add" style="font-size: 0.78rem; padding: 10px 14px; flex: 1; background: var(--warning);" onclick="enviarComandoRemotoESP32('forzar_muestreo')"><i class="fa-solid fa-flask"></i> Forzar Muestreo</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECCIÓN: CUADRILLAS, REPORTES DRIVE Y CALENDARIO -->
-      <section id="section-cuadrillas" class="app-section hidden">
-        <div class="section-heading">
-          <h2><i class="fa-solid fa-users-rectangle"></i> Gestión de Reportes & Calendario Operativo</h2>
-        </div>
-
-        <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA -->
-        <div class="card admin-only" style="margin-bottom: 20px;">
-          <h3><i class="fa-solid fa-folder-plus"></i> Integrar Cuadrilla</h3>
-          <p class="card-subtitle">Asigne nombre, días de labor múltiples y miembros del equipo (Solo Administrador)</p>
-          
-          <div class="tracker-inputs-form" style="margin-top: 15px;">
-            <div class="tracker-inputs-row">
-              <input type="text" id="inputNombreCuadrilla" placeholder="Ej. Cuadrilla 1">
-              <input type="text" id="inputIntegrantes" placeholder="Ej. Integrante 1, 2, 3...">
-            </div>
-            <div class="tracker-inputs-row" style="align-items: center;">
-              <input type="date" id="inputFechaCuadrillaPicker" onchange="agregarFechaASeleccion()" title="Seleccionar fecha de labor" style="flex: 1;">
-              <button class="btn-add" onclick="crearCarpetaCuadrilla()"><i class="fa-solid fa-plus"></i> Crear Carpeta</button>
-            </div>
-            <div id="selectedBadgesDates" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;"></div>
-          </div>
-        </div>
-
-        <div class="grid-2-cols">
-          <!-- LISTADO DE CARPETAS DE CUADRILLAS -->
-          <div class="card">
-            <div class="chart-header">
-              <h3><i class="fa-solid fa-folder-tree"></i> Cuadrillas Activas</h3>
-              <button class="btn-action" onclick="cargarCuadrillasFirebase()" title="Recargar"><i class="fa-solid fa-rotate"></i></button>
-            </div>
-            <p class="card-subtitle">Despliegue cada cuadrilla para adjuntar y consultar enlaces de reportes PDF en Google Drive.</p>
-            
-            <div id="cuadrillasContainer" class="cuadrillas-container" style="margin-top: 15px;">
-              <p style="text-align: center; color: var(--text-muted); padding: 20px;">Cargando cuadrillas...</p>
+              <div class="metric-value"><span id="humValue">--</span> <small>%</small></div>
+              <div class="progress-bar"><div class="progress-fill fill-hum" id="humBar" style="width: 0%;"></div></div>
+              <div class="metric-footer"><span>Ambiente Exterior</span></div>
             </div>
           </div>
 
-          <!-- PLANIFICADOR MENSUAL INTERACTIVO -->
-          <div class="card">
-            <div class="chart-header">
-              <h3><i class="fa-regular fa-calendar-days"></i> Planificador Mensual</h3>
-              <input type="month" id="mesPlanificadorInput" class="select-metric" onchange="renderizarCalendarioMensual()" title="Seleccionar Mes">
-            </div>
-            <p class="card-subtitle">Amarillo = Asignado (Pendiente). Verde = Reporte Cumplido (Clic para ver PDF).</p>
-            
-            <div class="calendar-days-header" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--cyan-neon); margin-top: 12px; margin-bottom: 6px;">
-              <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
-            </div>
-
-            <div id="calendarioOperativoContainer" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; min-height: 220px;">
-              <!-- Se llena dinámicamente -->
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECCIÓN 2: CONTROL DE ACTUADORES Y DOSIFICACIÓN PID -->
-      <section id="section-actuators" class="app-section hidden">
-        <div class="section-heading">
-          <h2><i class="fa-solid fa-sliders"></i> Control de Actuadores, Bypass e Inyección Soluciones</h2>
-        </div>
-
-        <div class="card hydraulic-card" style="margin-bottom: 20px;">
-          <div class="hydraulic-title-box">
-            <h3><i class="fa-solid fa-project-diagram"></i> Diagrama de Flujo e Inyección Hidráulica</h3>
-            <span class="hydraulic-badge"><i class="fa-solid fa-circle-nodes"></i> Circuito Activo</span>
-          </div>
-
-          <!-- CANVAS DE SIMULACIÓN DE FLUJO INTERACTIVO -->
-          <div style="position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.4); border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border); margin-bottom: 15px;">
-            <canvas id="bypassCanvasSimulation" width="800" height="120" style="width: 100%; height: 100%; display: block;"></canvas>
-            <div style="position: absolute; bottom: 8px; left: 12px; font-size: 0.75rem; color: var(--cyan-neon); font-weight: 700;">
-              Estado de Inyección: <span id="schemaStatusInyeccion" class="node-status text-muted">En Reposo</span>
-            </div>
-            <button class="btn-add" style="position: absolute; top: 8px; right: 12px; font-size: 0.72rem; padding: 6px 12px;" onclick="simularPulsoInyeccionNutrientes()">
-              <i class="fa-solid fa-syringe"></i> Simular Pulso
-            </button>
-          </div>
-
-          <div class="hydraulic-schema-box">
-            <div class="schema-node" id="schemaNodeTank">
-              <div class="schema-icon-circle"><i class="fa-solid fa-cube"></i></div>
-              <span>Tanque Principal</span>
-              <small id="schemaStatusTank" class="node-status text-muted">Reposo</small>
-            </div>
-            
-            <div class="schema-pipe" id="pipeFlow1"><div class="flow-particle"></div></div>
-            
-            <div class="schema-node" id="schemaNodePump">
-              <div class="schema-icon-circle"><i class="fa-solid fa-faucet-drip"></i></div>
-              <span>Bomba NFT</span>
-              <small id="schemaStatusPump" class="node-status text-muted">Apagada</small>
-            </div>
-
-            <div class="schema-pipe" id="pipeFlow2"><div class="flow-particle"></div></div>
-
-            <div class="schema-node" id="schemaNodeBypass">
-              <div class="schema-icon-circle bypass-icon"><i class="fa-solid fa-code-branch"></i></div>
-              <span>Válvula Bypass</span>
-              <small id="schemaStatusBypass" class="node-status text-warning">Desactivada</small>
-            </div>
-
-            <div class="schema-pipe" id="pipeBypassFlow"><div class="flow-particle"></div></div>
-
-            <div class="schema-node" id="schemaNodePeltier">
-              <div class="schema-icon-circle cold-icon"><i class="fa-solid fa-snowflake"></i></div>
-              <span>Waterblock / Peltier</span>
-              <small id="schemaStatusPeltier" class="node-status text-muted">Apagado</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="card control-card">
-          <div class="control-grid" id="gridActuadoresNft">
-            <div class="control-item" id="item-bomba_principal">
-              <div class="actuator-info">
-                <div class="actuator-icon-wrapper pump-spin"><i class="fa-solid fa-faucet-drip actuator-icon"></i></div>
-                <div>
-                  <strong>Bomba Principal NFT</strong>
-                  <span>Circulación de Nutrientes</span>
-                  <div class="actuator-status" id="statusBombaPrincipal"><span class="status-dot"></span> APAGADA</div>
+          <div class="grid-2-cols" style="margin-top: 20px;">
+            <div class="card chart-card">
+              <div class="chart-header">
+                <h3><i class="fa-solid fa-chart-line"></i> Gráficas de Rendimiento</h3>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                  <select id="chartSelectY1" class="select-metric" title="Eje Y1 (Izquierda)">
+                    <option value="ph">Y1: pH del Agua</option>
+                    <option value="temperatura">Y1: Temperatura (°C)</option>
+                    <option value="ec">Y1: Conductividad (CE)</option>
+                    <option value="humedad">Y1: Humedad (%)</option>
+                  </select>
+                  <select id="chartSelectY2" class="select-metric" title="Eje Y2 (Derecha)">
+                    <option value="none">-- Modo Individual (Ocultar Y2) --</option>
+                    <option value="ec" selected>Y2: Conductividad (CE)</option>
+                    <option value="ph">Y2: pH del Agua</option>
+                    <option value="temperatura">Y2: Temperatura (°C)</option>
+                    <option value="humedad">Y2: Humedad (%)</option>
+                  </select>
+                  <button class="btn-export" onclick="exportarGraficaPNG()" title="Descargar Gráfica PNG"><i class="fa-solid fa-image"></i> PNG</button>
                 </div>
               </div>
-              <label class="switch"><input type="checkbox" id="btn-bomba_principal" onchange="toggleActuador('bomba_principal', this.checked)"><span class="slider"></span></label>
+              <div class="chart-container"><canvas id="sensorChart"></canvas></div>
+              <div class="stats-summary-bar">
+                <div class="stat-box"><span>Mínimo (Y1)</span><strong id="statMin">--</strong></div>
+                <div class="stat-box"><span>Promedio (Y1)</span><strong id="statAvg">--</strong></div>
+                <div class="stat-box"><span>Máximo (Y1)</span><strong id="statMax">--</strong></div>
+              </div>
             </div>
 
-            <div class="control-item" id="item-bomba_muestreo">
-              <div class="actuator-info">
-                <div class="actuator-icon-wrapper pump-spin"><i class="fa-solid fa-shower actuator-icon"></i></div>
-                <div>
-                  <strong>Bomba Waterblock</strong>
-                  <span>Circuito Enfriamiento Hielera</span>
-                  <div class="actuator-status" id="statusBomba2"><span class="status-dot"></span> APAGADA</div>
+            <div class="card diagnostics-card">
+              <h3><i class="fa-solid fa-microchip"></i> Telemetría ESP32</h3>
+              <p class="card-subtitle">Diagnóstico de conectividad y estado del hardware</p>
+              <div class="diag-list">
+                <div class="diag-row">
+                  <span><i class="fa-solid fa-wifi"></i> Señal Wi-Fi (RSSI):</span>
+                  <strong id="diagRssi">-- dBm</strong>
+                </div>
+                <div class="diag-row">
+                  <span><i class="fa-solid fa-clock-rotate-left"></i> Tiempo Activo:</span>
+                  <strong id="diagUptime">-- min</strong>
+                </div>
+                <div class="diag-row">
+                  <span><i class="fa-solid fa-memory"></i> RAM Libre:</span>
+                  <strong id="diagHeap">-- KB</strong>
                 </div>
               </div>
-              <label class="switch"><input type="checkbox" id="btn-bomba_muestreo" onchange="toggleActuador('bomba_muestreo', this.checked)"><span class="slider"></span></label>
-            </div>
 
-            <div class="control-item" id="item-peltier">
-              <div class="actuator-info">
-                <div class="actuator-icon-wrapper"><i class="fa-solid fa-snowflake actuator-icon icon-peltier snowflake-spin"></i></div>
-                <div>
-                  <strong>Celda Peltier</strong>
-                  <span>Modo Manual</span>
-                  <div class="actuator-status" id="statusPeltier"><span class="status-dot"></span> APAGADA</div>
+              <div class="admin-only" style="margin-top: 20px; border-top: 1px solid var(--card-border); padding-top: 15px;">
+                <h4 style="font-size: 0.85rem; color: var(--cyan-neon); margin-bottom: 10px;"><i class="fa-solid fa-terminal"></i> Comandos Remotos OTA</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <button class="btn-add" style="font-size: 0.78rem; padding: 10px 14px; flex: 1;" onclick="enviarComandoRemotoESP32('reinicio')"><i class="fa-solid fa-rotate"></i> Reiniciar ESP32</button>
+                  <button class="btn-add" style="font-size: 0.78rem; padding: 10px 14px; flex: 1; background: var(--warning);" onclick="enviarComandoRemotoESP32('forzar_muestreo')"><i class="fa-solid fa-flask"></i> Forzar Muestreo</button>
                 </div>
               </div>
-              <label class="switch"><input type="checkbox" id="btn-peltier" onchange="toggleActuador('peltier', this.checked)"><span class="slider"></span></label>
-            </div>
-
-            <div class="control-item admin-only" id="item-bypass">
-              <div class="actuator-info">
-                <div class="actuator-icon-wrapper"><i class="fa-solid fa-code-branch actuator-icon" style="color: var(--warning);"></i></div>
-                <div>
-                  <strong>Válvula Bypass (Plástico)</strong>
-                  <span>Retorno Directo</span>
-                  <div class="actuator-status" id="statusBypass"><span class="status-dot"></span> APAGADA</div>
-                </div>
-              </div>
-              <label class="switch"><input type="checkbox" id="btn-bypass" onchange="toggleActuador('bypass', this.checked)"><span class="slider"></span></label>
-            </div>
-
-            <div class="control-item admin-only" id="item-inyeccion">
-              <div class="actuator-info">
-                <div class="actuator-icon-wrapper"><i class="fa-solid fa-syringe actuator-icon syringe-pulse" style="color: var(--cyan-neon);"></i></div>
-                <div>
-                  <strong>Bombas Kamoer (A+B / pH)</strong>
-                  <span>Dosificación de Precisión</span>
-                  <div class="actuator-status" id="statusInyeccion"><span class="status-dot"></span> APAGADA</div>
-                </div>
-              </div>
-              <label class="switch"><input type="checkbox" id="btn-inyeccion" onchange="toggleActuador('inyeccion', this.checked)"><span class="slider"></span></label>
             </div>
           </div>
+        </section>
 
-          <div class="control-grid hidden" id="gridActuadoresRaices">
-            <div class="control-item" id="item-raices_peltier">
-              <div class="actuator-info">
-                <div class="actuator-icon-wrapper"><i class="fa-solid fa-snowflake actuator-icon icon-peltier snowflake-spin"></i></div>
-                <div>
-                  <strong>Peltier Raíces Flotantes</strong>
-                  <span>Regulación Térmica</span>
-                  <div class="actuator-status" id="statusRaicesPeltier"><span class="status-dot"></span> APAGADA</div>
-                </div>
-              </div>
-              <label class="switch"><input type="checkbox" id="btn-raices_peltier" onchange="toggleActuador('raices_peltier', this.checked)"><span class="slider"></span></label>
-            </div>
-
-            <div class="control-item" id="item-bomba_aire">
-              <div class="actuator-info">
-                <div class="actuator-icon-wrapper"><i class="fa-solid fa-wind actuator-icon" style="color: var(--cyan-neon);"></i></div>
-                <div>
-                  <strong>Bomba de Aire</strong><span>Oxigenación Radicular</span>
-                  <div class="actuator-status" id="statusBombaAire"><span class="status-dot"></span> APAGADA</div>
-                </div>
-              </div>
-              <label class="switch"><input type="checkbox" id="btn-bomba_aire" onchange="toggleActuador('bomba_aire', this.checked)"><span class="slider"></span></label>
-            </div>
+        <!-- SECCIÓN: CUADRILLAS, REPORTES DRIVE Y CALENDARIO -->
+        <section id="section-cuadrillas" class="app-section hidden">
+          <div class="section-heading">
+            <h2><i class="fa-solid fa-users-rectangle"></i> Gestión de Reportes & Calendario Operativo</h2>
           </div>
 
-          <!-- MÓDULO DE CONTROL PID Y DOSIFICACIÓN -->
-          <div class="card" style="margin-top: 25px;">
-            <div class="chart-header">
-              <h3><i class="fa-solid fa-microchip"></i> Lazo de Control PID</h3>
-              <span class="hydraulic-badge"><i class="fa-solid fa-wave-square"></i> Algoritmo Activo</span>
-            </div>
-            <p class="card-subtitle">Monitoreo de error en tiempo real para corrección automática de pH y CE.</p>
+          <!-- PANEL DE ADMINISTRADOR: CREAR CUADRILLA -->
+          <div class="card admin-only" style="margin-bottom: 20px;">
+            <h3><i class="fa-solid fa-folder-plus"></i> Integrar Cuadrilla</h3>
+            <p class="card-subtitle">Asigne nombre, días de labor múltiples y miembros del equipo (Solo Administrador)</p>
             
-            <div class="sensors-grid" style="margin-top: 10px;">
-              <div class="stat-box" style="padding: 15px;">
-                <span>Error de pH (Setpoint: 6.0)</span>
-                <strong id="pidPhError" style="color: var(--cyan-neon);">0.0 pH</strong>
-              </div>
-              <div class="stat-box" style="padding: 15px;">
-                <span>Salida Kamoer A+B (PWM)</span>
-                <strong id="pidPwmOutput" style="color: var(--warning);">0 %</strong>
-              </div>
-              <div class="stat-box" style="padding: 15px;">
-                <span>Estado del Lazo PID</span>
-                <strong id="pidStateLabel" style="color: var(--green-bright);">Estable</strong>
-              </div>
-            </div>
-          </div>
-
-          <div class="scheduler-card-box admin-only" style="margin-top: 25px;">
-            <div class="sched-header">
-              <i class="fa-solid fa-clock-rotate-left"></i>
-              <div>
-                <h4>Programador Automático</h4>
-                <p>Define horarios automatizados para los componentes del huerto</p>
-              </div>
-            </div>
-            
-            <div class="sched-controls-grid">
-              <div class="sched-field">
-                <label><i class="fa-solid fa-toggle-on"></i> Actuador</label>
-                <select id="schedActuator" class="select-metric">
-                  <option value="bomba_principal">Bomba Principal NFT</option>
-                  <option value="peltier">Placa Peltier Enfriador</option>
-                  <option value="bypass">Válvula Bypass Desvío</option>
-                </select>
-              </div>
-
-              <div class="sched-field">
-                <label><i class="fa-regular fa-clock"></i> Hora Encendido</label>
-                <input type="time" id="schedTimeOn" class="select-metric" value="08:00">
-              </div>
-
-              <div class="sched-field">
-                <label><i class="fa-solid fa-power-off"></i> Hora Apagado</label>
-                <input type="time" id="schedTimeOff" class="select-metric" value="20:00">
-              </div>
-
-              <button class="btn-sched-submit" onclick="guardarProgramacion()">
-                <i class="fa-solid fa-floppy-disk"></i> Guardar Regla
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECCIÓN 3: TRACKERS & CHECKLIST -->
-      <section id="section-crops" class="app-section hidden">
-        <div class="section-heading">
-          <h2><i class="fa-solid fa-seedling"></i> Gestión de Lotes y Tareas</h2>
-        </div>
-
-        <div class="bottom-grid">
-          <div class="card tracker-card">
-            <h3><i class="fa-solid fa-leaf"></i> Trackers de Cultivo</h3>
-            <p class="card-subtitle">Fase 1: Agua (7d) | Fase 2: Solución 50% (7d) | Fase 3: Solución 100% (Resto)</p>
-            
-            <div class="tracker-inputs-form admin-only">
-              <input type="text" id="tracker-input" placeholder="Nombre del Lote (ej. Lote Lechuga 1)...">
+            <div class="tracker-inputs-form" style="margin-top: 15px;">
               <div class="tracker-inputs-row">
-                <input type="date" id="tracker-date-input" title="Fecha de inicio">
-                <input type="number" id="tracker-days-total" min="15" max="90" placeholder="Días Totales" value="30" title="Duración del ciclo">
-                <button class="btn-add" onclick="addTracker()"><i class="fa-solid fa-plus"></i> Añadir</button>
+                <input type="text" id="inputNombreCuadrilla" placeholder="Ej. Cuadrilla 1">
+                <input type="text" id="inputIntegrantes" placeholder="Ej. Integrante 1, 2, 3...">
               </div>
+              <div class="tracker-inputs-row" style="align-items: center;">
+                <input type="date" id="inputFechaCuadrillaPicker" onchange="agregarFechaASeleccion()" title="Seleccionar fecha de labor" style="flex: 1;">
+                <button class="btn-add" onclick="crearCarpetaCuadrilla()"><i class="fa-solid fa-plus"></i> Crear Carpeta</button>
+              </div>
+              <div id="selectedBadgesDates" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;"></div>
             </div>
-            <div id="tracker-container" class="tracker-list"></div>
           </div>
 
-          <div class="card checklist-card">
-            <h3><i class="fa-solid fa-list-check"></i> Checklist</h3>
-            <p class="card-subtitle">Tareas de mantenimiento preventivo</p>
-            <div class="input-group-add admin-only">
-              <input type="text" id="task-input" placeholder="Ej: Revisar nivel tanques A+B (HDPE)...">
-              <button class="btn-add" onclick="addTask()"><i class="fa-solid fa-plus"></i></button>
+          <div class="grid-2-cols">
+            <!-- LISTADO DE CARPETAS DE CUADRILLAS -->
+            <div class="card">
+              <div class="chart-header">
+                <h3><i class="fa-solid fa-folder-tree"></i> Cuadrillas Activas</h3>
+                <button class="btn-action" onclick="cargarCuadrillasFirebase()" title="Recargar"><i class="fa-solid fa-rotate"></i></button>
+              </div>
+              <p class="card-subtitle">Despliegue cada cuadrilla para adjuntar y consultar enlaces de reportes PDF en Google Drive.</p>
+              
+              <div id="cuadrillasContainer" class="cuadrillas-container" style="margin-top: 15px;">
+                <p style="text-align: center; color: var(--text-muted); padding: 20px;">Cargando cuadrillas...</p>
+              </div>
             </div>
-            <div class="task-list" id="task-container"></div>
+
+            <!-- PLANIFICADOR MENSUAL INTERACTIVO -->
+            <div class="card">
+              <div class="chart-header">
+                <h3><i class="fa-regular fa-calendar-days"></i> Planificador Mensual</h3>
+                <input type="month" id="mesPlanificadorInput" class="select-metric" onchange="renderizarCalendarioMensual()" title="Seleccionar Mes">
+              </div>
+              <p class="card-subtitle">Amarillo = Asignado (Pendiente). Verde = Reporte Cumplido (Clic para ver PDF).</p>
+              
+              <div class="calendar-days-header" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--cyan-neon); margin-top: 12px; margin-bottom: 6px;">
+                <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+              </div>
+
+              <div id="calendarioOperativoContainer" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; min-height: 220px;">
+                <!-- Se llena dinámicamente -->
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- SECCIÓN 4 (UNIFICADA): BITÁCORA, CALIBRACIÓN & ALERTAS PUSH -->
-      <section id="section-history" class="app-section hidden">
-        <div class="section-heading">
-          <h2><i class="fa-solid fa-bell-concierge"></i> Centro Unificado: Bitácora, Calibración & Umbrales de Alerta</h2>
-        </div>
+        <!-- SECCIÓN 2: CONTROL DE ACTUADORES Y DOSIFICACIÓN PID -->
+        <section id="section-actuators" class="app-section hidden">
+          <div class="section-heading">
+            <h2><i class="fa-solid fa-sliders"></i> Control de Actuadores, Bypass e Inyección Soluciones</h2>
+          </div>
 
-        <!-- 1. BLOQUE DE CONFIGURACIÓN DE UMBRALES -->
-        <div class="card" style="margin-bottom: 20px; border-color: var(--card-border-glow);">
-          <h3><i class="fa-solid fa-sliders"></i> Control Dinámico de Umbrales & Rangos de Seguridad</h3>
-          <p class="card-subtitle">Ajuste los límites seguros. Se emitirá una alerta y notificación push si los parámetros salen de este rango.</p>
-          
-          <div class="grid-2-cols" style="margin-top: 15px; align-items: flex-end;">
-            <div class="tracker-inputs-form admin-only" style="margin-bottom: 0;">
-              <div class="threshold-group">
-                <label><i class="fa-solid fa-flask icon-ph"></i> pH del Agua (Mín / Máx)</label>
-                <div class="tracker-inputs-row">
-                  <input type="number" step="0.1" id="threshPhMin" value="5.5" placeholder="Mín 5.5">
-                  <input type="number" step="0.1" id="threshPhMax" value="6.5" placeholder="Máx 6.5">
-                </div>
-              </div>
-
-              <div class="threshold-group" style="margin-top: 12px;">
-                <label><i class="fa-solid fa-bolt icon-ce"></i> Conductividad CE (mS/cm)</label>
-                <div class="tracker-inputs-row">
-                  <input type="number" step="0.1" id="threshEcMin" value="2.0" placeholder="Mín 2.0">
-                  <input type="number" step="0.1" id="threshEcMax" value="2.5" placeholder="Máx 2.5">
-                </div>
-              </div>
+          <div class="card hydraulic-card" style="margin-bottom: 20px;">
+            <div class="hydraulic-title-box">
+              <h3><i class="fa-solid fa-project-diagram"></i> Diagrama de Flujo e Inyección Hidráulica</h3>
+              <span class="hydraulic-badge"><i class="fa-solid fa-circle-nodes"></i> Circuito Activo</span>
             </div>
 
-            <div class="tracker-inputs-form admin-only" style="margin-bottom: 0;">
-              <div class="threshold-group">
-                <label><i class="fa-solid fa-temperature-half icon-temp"></i> Temperatura Agua (°C)</label>
-                <div class="tracker-inputs-row">
-                  <input type="number" step="0.5" id="threshTempMin" value="18.0" placeholder="Mín 18°C">
-                  <input type="number" step="0.5" id="threshTempMax" value="24.0" placeholder="Máx 24°C">
-                </div>
+            <!-- CANVAS DE SIMULACIÓN DE FLUJO INTERACTIVO -->
+            <div style="position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.4); border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border); margin-bottom: 15px;">
+              <canvas id="bypassCanvasSimulation" width="800" height="120" style="width: 100%; height: 100%; display: block;"></canvas>
+              <div style="position: absolute; bottom: 8px; left: 12px; font-size: 0.75rem; color: var(--cyan-neon); font-weight: 700;">
+                Estado de Inyección: <span id="schemaStatusInyeccion" class="node-status text-muted">En Reposo</span>
               </div>
-
-              <button class="btn-hex-submit" onclick="guardarUmbrales()" style="margin-top: 16px; width: 100%; border-radius: 12px; padding: 12px;">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Umbrales en Firebase
+              <button class="btn-add" style="position: absolute; top: 8px; right: 12px; font-size: 0.72rem; padding: 6px 12px;" onclick="simularPulsoInyeccionNutrientes()">
+                <i class="fa-solid fa-syringe"></i> Simular Pulso
               </button>
             </div>
-          </div>
 
-          <div id="alertStatusBox" class="alert-status-card" style="margin-top: 15px;">
-            <i class="fa-solid fa-circle-check" style="color: var(--green-bright); font-size: 1.2rem;"></i>
-            <span>Estado Global: Todos los parámetros se encuentran dentro de los rangos óptimos.</span>
-          </div>
-        </div>
+            <div class="hydraulic-schema-box">
+              <div class="schema-node" id="schemaNodeTank">
+                <div class="schema-icon-circle"><i class="fa-solid fa-cube"></i></div>
+                <span>Tanque Principal</span>
+                <small id="schemaStatusTank" class="node-status text-muted">Reposo</small>
+              </div>
+              
+              <div class="schema-pipe" id="pipeFlow1"><div class="flow-particle"></div></div>
+              
+              <div class="schema-node" id="schemaNodePump">
+                <div class="schema-icon-circle"><i class="fa-solid fa-faucet-drip"></i></div>
+                <span>Bomba NFT</span>
+                <small id="schemaStatusPump" class="node-status text-muted">Apagada</small>
+              </div>
 
-        <!-- 2. BLOQUE DE BITÁCORA HISTÓRICA Y CALIBRACIÓN -->
-        <div class="grid-2-cols">
-          <div class="card">
-            <div class="chart-header">
-              <h3><i class="fa-solid fa-database"></i> Bitácora Histórica</h3>
-              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                <button class="btn-action" onclick="cargarHistorialFirebase()" title="Recargar"><i class="fa-solid fa-rotate"></i></button>
-                <button class="btn-export" onclick="exportarCSV()"><i class="fa-solid fa-file-csv"></i> CSV</button>
-                <button class="btn-export" onclick="exportarReporteExcelEjecutivo()" style="background: #107c41; color: #fff;"><i class="fa-solid fa-file-excel"></i> Excel .xlsx</button>
-                <button class="btn-export" onclick="exportarReportePDF()" style="background: var(--purple-neon); color: #fff;"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                <button class="btn-danger-custom admin-only" onclick="purgarBitacoraFirebase()" title="Borrar Historial"><i class="fa-solid fa-trash-can"></i></button>
+              <div class="schema-pipe" id="pipeFlow2"><div class="flow-particle"></div></div>
+
+              <div class="schema-node" id="schemaNodeBypass">
+                <div class="schema-icon-circle bypass-icon"><i class="fa-solid fa-code-branch"></i></div>
+                <span>Válvula Bypass</span>
+                <small id="schemaStatusBypass" class="node-status text-warning">Desactivada</small>
+              </div>
+
+              <div class="schema-pipe" id="pipeBypassFlow"><div class="flow-particle"></div></div>
+
+              <div class="schema-node" id="schemaNodePeltier">
+                <div class="schema-icon-circle cold-icon"><i class="fa-solid fa-snowflake"></i></div>
+                <span>Waterblock / Peltier</span>
+                <small id="schemaStatusPeltier" class="node-status text-muted">Apagado</small>
               </div>
             </div>
-            <div style="max-height: 280px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; background: rgba(0,0,0,0.3);">
+          </div>
+
+          <div class="card control-card">
+            <div class="control-grid" id="gridActuadoresNft">
+              <div class="control-item" id="item-bomba_principal">
+                <div class="actuator-info">
+                  <div class="actuator-icon-wrapper pump-spin"><i class="fa-solid fa-faucet-drip actuator-icon"></i></div>
+                  <div>
+                    <strong>Bomba Principal NFT</strong>
+                    <span>Circulación de Nutrientes</span>
+                    <div class="actuator-status" id="statusBombaPrincipal"><span class="status-dot"></span> APAGADA</div>
+                  </div>
+                </div>
+                <label class="switch"><input type="checkbox" id="btn-bomba_principal" onchange="toggleActuador('bomba_principal', this.checked)"><span class="slider"></span></label>
+              </div>
+
+              <div class="control-item" id="item-bomba_muestreo">
+                <div class="actuator-info">
+                  <div class="actuator-icon-wrapper pump-spin"><i class="fa-solid fa-shower actuator-icon"></i></div>
+                  <div>
+                    <strong>Bomba Waterblock</strong>
+                    <span>Circuito Enfriamiento Hielera</span>
+                    <div class="actuator-status" id="statusBomba2"><span class="status-dot"></span> APAGADA</div>
+                  </div>
+                </div>
+                <label class="switch"><input type="checkbox" id="btn-bomba_muestreo" onchange="toggleActuador('bomba_muestreo', this.checked)"><span class="slider"></span></label>
+              </div>
+
+              <div class="control-item" id="item-peltier">
+                <div class="actuator-info">
+                  <div class="actuator-icon-wrapper"><i class="fa-solid fa-snowflake actuator-icon icon-peltier snowflake-spin"></i></div>
+                  <div>
+                    <strong>Celda Peltier</strong>
+                    <span>Modo Manual</span>
+                    <div class="actuator-status" id="statusPeltier"><span class="status-dot"></span> APAGADA</div>
+                  </div>
+                </div>
+                <label class="switch"><input type="checkbox" id="btn-peltier" onchange="toggleActuador('peltier', this.checked)"><span class="slider"></span></label>
+              </div>
+
+              <div class="control-item admin-only" id="item-bypass">
+                <div class="actuator-info">
+                  <div class="actuator-icon-wrapper"><i class="fa-solid fa-code-branch actuator-icon" style="color: var(--warning);"></i></div>
+                  <div>
+                    <strong>Válvula Bypass (Plástico)</strong>
+                    <span>Retorno Directo</span>
+                    <div class="actuator-status" id="statusBypass"><span class="status-dot"></span> APAGADA</div>
+                  </div>
+                </div>
+                <label class="switch"><input type="checkbox" id="btn-bypass" onchange="toggleActuador('bypass', this.checked)"><span class="slider"></span></label>
+              </div>
+
+              <div class="control-item admin-only" id="item-inyeccion">
+                <div class="actuator-info">
+                  <div class="actuator-icon-wrapper"><i class="fa-solid fa-syringe actuator-icon syringe-pulse" style="color: var(--cyan-neon);"></i></div>
+                  <div>
+                    <strong>Bombas Kamoer (A+B / pH)</strong>
+                    <span>Dosificación de Precisión</span>
+                    <div class="actuator-status" id="statusInyeccion"><span class="status-dot"></span> APAGADA</div>
+                  </div>
+                </div>
+                <label class="switch"><input type="checkbox" id="btn-inyeccion" onchange="toggleActuador('inyeccion', this.checked)"><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="control-grid hidden" id="gridActuadoresRaices">
+              <div class="control-item" id="item-raices_peltier">
+                <div class="actuator-info">
+                  <div class="actuator-icon-wrapper"><i class="fa-solid fa-snowflake actuator-icon icon-peltier snowflake-spin"></i></div>
+                  <div>
+                    <strong>Peltier Raíces Flotantes</strong>
+                    <span>Regulación Térmica</span>
+                    <div class="actuator-status" id="statusRaicesPeltier"><span class="status-dot"></span> APAGADA</div>
+                  </div>
+                </div>
+                <label class="switch"><input type="checkbox" id="btn-raices_peltier" onchange="toggleActuador('raices_peltier', this.checked)"><span class="slider"></span></label>
+              </div>
+
+              <div class="control-item" id="item-bomba_aire">
+                <div class="actuator-info">
+                  <div class="actuator-icon-wrapper"><i class="fa-solid fa-wind actuator-icon" style="color: var(--cyan-neon);"></i></div>
+                  <div>
+                    <strong>Bomba de Aire</strong><span>Oxigenación Radicular</span>
+                    <div class="actuator-status" id="statusBombaAire"><span class="status-dot"></span> APAGADA</div>
+                  </div>
+                </div>
+                <label class="switch"><input type="checkbox" id="btn-bomba_aire" onchange="toggleActuador('bomba_aire', this.checked)"><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <!-- MÓDULO DE CONTROL PID Y DOSIFICACIÓN -->
+            <div class="card" style="margin-top: 25px;">
+              <div class="chart-header">
+                <h3><i class="fa-solid fa-microchip"></i> Lazo de Control PID</h3>
+                <span class="hydraulic-badge"><i class="fa-solid fa-wave-square"></i> Algoritmo Activo</span>
+              </div>
+              <p class="card-subtitle">Monitoreo de error en tiempo real para corrección automática de pH y CE.</p>
+              
+              <div class="sensors-grid" style="margin-top: 10px;">
+                <div class="stat-box" style="padding: 15px;">
+                  <span>Error de pH (Setpoint: 6.0)</span>
+                  <strong id="pidPhError" style="color: var(--cyan-neon);">0.0 pH</strong>
+                </div>
+                <div class="stat-box" style="padding: 15px;">
+                  <span>Salida Kamoer A+B (PWM)</span>
+                  <strong id="pidPwmOutput" style="color: var(--warning);">0 %</strong>
+                </div>
+                <div class="stat-box" style="padding: 15px;">
+                  <span>Estado del Lazo PID</span>
+                  <strong id="pidStateLabel" style="color: var(--green-bright);">Estable</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="scheduler-card-box admin-only" style="margin-top: 25px;">
+              <div class="sched-header">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <div>
+                  <h4>Programador Automático</h4>
+                  <p>Define horarios automatizados para los componentes del huerto</p>
+                </div>
+              </div>
+              
+              <div class="sched-controls-grid">
+                <div class="sched-field">
+                  <label><i class="fa-solid fa-toggle-on"></i> Actuador</label>
+                  <select id="schedActuator" class="select-metric">
+                    <option value="bomba_principal">Bomba Principal NFT</option>
+                    <option value="peltier">Placa Peltier Enfriador</option>
+                    <option value="bypass">Válvula Bypass Desvío</option>
+                  </select>
+                </div>
+
+                <div class="sched-field">
+                  <label><i class="fa-regular fa-clock"></i> Hora Encendido</label>
+                  <input type="time" id="schedTimeOn" class="select-metric" value="08:00">
+                </div>
+
+                <div class="sched-field">
+                  <label><i class="fa-solid fa-power-off"></i> Hora Apagado</label>
+                  <input type="time" id="schedTimeOff" class="select-metric" value="20:00">
+                </div>
+
+                <button class="btn-sched-submit" onclick="guardarProgramacion()">
+                  <i class="fa-solid fa-floppy-disk"></i> Guardar Regla
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 3: TRACKERS & CHECKLIST -->
+        <section id="section-crops" class="app-section hidden">
+          <div class="section-heading">
+            <h2><i class="fa-solid fa-seedling"></i> Gestión de Lotes y Tareas</h2>
+          </div>
+
+          <div class="bottom-grid">
+            <div class="card tracker-card">
+              <h3><i class="fa-solid fa-leaf"></i> Trackers de Cultivo</h3>
+              <p class="card-subtitle">Fase 1: Agua (7d) | Fase 2: Solución 50% (7d) | Fase 3: Solución 100% (Resto)</p>
+              
+              <div class="tracker-inputs-form admin-only">
+                <input type="text" id="tracker-input" placeholder="Nombre del Lote (ej. Lote Lechuga 1)...">
+                <div class="tracker-inputs-row">
+                  <input type="date" id="tracker-date-input" title="Fecha de inicio">
+                  <input type="number" id="tracker-days-total" min="15" max="90" placeholder="Días Totales" value="30" title="Duración del ciclo">
+                  <button class="btn-add" onclick="addTracker()"><i class="fa-solid fa-plus"></i> Añadir</button>
+                </div>
+              </div>
+              <div id="tracker-container" class="tracker-list"></div>
+            </div>
+
+            <div class="card checklist-card">
+              <h3><i class="fa-solid fa-list-check"></i> Checklist</h3>
+              <p class="card-subtitle">Tareas de mantenimiento preventivo</p>
+              <div class="input-group-add admin-only">
+                <input type="text" id="task-input" placeholder="Ej: Revisar nivel tanques A+B (HDPE)...">
+                <button class="btn-add" onclick="addTask()"><i class="fa-solid fa-plus"></i></button>
+              </div>
+              <div class="task-list" id="task-container"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 4 (UNIFICADA): BITÁCORA, CALIBRACIÓN & ALERTAS PUSH -->
+        <section id="section-history" class="app-section hidden">
+          <div class="section-heading">
+            <h2><i class="fa-solid fa-bell-concierge"></i> Centro Unificado: Bitácora, Calibración & Umbrales de Alerta</h2>
+          </div>
+
+          <!-- 1. BLOQUE DE CONFIGURACIÓN DE UMBRALES -->
+          <div class="card" style="margin-bottom: 20px; border-color: var(--card-border-glow);">
+            <h3><i class="fa-solid fa-sliders"></i> Control Dinámico de Umbrales & Rangos de Seguridad</h3>
+            <p class="card-subtitle">Ajuste los límites seguros. Se emitirá una alerta y notificación push si los parámetros salen de este rango.</p>
+            
+            <div class="grid-2-cols" style="margin-top: 15px; align-items: flex-end;">
+              <div class="tracker-inputs-form admin-only" style="margin-bottom: 0;">
+                <div class="threshold-group">
+                  <label><i class="fa-solid fa-flask icon-ph"></i> pH del Agua (Mín / Máx)</label>
+                  <div class="tracker-inputs-row">
+                    <input type="number" step="0.1" id="threshPhMin" value="5.5" placeholder="Mín 5.5">
+                    <input type="number" step="0.1" id="threshPhMax" value="6.5" placeholder="Máx 6.5">
+                  </div>
+                </div>
+
+                <div class="threshold-group" style="margin-top: 12px;">
+                  <label><i class="fa-solid fa-bolt icon-ce"></i> Conductividad CE (mS/cm)</label>
+                  <div class="tracker-inputs-row">
+                    <input type="number" step="0.1" id="threshEcMin" value="2.0" placeholder="Mín 2.0">
+                    <input type="number" step="0.1" id="threshEcMax" value="2.5" placeholder="Máx 2.5">
+                  </div>
+                </div>
+              </div>
+
+              <div class="tracker-inputs-form admin-only" style="margin-bottom: 0;">
+                <div class="threshold-group">
+                  <label><i class="fa-solid fa-temperature-half icon-temp"></i> Temperatura Agua (°C)</label>
+                  <div class="tracker-inputs-row">
+                    <input type="number" step="0.5" id="threshTempMin" value="18.0" placeholder="Mín 18°C">
+                    <input type="number" step="0.5" id="threshTempMax" value="24.0" placeholder="Máx 24°C">
+                  </div>
+                </div>
+
+                <button class="btn-hex-submit" onclick="guardarUmbrales()" style="margin-top: 16px; width: 100%; border-radius: 12px; padding: 12px;">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Umbrales en Firebase
+                </button>
+              </div>
+            </div>
+
+            <div id="alertStatusBox" class="alert-status-card" style="margin-top: 15px;">
+              <i class="fa-solid fa-circle-check" style="color: var(--green-bright); font-size: 1.2rem;"></i>
+              <span>Estado Global: Todos los parámetros se encuentran dentro de los rangos óptimos.</span>
+            </div>
+          </div>
+
+          <!-- 2. BLOQUE DE BITÁCORA HISTÓRICA Y CALIBRACIÓN -->
+          <div class="grid-2-cols">
+            <div class="card">
+              <div class="chart-header">
+                <h3><i class="fa-solid fa-database"></i> Bitácora Histórica</h3>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <button class="btn-action" onclick="cargarHistorialFirebase()" title="Recargar"><i class="fa-solid fa-rotate"></i></button>
+                  <button class="btn-export" onclick="exportarCSV()"><i class="fa-solid fa-file-csv"></i> CSV</button>
+                  <button class="btn-export" onclick="exportarReporteExcelEjecutivo()" style="background: #107c41; color: #fff;"><i class="fa-solid fa-file-excel"></i> Excel .xlsx</button>
+                  <button class="btn-export" onclick="exportarReportePDF()" style="background: var(--purple-neon); color: #fff;"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                  <button class="btn-danger-custom admin-only" onclick="purgarBitacoraFirebase()" title="Borrar Historial"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+              </div>
+              <div style="max-height: 280px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; background: rgba(0,0,0,0.3);">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                  <thead>
+                    <tr style="color: var(--green-bright); border-bottom: 1px solid var(--card-border);">
+                      <th style="padding: 8px;">Hora</th>
+                      <th style="padding: 8px;">pH</th>
+                      <th style="padding: 8px;">CE</th>
+                      <th style="padding: 8px;">Temp</th>
+                      <th style="padding: 8px;">Hum</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tablaHistorialBody" style="color: var(--text-muted);">
+                    <tr><td colspan="5" style="text-align: center; padding: 15px;">Cargando registros...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="chart-header">
+                <h3><i class="fa-solid fa-flask-vial"></i> Calibración de Sondas</h3>
+              </div>
+              <div style="font-size: 0.88rem; display: flex; flex-direction: column; gap: 14px; color: var(--text-muted);">
+                <div class="diag-row">
+                  <span>Calibración pH Buffer:</span>
+                  <strong id="calibPhDate" style="color: var(--text-main);">01/10/2026</strong>
+                </div>
+                <div class="diag-row">
+                  <span>Calibración CE Estándar:</span>
+                  <strong id="calibEcDate" style="color: var(--text-main);">01/10/2026</strong>
+                </div>
+                <div class="diag-row">
+                  <span>Offset Temp DS18B20:</span>
+                  <strong id="calibTempDate" style="color: var(--text-main);">01/10/2026</strong>
+                </div>
+
+                <div class="admin-only" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                  <button class="btn-add" onclick="iniciarCalibracionGuiada('ph')"><i class="fa-solid fa-vial"></i> Calibrar pH (Buffer 4/7/10)</button>
+                  <button class="btn-add" onclick="iniciarCalibracionGuiada('ec')" style="background: var(--warning);"><i class="fa-solid fa-bolt"></i> Calibrar CE / TDS</button>
+                  <button class="btn-add" onclick="iniciarCalibracionGuiada('temp')" style="background: var(--cyan-neon);"><i class="fa-solid fa-temperature-full"></i> Calibrar Temp DS18B20</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. BLOQUE DE HISTORIAL DE ALERTAS PUSH -->
+          <div class="card" style="margin-top: 20px;">
+            <div class="chart-header">
+              <h3><i class="fa-solid fa-bell" style="color: var(--warning);"></i> Historial de Alertas & Anomalías Recientes</h3>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn-action" onclick="cargarHistorialAlertasFirebase()" title="Recargar Alertas"><i class="fa-solid fa-rotate"></i></button>
+                <button class="btn-danger-custom admin-only" onclick="purgarAlertasFirebase()" title="Limpiar Historial de Alertas"><i class="fa-solid fa-trash-can"></i> Limpiar</button>
+              </div>
+            </div>
+            <p class="card-subtitle">Registro de advertencias críticas y notificaciones push enviadas al equipo.</p>
+            <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; background: rgba(0,0,0,0.3);">
               <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
                 <thead>
-                  <tr style="color: var(--green-bright); border-bottom: 1px solid var(--card-border);">
-                    <th style="padding: 8px;">Hora</th>
-                    <th style="padding: 8px;">pH</th>
-                    <th style="padding: 8px;">CE</th>
-                    <th style="padding: 8px;">Temp</th>
-                    <th style="padding: 8px;">Hum</th>
+                  <tr style="color: var(--warning); border-bottom: 1px solid var(--card-border);">
+                    <th style="padding: 8px;">Fecha / Hora</th>
+                    <th style="padding: 8px;">Tipo de Anomalía / Evento</th>
+                    <th style="padding: 8px;">Valor Registrado</th>
+                    <th style="padding: 8px;">Estado Push</th>
                   </tr>
                 </thead>
-                <tbody id="tablaHistorialBody" style="color: var(--text-muted);">
-                  <tr><td colspan="5" style="text-align: center; padding: 15px;">Cargando registros...</td></tr>
+                <tbody id="tablaAlertasPushBody" style="color: var(--text-muted);">
+                  <tr><td colspan="4" style="text-align: center; padding: 15px;">Sin alertas recientes registradas.</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
+        </section>
 
-          <div class="card">
-            <div class="chart-header">
-              <h3><i class="fa-solid fa-flask-vial"></i> Calibración de Sondas</h3>
-            </div>
-            <div style="font-size: 0.88rem; display: flex; flex-direction: column; gap: 14px; color: var(--text-muted);">
-              <div class="diag-row">
-                <span>Calibración pH Buffer:</span>
-                <strong id="calibPhDate" style="color: var(--text-main);">01/10/2026</strong>
-              </div>
-              <div class="diag-row">
-                <span>Calibración CE Estándar:</span>
-                <strong id="calibEcDate" style="color: var(--text-main);">01/10/2026</strong>
-              </div>
-              <div class="diag-row">
-                <span>Offset Temp DS18B20:</span>
-                <strong id="calibTempDate" style="color: var(--text-main);">01/10/2026</strong>
-              </div>
+      </main>
 
-              <div class="admin-only" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
-                <button class="btn-add" onclick="iniciarCalibracionGuiada('ph')"><i class="fa-solid fa-vial"></i> Calibrar pH (Buffer 4/7/10)</button>
-                <button class="btn-add" onclick="iniciarCalibracionGuiada('ec')" style="background: var(--warning);"><i class="fa-solid fa-bolt"></i> Calibrar CE / TDS</button>
-                <button class="btn-add" onclick="iniciarCalibracionGuiada('temp')" style="background: var(--cyan-neon);"><i class="fa-solid fa-temperature-full"></i> Calibrar Temp DS18B20</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. BLOQUE DE HISTORIAL DE ALERTAS PUSH -->
-        <div class="card" style="margin-top: 20px;">
-          <div class="chart-header">
-            <h3><i class="fa-solid fa-bell" style="color: var(--warning);"></i> Historial de Alertas & Anomalías Recientes</h3>
-            <div style="display: flex; gap: 8px;">
-              <button class="btn-action" onclick="cargarHistorialAlertasFirebase()" title="Recargar Alertas"><i class="fa-solid fa-rotate"></i></button>
-              <button class="btn-danger-custom admin-only" onclick="purgarAlertasFirebase()" title="Limpiar Historial de Alertas"><i class="fa-solid fa-trash-can"></i> Limpiar</button>
-            </div>
-          </div>
-          <p class="card-subtitle">Registro de advertencias críticas y notificaciones push enviadas al equipo.</p>
-          <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; background: rgba(0,0,0,0.3);">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
-              <thead>
-                <tr style="color: var(--warning); border-bottom: 1px solid var(--card-border);">
-                  <th style="padding: 8px;">Fecha / Hora</th>
-                  <th style="padding: 8px;">Tipo de Anomalía / Evento</th>
-                  <th style="padding: 8px;">Valor Registrado</th>
-                  <th style="padding: 8px;">Estado Push</th>
-                </tr>
-              </thead>
-              <tbody id="tablaAlertasPushBody" style="color: var(--text-muted);">
-                <tr><td colspan="4" style="text-align: center; padding: 15px;">Sin alertas recientes registradas.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <footer>
-      <p>Huerto Hidropónico Inteligente IoT · Escuela Superior de Huejutla · UAEH</p>
-      <p style="font-size: 0.72rem; margin-top: 4px; opacity: 0.7;">Desarrollado por la Cuadrilla de Programación</p>
-    </footer>
+      <footer>
+        <p>Huerto Hidropónico Inteligente IoT · Escuela Superior de Huejutla · UAEH</p>
+        <p style="font-size: 0.72rem; margin-top: 4px; opacity: 0.7;">Desarrollado por la Cuadrilla de Programación</p>
+      </footer>
+    </div>
   </div>
 
   <!-- MODALES DEL SISTEMA -->
