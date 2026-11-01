@@ -595,56 +595,6 @@ body::before {
 .diag-row { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .diag-row strong { color: var(--text-main); }
 
-/* --- ESTILOS MODERNOS PARA CARPETAS Y CUADRILLAS EN REPORTES --- */
-.folder-card {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--card-border);
-  border-radius: 18px;
-  margin-bottom: 12px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
-}
-
-.folder-card:hover {
-  border-color: var(--card-border-glow);
-  background: rgba(0, 0, 0, 0.45);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-}
-
-.folder-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 18px;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.02);
-  transition: background 0.2s ease;
-}
-
-.folder-header:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.folder-icon-glow {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: rgba(255, 209, 102, 0.15);
-  border: 1px solid rgba(255, 209, 102, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--warning);
-  font-size: 1.1rem;
-  box-shadow: 0 0 12px rgba(255, 209, 102, 0.2);
-  flex-shrink: 0;
-}
-
-.folder-content {
-  animation: fadeInUp 0.3s ease forwards;
-}
-
 /* --- REDISEÑO TOTAL: PROGRAMADOR AUTOMÁTICO INTELIGENTE --- */
 .scheduler-hud-card {
   background: rgba(12, 35, 28, 0.75);
@@ -851,44 +801,6 @@ body.role-guest .control-item .switch { pointer-events: none; opacity: 0.3; filt
 
 footer { text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 40px 0 20px; }
 
-/* --- CALENDARIO OPERATIVO MENSUAL & RESPONSIVIDAD MÓVIL --- */
-#calendarioOperativoContainer {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-}
-
-.calendar-day-box {
-  background: rgba(0,0,0,0.3);
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  padding: 6px;
-  min-height: 68px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  box-sizing: border-box;
-  overflow: hidden;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.calendar-day-box:active {
-  transform: scale(0.95);
-}
-
-.calendar-day-pendiente {
-  border: 1px solid var(--warning) !important;
-  background: rgba(255, 209, 102, 0.12) !important;
-}
-
-.calendar-day-cumplido {
-  border: 1px solid var(--green-bright) !important;
-  background: rgba(53, 229, 138, 0.22) !important;
-  box-shadow: 0 0 12px rgba(53, 229, 138, 0.35);
-  cursor: pointer;
-}
-
 /* =========================================================
    OPTIMIZACIÓN MÓVIL AVANZADA & RENDIMIENTO HUD (SMARTPHONES)
    ========================================================= */
@@ -968,20 +880,6 @@ footer { text-align: center; color: var(--text-muted); font-size: 0.78rem; paddi
   .card, .main-header, .ags-sidebar, .login-hex-card {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-  }
-
-  #calendarioOperativoContainer {
-    gap: 4px;
-  }
-  
-  .calendar-day-box {
-    min-height: 58px !important;
-    padding: 4px !important;
-    border-radius: 8px !important;
-  }
-
-  .calendar-day-box > div:first-child {
-    font-size: 0.75rem !important;
   }
   
   .grid-2-cols { 

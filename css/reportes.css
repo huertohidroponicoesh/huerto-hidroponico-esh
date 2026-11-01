@@ -1,0 +1,169 @@
+/* =========================================================
+   MÓDULO DE REPORTES, CUADRILLAS Y CALENDARIO (REPORTES.CSS)
+   ========================================================= */
+
+.reports-card-hud {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+/* Caja de Formulario para Integrar Cuadrilla */
+.report-inputs-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(15px);
+}
+
+.report-inputs-box input {
+  padding: 13px 16px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  border-radius: 14px;
+  outline: none;
+  font-size: 0.88rem;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.report-inputs-box input:focus {
+  border-color: var(--green-bright);
+  box-shadow: 0 0 18px rgba(53, 229, 138, 0.35);
+}
+
+/* Cuadrillas Activas: Tarjetas de Carpetas */
+.folder-card {
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  margin-bottom: 14px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.folder-card:hover {
+  border-color: var(--card-border-glow);
+  background: rgba(0, 0, 0, 0.48);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+.folder-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.025);
+  transition: background 0.2s ease;
+}
+
+.folder-header:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.folder-icon-glow {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255, 209, 102, 0.15);
+  border: 1px solid rgba(255, 209, 102, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--warning);
+  font-size: 1.15rem;
+  box-shadow: 0 0 15px rgba(255, 209, 102, 0.25);
+  flex-shrink: 0;
+}
+
+.folder-content {
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+/* Planificador Mensual & Calendario Operativo */
+.calendar-hud-wrapper {
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(15px);
+}
+
+.calendar-header-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.calendar-weekdays-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+#calendarioOperativoContainer {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-day-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 8px;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.calendar-day-box:hover {
+  border-color: var(--card-border-glow);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.calendar-day-box:active {
+  transform: scale(0.96);
+}
+
+/* Estados de días en el calendario */
+.calendar-day-pendiente {
+  border: 1px solid var(--warning) !important;
+  background: rgba(255, 209, 102, 0.12) !important;
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.2);
+}
+
+.calendar-day-cumplido {
+  border: 1px solid var(--green-bright) !important;
+  background: rgba(53, 229, 138, 0.22) !important;
+  box-shadow: 0 0 14px rgba(53, 229, 138, 0.35);
+  cursor: pointer;
+}
+
+.calendar-day-cumplido:hover {
+  filter: brightness(1.15);
+}
