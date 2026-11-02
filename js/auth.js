@@ -106,9 +106,9 @@ function autenticar() {
       localStorage.removeItem("hidro_role");
     }
     
-    // Generar un token único por dispositivo para notificaciones PWA al autenticar si no existe
+    // Asignar token único de sesión por dispositivo al autenticar si no existe
     if (!localStorage.getItem("hidro_device_unique_token")) {
-      const tokenSesion = "device_token_" + Date.now() + "_" + Math.random().toString(36).substring(2, 10);
+      const tokenSesion = "fcm_token_esh_" + Math.random().toString(36).substring(2, 15) + "_" + Date.now();
       localStorage.setItem("hidro_device_unique_token", tokenSesion);
       localStorage.setItem("hidro_push_token", tokenSesion);
     }
@@ -174,47 +174,3 @@ function iniciarReloj() {
     }
   }, 1000);
 }
-
-// =========================================================
-// GESTIÓN DE DISPOSITIVO Y TOKEN PUSH (INDEPENDIENTE POR HARDWARE)
-// =========================================================
-function guardarDispositivoPersonalizado() {
-  const inputDispositivo = document.getElementById('inputNombreDispositivo');
-  const inputUsuario = document.getElementById('inputNombreUsuario');
-  
-  const nombreDisp = inputDispositivo ? inputDispositivo.value.trim() : "";
-  const nombreUsu = inputUsuario ? inputUsuario.value.trim() : "H.A.G.D.R.";
-
-  if (!nombreDisp) {
-    if (typeof mostrarToast === 'function') {
-      mostrarToast("Aviso", "Por favor ingresa un nombre para este dispositivo.", "warning");
-    } else {
-      alert("Por favor ingresa un nombre para este dispositivo.");
-    }
-    return;
-  }
-
-  // Generar o recuperar de forma segura el token exclusivo de este dispositivo
-  let tokenDispositivo = localStorage.getItem("hidro_device_unique_token") || localStorage.getItem("hidro_push_token");
-  if (!tokenDispositivo) {
-    tokenDispositivo = "fcm_token_" + Date.now() + "_" + Math.random().toString(36).substring(2, 12);
-  }
-
-  // Guardar y sincronizar localmente
-  localStorage.setItem("hidro_device_unique_token", tokenDispositivo);
-  localStorage.setItem("hidro_push_token", tokenDispositivo);
-  localStorage.setItem('dispositivo_push_activo', nombreDisp);
-  localStorage.setItem('usuario_push_activo', nombreUsu);
-  localStorage.setItem('push_registrado_exito', "true");
-
-  if (typeof mostrarToast === 'function') {
-    mostrarToast("Alertas Push 24/7", `Dispositivo "${nombreDisp}" registrado con éxito.`, "success");
-  } else {
-    alert(`Dispositivo "${nombreDisp}" vinculado correctamente.`);
-  }
-  
-  if (typeof cerrarModalPush === 'function') {
-    cerrarModalPush();
-  }
-}
-window.guardarDispositivoPersonalizado = guardarDispositivoPersonalizado;
