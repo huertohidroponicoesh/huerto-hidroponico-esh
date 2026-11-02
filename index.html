@@ -677,8 +677,16 @@
 
           <!-- 1. BLOQUE DE CONFIGURACIÓN DE UMBRALES -->
           <div class="card" style="margin-bottom: 20px; border-color: var(--card-border-glow);">
-            <h3><i class="fa-solid fa-sliders"></i> Control Dinámico de Umbrales & Rangos de Seguridad</h3>
-            <p class="card-subtitle">Ajuste los límites seguros. Se emitirá una alerta y notificación push si los parámetros salen de este rango.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h3><i class="fa-solid fa-sliders"></i> Control Dinámico de Umbrales & Rangos de Seguridad</h3>
+                <p class="card-subtitle">Ajuste los límites seguros. Se emitirá una alerta y notificación push si los parámetros salen de este rango.</p>
+              </div>
+              <!-- BOTÓN DE EMISIÓN DE ALERTA GLOBAL BROADCAST (SOLO ADMIN) -->
+              <button onclick="abrirModalBroadcast()" class="btn-add admin-only" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; font-size: 0.8rem; padding: 10px 16px;">
+                <i class="fa-solid fa-bullhorn"></i> Alerta Global Admin
+              </button>
+            </div>
             
             <div class="grid-2-cols" style="margin-top: 15px; align-items: flex-end;">
               <div class="tracker-inputs-form admin-only" style="margin-bottom: 0;">
@@ -815,7 +823,42 @@
     </div>
   </div>
 
-  <!-- MODALES DEL SISTEMA -->
+  <!-- MODAL DE TRANSMISIÓN DE AVISOS GLOBALES (SOLO ADMIN) -->
+  <div id="broadcastModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2600; padding: 15px;">
+    <div class="animate-fade-in" style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 24px; width: 100%; max-width: 440px; padding: 25px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.85); backdrop-filter: blur(30px); text-align: left; position: relative;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
+        <h3 style="color: #f87171; font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 10px; margin: 0;">
+          <i class="fa-solid fa-bullhorn" style="font-size: 1.1rem;"></i> Transmisión Global Admin
+        </h3>
+        <button onclick="cerrarModalBroadcast()" style="background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; padding: 4px;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px;">
+        Este comunicado se emitirá como notificación push inmediata a todos los dispositivos vinculados en la red.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div>
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;"><i class="fa-solid fa-heading" style="color: #f87171;"></i> Título del Comunicado:</label>
+          <input type="text" id="broadcastTitulo" placeholder="Ej. Mantenimiento General de Tanques" style="width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;"><i class="fa-solid fa-envelope-open-text" style="color: #f87171;"></i> Mensaje / Instrucción:</label>
+          <textarea id="broadcastMensaje" rows="3" placeholder="Escriba aquí la instrucción para las cuadrillas y operadores..." style="width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 12px; font-size: 0.85rem; outline: none; box-sizing: border-box; resize: none;"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 24px;">
+        <button onclick="cerrarModalBroadcast()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text-muted); border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">Cancelar</button>
+        <button onclick="enviarAvisoGlobal()" style="flex: 1.2; padding: 12px; background: #ef4444; border: none; color: #ffffff; border-radius: 12px; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);"><i class="fa-solid fa-paper-plane"></i> Emitir Alerta</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OTROS MODALES DEL SISTEMA -->
   <div id="calibrationModal" class="login-overlay hidden" style="backdrop-filter: blur(20px); z-index: 2000;">
     <div class="login-hex-card" style="max-width: 480px; text-align: left;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -911,5 +954,6 @@
   <script src="js/pwa-manager.js"></script>
   <script src="js/push-manager.js"></script>
   <script src="js/push-notifications-observer.js"></script>
+  <script src="js/admin-broadcast.js"></script>
 </body>
 </html>

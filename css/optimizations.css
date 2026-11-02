@@ -11,6 +11,8 @@
   z-index: 0; 
   opacity: 0.4; 
   animation: floatOrb 14s infinite alternate ease-in-out; 
+  will-change: transform;
+  transform: translateZ(0);
 }
 .orb-1 { width: 400px; height: 400px; background: var(--green-bright); top: -80px; right: -80px; }
 .orb-2 { width: 450px; height: 450px; background: var(--cyan-neon); bottom: -120px; left: -120px; animation-delay: -4s; }
@@ -27,7 +29,10 @@
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-in { animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-fade-in { 
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+  will-change: transform, opacity;
+}
 
 @keyframes plantBounce {
   0%, 100% { transform: translateY(0) scale(1); }
@@ -35,11 +40,44 @@
 }
 .plant-bounce { animation: plantBounce 3s infinite ease-in-out; }
 
-/* Optimización extrema para smartphones (Evita tirones y lag) */
+/* Aceleración por GPU y optimización de renderizado para elementos críticos */
+.toast-container,
+.modal-content,
+#sidebar,
+.card, 
+.main-header, 
+.ags-sidebar, 
+.login-hex-card, 
+.reports-card-hud, 
+.calendar-hud-wrapper, 
+.scheduler-hud-card {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Aislamiento de layout para contenedores principales (evita repintados globales innecesarios) */
+.dashboard-grid,
+.tracker-section,
+.sensor-container {
+  contain: layout style paint;
+}
+
+/* Optimización extrema para smartphones (Evita tirones, lag y sobrecarga de GPU móvil) */
 @media (max-width: 992px) {
   .card, .main-header, .ags-sidebar, .login-hex-card, .reports-card-hud, .calendar-hud-wrapper, .scheduler-hud-card {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     background: var(--card-bg) !important;
+  }
+}
+
+/* Respetar preferencias de reducción de movimiento del sistema */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
