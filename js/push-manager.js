@@ -1,12 +1,13 @@
 // =========================================================
-// MÓDULO INDEPENDIENTE: GESTIÓN DE TOKENS Y PUSH MANAGER
+// MÓDULO INDEPENDIENTE: GESTIÓN DE TOKENS Y PERMISOS PUSH
 // =========================================================
 
 function abrirModalPush() {
   const modal = document.getElementById('pushConfigModal');
   if (modal) {
     modal.classList.remove('hidden');
-    // Prellenar campos si ya están guardados previamente en este dispositivo
+    
+    // Prellenar campos si ya existen datos guardados en este dispositivo
     const inputDisp = document.getElementById('inputNombreDispositivo');
     const inputUsu = document.getElementById('inputNombreUsuario');
     if (inputDisp && localStorage.getItem('dispositivo_push_activo')) {
@@ -25,7 +26,7 @@ function cerrarModalPush() {
 }
 window.cerrarModalPush = cerrarModalPush;
 
-function guardarDispositivoPersonalizado() {
+async function guardarDispositivoPersonalizado() {
   const inputDispositivo = document.getElementById('inputNombreDispositivo');
   const inputUsuario = document.getElementById('inputNombreUsuario');
   
@@ -41,46 +42,68 @@ function guardarDispositivoPersonalizado() {
     return;
   }
 
-  // Generar un token único independiente por hardware/navegador para la PWA
+  // 1. SOLICITAR PERMISO NATIVO DEL NAVEGADOR / SISTEMA OPERATIVO
+  if ('Notification' in window) {
+    let permiso = Notification.permission;
+
+    if (permiso === 'default') {
+      // Abre el diálogo emergente nativo del navegador preguntando si permite notificaciones
+      permiso = await Notification.requestPermission();
+    }
+
+    if (permiso === 'denied') {
+      if (typeof mostrarToast === 'function') {
+        mostrarToast("Permiso Bloqueado", "Las notificaciones están bloqueadas en los ajustes de tu navegador o teléfono.", "danger");
+      } else {
+        alert("Las notificaciones están bloqueadas en tu navegador.");
+      }
+      return;
+    }
+  } else {
+    console.warn("⚠️ Este navegador no soporta la API de Notificaciones.");
+  }
+
+  // 2. GENERAR TOKEN ÚNICO POR DISPOSITIVO (SOLO SI SE OTORGÓ EL PERMISO)
   let tokenDispositivo = localStorage.getItem("hidro_device_unique_token");
   if (!tokenDispositivo) {
     tokenDispositivo = "fcm_token_esh_" + Math.random().toString(36).substring(2, 15) + "_" + Date.now();
     localStorage.setItem("hidro_device_unique_token", tokenDispositivo);
   }
   
-  // Sincronizar variables locales
+  // Guardar configuración local
   localStorage.setItem("hidro_push_token", tokenDispositivo);
   localStorage.setItem('dispositivo_push_activo', nombreDisp);
   localStorage.setItem('usuario_push_activo', nombreUsu);
   localStorage.setItem('push_registrado_exito', "true");
 
-  // Enviar y registrar de forma remota en la base de datos de Firebase Realtime Database
+  // 3. SINCRONIZAR CON FIREBASE REALTIME DATABASE
   if (typeof firebase !== 'undefined' && firebase.database) {
     const deviceIdClean = nombreDisp.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
     firebase.database().ref('fcm_tokens/' + deviceIdClean).set({
       dispositivo: nombreDisp,
       usuario: nombreUsu,
       token: tokenDispositivo,
+      permisoOtorgado: Notification.permission === 'granted',
       fechaRegistro: new Date().toISOString()
     }).then(() => {
-      console.log("☁️ Token único sincronizado correctamente en Firebase.");
+      console.log("☁️ Token y estado de notificación sincronizados en Firebase.");
     }).catch((err) => {
-      console.warn("⚠️ Registro local exitoso, aviso de red en Firebase:", err);
+      console.warn("⚠️ Error de red en Firebase:", err);
     });
   }
 
-  // Notificar al usuario con el sistema Toast flotante centrado
+  // 4. CONFIRMACIÓN CON TOAST
   if (typeof mostrarToast === 'function') {
-    mostrarToast("Alertas Push 24/7", `Dispositivo "${nombreDisp}" enlazado con éxito.`, "success");
+    mostrarToast("Alertas Push 24/7", `Permisos otorgados y dispositivo "${nombreDisp}" activado.`, "success");
   } else {
-    alert(`Dispositivo "${nombreDisp}" vinculado correctamente.`);
+    alert(`Notificaciones activadas para "${nombreDisp}".`);
   }
   
   cerrarModalPush();
 }
 window.guardarDispositivoPersonalizado = guardarDispositivoPersonalizado;
 
-// Enlace automático y seguro para el botón de la campanita
+// Enlace directo de la campanita
 document.addEventListener("DOMContentLoaded", () => {
   const btnNotify = document.getElementById('btnNotify') || document.querySelector('button[title*="Notificaciones"]') || document.querySelector('.fa-bell')?.closest('button');
   if (btnNotify) {
