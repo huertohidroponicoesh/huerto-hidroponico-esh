@@ -1,5 +1,5 @@
 // =========================================================
-// MÓDULO BROADCAST DE AVISOS MANUALES (SOLO ADMIN)
+// MÓDULO BROADCAST DE AVISOS MANUALES (SOLO ADMIN) - V2
 // =========================================================
 
 function abrirModalBroadcast() {
@@ -22,7 +22,6 @@ function cerrarModalBroadcast() {
   const modal = document.getElementById('broadcastModal');
   if (modal) modal.classList.add('hidden');
   
-  // Limpiar campos
   const inputTitulo = document.getElementById('broadcastTitulo');
   const inputMsg = document.getElementById('broadcastMensaje');
   if (inputTitulo) inputTitulo.value = '';
@@ -53,18 +52,30 @@ function enviarAvisoGlobal() {
   }
 
   if (typeof firebase !== 'undefined' && firebase.database) {
+    const timestamp = Date.now();
+    const emisor = localStorage.getItem('usuario_push_activo') || 'Administrador General';
+    
+    // 1. Enviar evento en vivo a broadcast_alerts
     const alertRef = firebase.database().ref('broadcast_alerts').push();
-    alertRef.set({
-      titulo: titulo,
+    const payload = {
+      titulo: `📢 ${titulo}`,
       mensaje: mensaje,
-      emisor: localStorage.getItem('usuario_push_activo') || 'Administrador',
-      timestamp: Date.now(),
-      fecha: new Date().toISOString()
-    }).then(() => {
+      emisor: emisor,
+      timestamp: timestamp,
+      fecha: new Date().toLocaleString()
+    };
+
+    alertRef.set(payload).then(() => {
+      // 2. Guardar registro permanente en broadcast_history
+      firebase.database().ref('broadcast_history').push(payload);
+
       if (typeof mostrarToast === 'function') {
-        mostrarToast("Aviso Transmitido", "El mensaje se envió a todos los dispositivos registrados.", "success");
+        mostrarToast("Aviso Transmitido", "El mensaje se envió a la red y se guardó en la bitácora.", "success");
       }
       cerrarModalBroadcast();
+      if (typeof cargarHistorialBroadcast === 'function') {
+        cargarHistorialBroadcast();
+      }
     }).catch((err) => {
       console.error("Error al emitir el aviso broadcast:", err);
       if (typeof mostrarToast === 'function') {

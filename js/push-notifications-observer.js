@@ -1,72 +1,67 @@
 // =========================================================
-// MÓDULO INDEPENDIENTE: OBSERVADOR DE CAMBIOS PARA PUSH 24/7
+// MÓDULO INDEPENDIENTE: OBSERVADOR DE CAMBIOS Y PUSH 24/7
 // =========================================================
 
-let esCargaInicialTareas = true;
-let esCargaInicialTrackers = true;
+// Registrar el timestamp exacto en que abrió la aplicación para ignorar eventos antiguos
+const tiempoInicioApp = Date.now();
+let datosHistoricosCargados = false;
 
 function iniciarObservadorPushFirebase() {
   if (typeof firebase === 'undefined' || !firebase.database) return;
 
   const dbRef = firebase.database().ref();
 
-  // 1. Vigilar nuevas tareas evitando duplicación en la carga inicial
+  // Marcar cuando se terminan de leer los registros iniciales para evitar ráfagas
   dbRef.child('tasks').once('value', () => {
-    esCargaInicialTareas = false;
+    setTimeout(() => {
+      datosHistoricosCargados = true;
+    }, 1500);
   });
 
+  // 1. Vigilar nuevas tareas evitando duplicación histórica
   dbRef.child('tasks').on('child_added', (snapshot) => {
-    if (esCargaInicialTareas) return;
+    if (!datosHistoricosCargados) return;
+    
     const tarea = snapshot.val();
-    dispararNotificacionLocal("📋 Nueva Tarea Creada", `Se ha añadido: ${tarea?.title || 'Nueva tarea'}`);
-  });
+    const timestampTarea = tarea?.timestamp || Date.now();
 
-  // 2. Vigilar actualizaciones en Trackers evitando duplicación en la carga inicial
-  dbRef.child('trackers').once('value', () => {
-    esCargaInicialTrackers = false;
-  });
-
-  dbRef.child('trackers').on('child_changed', (snapshot) => {
-    if (esCargaInicialTrackers) return;
-    dispararNotificacionLocal("📊 Actualización de Tracker", "Se han modificado los parámetros de seguimiento.");
-  });
-
-  // 3. Vigilar cambios en umbrales o calibración de sensores
-  dbRef.child('sensores').on('child_changed', (snapshot) => {
-    const data = snapshot.val();
-    if (data && (data.pH < 5.0 || data.pH > 7.0)) {
-      dispararNotificacionLocal("🚨 Alerta Crítica de pH", `El pH actual es de ${data.pH}. ¡Requiere atención!`);
+    // Solo notificar si la tarea fue creada después de abrir la app (evita duplicados al entrar)
+    if (timestampTarea > tiempoInicioApp) {
+      dispararNotificacionLocal("📋 Nueva Tarea Creada", `Se ha añadido: ${tarea?.title || 'Nueva tarea'}`);
     }
   });
 
-  // 4. Vigilar avisos globales de transmisión manual (Broadcast de Admin)
+  // 2. Vigilar avisos globales de transmisión manual (Broadcast de Admin)
   dbRef.child('broadcast_alerts').limitToLast(1).on('child_added', (snapshot) => {
+    if (!datosHistoricosCargados) return;
+
     const alerta = snapshot.val();
     if (!alerta || !alerta.timestamp) return;
 
-    // Solo notificar si la alerta fue emitida hace menos de 10 segundos para evitar repeticiones al recargar
-    if (Date.now() - alerta.timestamp < 10000) {
+    // Verificar que la alerta sea reciente y posterior al inicio de sesión
+    if (alerta.timestamp > tiempoInicioApp && (Date.now() - alerta.timestamp < 15000)) {
       dispararNotificacionLocal(alerta.titulo, alerta.mensaje, 'warning');
     }
   });
 
-  console.log("👀 Observador de Firebase para notificaciones push optimizado y activo.");
+  console.log("👀 Observador de Firebase optimizado y filtro anti-duplicados activo.");
 }
 
 function dispararNotificacionLocal(titulo, mensaje, tipo = 'warning') {
-  // Mostrar Toast visual en pantalla si está abierta la app
+  // Mostrar Toast visual en pantalla si la app está abierta
   if (typeof mostrarToast === 'function') {
     mostrarToast(titulo, mensaje, tipo);
   }
 
-  // Si el navegador soporta notificaciones nativas y el usuario dio permisos, las muestra en segundo plano
+  // Mostrar notificación nativa del sistema (funciona en segundo plano si el Service Worker está activo)
   if ('Notification' in window && Notification.permission === 'granted') {
     navigator.serviceWorker.ready.then((registration) => {
       registration.showNotification(titulo, {
         body: mensaje,
         icon: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png',
         badge: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png',
-        vibrate: [200, 100, 200]
+        vibrate: [200, 100, 200],
+        tag: 'huerto-esh-alerta'
       });
     });
   }

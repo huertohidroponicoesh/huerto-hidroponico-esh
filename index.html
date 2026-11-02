@@ -812,6 +812,33 @@
               </table>
             </div>
           </div>
+
+          <!-- 4. BLOQUE DE HISTORIAL DE AVISOS GLOBALES BROADCAST (NUEVO) -->
+          <div class="card" style="margin-top: 20px;">
+            <div class="chart-header">
+              <h3><i class="fa-solid fa-bullhorn" style="color: #f87171;"></i> Historial de Avisos Globales Transmitidos</h3>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn-action" onclick="cargarHistorialBroadcast()" title="Recargar Historial Broadcast"><i class="fa-solid fa-rotate"></i></button>
+                <button class="btn-danger-custom admin-only" onclick="vaciarHistorialBroadcast()" title="Purgar Historial Broadcast"><i class="fa-solid fa-trash-can"></i> Limpiar Todo</button>
+              </div>
+            </div>
+            <p class="card-subtitle">Registro acumulado de comunicados manuales enviados por la administración.</p>
+            <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; background: rgba(0,0,0,0.3);">
+              <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                <thead>
+                  <tr style="color: #f87171; border-bottom: 1px solid var(--card-border);">
+                    <th style="padding: 8px;">Fecha / Hora</th>
+                    <th style="padding: 8px;">Título del Comunicado</th>
+                    <th style="padding: 8px;">Mensaje / Instrucción</th>
+                    <th style="padding: 8px; text-align: center;">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaBroadcastHistoryBody" style="color: var(--text-muted);">
+                  <tr><td colspan="4" style="text-align: center; padding: 15px;">Cargando historial de avisos...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
       </main>
@@ -955,5 +982,6 @@
   <script src="js/push-manager.js"></script>
   <script src="js/push-notifications-observer.js"></script>
   <script src="js/admin-broadcast.js"></script>
+  <script src="js/admin-broadcast-history.js"></script>
 </body>
 </html>
