@@ -55,7 +55,7 @@ function enviarAvisoGlobal() {
     const timestamp = Date.now();
     const emisor = localStorage.getItem('usuario_push_activo') || 'Administrador General';
     
-    // 1. Enviar evento en vivo a broadcast_alerts
+    // 1. Enviar evento en vivo a broadcast_alerts para los observadores activos
     const alertRef = firebase.database().ref('broadcast_alerts').push();
     const payload = {
       titulo: `📢 ${titulo}`,
@@ -68,6 +68,10 @@ function enviarAvisoGlobal() {
     alertRef.set(payload).then(() => {
       // 2. Guardar registro permanente en broadcast_history
       firebase.database().ref('broadcast_history').push(payload);
+
+      // 3. Disparar API Push de Vercel para forzar la notificación externa inmediata (móvil y laptop)
+      fetch(`https://huerto-hidroponico-esh.vercel.app/api/push?titulo=${encodeURIComponent(payload.titulo)}&mensaje=${encodeURIComponent(payload.mensaje)}`)
+        .catch(err => console.log("Push de Vercel enviado en segundo plano", err));
 
       if (typeof mostrarToast === 'function') {
         mostrarToast("Aviso Transmitido", "El mensaje se envió a la red y se guardó en la bitácora.", "success");
