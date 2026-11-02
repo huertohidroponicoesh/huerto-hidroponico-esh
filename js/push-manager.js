@@ -63,7 +63,7 @@ async function guardarDispositivoPersonalizado() {
       return;
     }
 
-    // 2. OBTENER EL TOKEN REAL DE FIREBASE CLOUD MESSAGING (FCM) CON VAPID KEY
+    // 2. OBTENER EL TOKEN REAL DE FIREBASE CLOUD MESSAGING (FCM) CON VAPID KEY Y DIAGNÓSTICO
     let tokenDispositivo = null;
     
     if (typeof firebase !== 'undefined' && firebase.messaging) {
@@ -74,8 +74,10 @@ async function guardarDispositivoPersonalizado() {
         tokenDispositivo = await messaging.getToken({ 
           vapidKey: 'BJBLJ1psCydMWxnpj3LX5TbH6ev9Br8EjHgoBUdniqs2DHwm-5o2m20UW-TRyIUGT5ZFPQaoRgJSEKX1VCE2-M4' 
         });
+        console.log("🔥 Token oficial de Google obtenido con éxito:", tokenDispositivo);
       } catch (fcmErr) {
-        console.warn("⚠️ No se pudo obtener el token FCM nativo del navegador, usando respaldo local:", fcmErr);
+        console.error("❌ ERROR CRÍTICO FCM (¡Detalle del fallo!):", fcmErr);
+        console.warn("⚠️ Usando respaldo local debido al error anterior.");
       }
     }
 
@@ -103,7 +105,7 @@ async function guardarDispositivoPersonalizado() {
         permisoOtorgado: Notification.permission === 'granted',
         fechaRegistro: new Date().toISOString()
       });
-      console.log("☁️ Token real de FCM sincronizado en Firebase para Vercel.");
+      console.log("☁️ Token sincronizado en Firebase para Vercel:", tokenDispositivo);
     }
 
     // 4. CONFIRMACIÓN CON TOAST
