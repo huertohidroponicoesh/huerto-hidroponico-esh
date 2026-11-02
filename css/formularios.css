@@ -116,23 +116,29 @@
 }
 
 /* =========================================================
-   CONTENEDOR DE TOASTS FLOTANTES (CORREGIDO PARA MÓVIL)
+   CONTENEDOR DE TOASTS FLOTANTES - CENTRADO ABSOLUTO MÓVIL
    ========================================================= */
-.toast-container {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 90%;
-  max-width: 380px;
-  box-sizing: border-box;
-  pointer-events: none;
+.toast-container,
+#toast-container {
+  position: fixed !important;
+  top: 20px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 90% !important;
+  max-width: 380px !important;
+  box-sizing: border-box !important;
+  pointer-events: none !important;
 }
 
-.toast-container > * {
-  pointer-events: auto;
+.toast-container > *,
+#toast-container > * {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  pointer-events: auto !important;
 }

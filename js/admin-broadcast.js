@@ -29,7 +29,7 @@ function cerrarModalBroadcast() {
 }
 window.cerrarModalBroadcast = cerrarModalBroadcast;
 
-function enviarAvisoGlobal() {
+async function enviarAvisoGlobal() {
   const rol = localStorage.getItem("hidro_role") || userRole;
   if (rol !== 'admin') {
     if (typeof mostrarToast === 'function') {
@@ -55,8 +55,7 @@ function enviarAvisoGlobal() {
     const timestamp = Date.now();
     const emisor = localStorage.getItem('usuario_push_activo') || 'Administrador General';
     
-    // 1. Enviar evento en vivo a broadcast_alerts para los observadores activos
-    const alertRef = firebase.database().ref('broadcast_alerts').push();
+    // Preparar payload de la alerta
     const payload = {
       titulo: `📢 ${titulo}`,
       mensaje: mensaje,
@@ -65,27 +64,33 @@ function enviarAvisoGlobal() {
       fecha: new Date().toLocaleString()
     };
 
-    alertRef.set(payload).then(() => {
-      // 2. Guardar registro permanente en broadcast_history
-      firebase.database().ref('broadcast_history').push(payload);
+    try {
+      // 1. Disparar de inmediato la API Push de Vercel (para forzar la push nativa al celular con app cerrada)
+      const urlPush = `https://huerto-hidroponico-esh.vercel.app/api/push?titulo=${encodeURIComponent(payload.titulo)}&mensaje=${encodeURIComponent(payload.mensaje)}`;
+      await fetch(urlPush, { method: 'GET', mode: 'cors' });
+      console.log("🚀 Notificación Push despachada a Vercel con éxito.");
 
-      // 3. Disparar API Push de Vercel para forzar la notificación externa inmediata (móvil y laptop)
-      fetch(`https://huerto-hidroponico-esh.vercel.app/api/push?titulo=${encodeURIComponent(payload.titulo)}&mensaje=${encodeURIComponent(payload.mensaje)}`)
-        .catch(err => console.log("Push de Vercel enviado en segundo plano", err));
+      // 2. Enviar evento en vivo a broadcast_alerts para los observadores activos en la interfaz
+      const alertRef = firebase.database().ref('broadcast_alerts').push();
+      await alertRef.set(payload);
+
+      // 3. Guardar registro permanente en broadcast_history
+      await firebase.database().ref('broadcast_history').push(payload);
 
       if (typeof mostrarToast === 'function') {
-        mostrarToast("Aviso Transmitido", "El mensaje se envió a la red y se guardó en la bitácora.", "success");
+        mostrarToast("Aviso Transmitido", "El mensaje se envió a la red y a las notificaciones push.", "success");
       }
       cerrarModalBroadcast();
       if (typeof cargarHistorialBroadcast === 'function') {
         cargarHistorialBroadcast();
       }
-    }).catch((err) => {
+
+    } catch (err) {
       console.error("Error al emitir el aviso broadcast:", err);
       if (typeof mostrarToast === 'function') {
         mostrarToast("Error", "No se pudo enviar el aviso a la red.", "danger");
       }
-    });
+    }
   }
 }
 window.enviarAvisoGlobal = enviarAvisoGlobal;
