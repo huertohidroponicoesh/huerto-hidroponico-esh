@@ -156,14 +156,14 @@ db.ref('cuadrillas_sistema').on('child_added', (snapshot) => {
 setTimeout(() => { cargandoInicialCuadrillas = false; }, 3000);
 
 // =========================================================
-// 6. SERVIDOR HTTP BÁSICO (EXIGIDO POR RENDER)
+// 6. SERVIDOR HTTP BÁSICO (EXIGIDO POR FLY.IO)
 // =========================================================
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Huerto ESH Monitor Push 24/7 activo con eventos globales\n');
 });
 
-const PORT = process.env.PORT || 10000;
-server.listen(PORT, () => {
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor HTTP corriendo en el puerto ${PORT}`);
 });
