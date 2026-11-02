@@ -63,26 +63,32 @@ async function guardarDispositivoPersonalizado() {
       return;
     }
 
-    // 2. OBTENER EL TOKEN REAL DE FIREBASE CLOUD MESSAGING (FCM) CON VAPID KEY Y DIAGNÓSTICO
+    // 2. OBTENER EL TOKEN REAL DE FCM REGISTRANDO EXPLÍCITAMENTE EL SERVICE WORKER
     let tokenDispositivo = null;
     
     if (typeof firebase !== 'undefined' && firebase.messaging) {
       try {
         const messaging = firebase.messaging();
         
-        // Solicitud oficial con tu Clave VAPID de Firebase
-        tokenDispositivo = await messaging.getToken({ 
-          vapidKey: 'BJBLJ1psCydMWxnpj3LX5TbH6ev9Br8EjHgoBUdniqs2DHwm-5o2m20UW-TRyIUGT5ZFPQaoRgJSEKX1VCE2-M4' 
-        });
-        console.log("🔥 Token oficial de Google obtenido con éxito:", tokenDispositivo);
+        // Registrar explícitamente el Service Worker para asegurar compatibilidad en Firefox y GitHub Pages
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+          
+          tokenDispositivo = await messaging.getToken({ 
+            vapidKey: 'BJBLJ1psCydMWxnpj3LX5TbH6ev9Br8EjHgoBUdniqs2DHwm-5o2m20UW-TRyIUGT5ZFPQaoRgJSEKX1VCE2-M4',
+            serviceWorkerRegistration: registration
+          });
+          
+          console.log("🔥 Token oficial de Google FCM obtenido con éxito:", tokenDispositivo);
+        }
       } catch (fcmErr) {
-        console.error("❌ ERROR CRÍTICO FCM (¡Detalle del fallo!):", fcmErr);
-        console.warn("⚠️ Usando respaldo local debido al error anterior.");
+        console.error("❌ ERROR DETALLADO AL OBTENER TOKEN FCM:", fcmErr);
       }
     }
 
-    // Respaldo por si el navegador bloquea temporalmente el Service Worker de FCM
+    // Si por alguna razón extrema sigue sin obtenerse el token de Google, se usa el respaldo
     if (!tokenDispositivo) {
+      console.warn("⚠️ Usando token de respaldo local.");
       tokenDispositivo = localStorage.getItem("hidro_device_unique_token");
       if (!tokenDispositivo) {
         tokenDispositivo = "fcm_token_esh_" + Math.random().toString(36).substring(2, 15) + "_" + Date.now();
