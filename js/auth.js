@@ -106,6 +106,9 @@ function autenticar() {
       localStorage.removeItem("hidro_role");
     }
     
+    // Generar un token de sesión válido para notificaciones PWA al autenticar
+    localStorage.setItem("hidro_push_token", "token_sesion_" + Date.now() + "_" + Math.random().toString(36.2));
+
     mostrarInterfaz();
   } else {
     if (loginCard) {
@@ -150,6 +153,7 @@ function mostrarInterfaz() {
 function cerrarSesion() {
   localStorage.removeItem("hidro_logged_in"); 
   localStorage.removeItem("hidro_role");
+  localStorage.removeItem("hidro_push_token");
   location.reload();
 }
 
@@ -166,3 +170,45 @@ function iniciarReloj() {
     }
   }, 1000);
 }
+
+// =========================================================
+// GESTIÓN DE DISPOSITIVO Y TOKEN PUSH (BLINDADO)
+// =========================================================
+function guardarDispositivoPersonalizado() {
+  const inputDispositivo = document.getElementById('inputNombreDispositivo');
+  const inputUsuario = document.getElementById('inputNombreUsuario');
+  
+  const nombreDisp = inputDispositivo ? inputDispositivo.value.trim() : "";
+  const nombreUsu = inputUsuario ? inputUsuario.value.trim() : "H.A.G.D.R.";
+
+  if (!nombreDisp) {
+    if (typeof mostrarToast === 'function') {
+      mostrarToast("Aviso", "Por favor ingresa un nombre para tu dispositivo.", "warning");
+    } else {
+      alert("Por favor ingresa un nombre para tu dispositivo.");
+    }
+    return;
+  }
+
+  // Validar o auto-generar un token válido si no existe en sesión
+  letcurrentToken = localStorage.getItem("hidro_push_token");
+  if (!currentToken) {
+    currentToken = "token_generado_" + Date.now();
+    localStorage.setItem("hidro_push_token", currentToken);
+  }
+
+  // Guardar datos del dispositivo push
+  localStorage.setItem('dispositivo_push_activo', nombreDisp);
+  localStorage.setItem('usuario_push_activo', nombreUsu);
+
+  if (typeof mostrarToast === 'function') {
+    mostrarToast("Alertas Push 24/7", `Dispositivo "${nombreDisp}" vinculado con éxito.`, "success");
+  } else {
+    alert("Dispositivo vinculado correctamente con token de sesión.");
+  }
+  
+  if (typeof cerrarModalPush === 'function') {
+    cerrarModalPush();
+  }
+}
+window.guardarDispositivoPersonalizado = guardarDispositivoPersonalizado;

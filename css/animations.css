@@ -1,5 +1,5 @@
 /* =========================================================
-   1. CONTENEDOR Y ESTILOS DE ALERTAS TOAST FLOTANTES
+   1. CONTENEDOR Y ESTILOS DE ALERTAS TOAST FLOTANTES (CENTRADOS EN MÓVIL)
    ========================================================= */
 .toast-container {
   position: fixed;
@@ -12,9 +12,21 @@
   pointer-events: none;
 }
 
+/* Centrado automático y estético para pantallas móviles */
+@media (max-width: 992px) {
+  .toast-container {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 92%;
+    max-width: 380px;
+    align-items: center;
+  }
+}
+
 .toast-card {
   pointer-events: auto;
-  background: var(--card-bg, rgba(10, 32, 25, 0.92));
+  background: var(--card-bg, rgba(10, 32, 25, 0.95));
   border: 1px solid var(--danger, #ff5d67);
   color: var(--text-main, #f2fff9);
   padding: 14px 18px;
@@ -27,8 +39,16 @@
   gap: 14px;
   min-width: 310px;
   max-width: 400px;
+  width: 100%;
   animation: slideInToast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (max-width: 992px) {
+  .toast-card {
+    min-width: unset;
+    width: 100%;
+  }
 }
 
 .toast-card:hover {
@@ -47,12 +67,12 @@
 }
 
 @keyframes slideInToast {
-  from { transform: translateX(120%) scale(0.9); opacity: 0; }
-  to { transform: translateX(0) scale(1); opacity: 1; }
+  from { transform: translateY(-20px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 @keyframes fadeOutToast {
-  to { transform: translateX(120%) scale(0.85); opacity: 0; }
+  to { transform: translateY(20px) scale(0.9); opacity: 0; }
 }
 
 .toast-icon { font-size: 1.4rem; color: var(--danger, #ff5d67); }

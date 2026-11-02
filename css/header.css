@@ -150,13 +150,13 @@
   color: var(--green-bright);
 }
 
-/* --- ADAPTACIÓN MÓVIL SIMÉTRICA Y UNIFICADA DEL HEADER --- */
+/* --- ADAPTACIÓN MÓVIL SIMÉTRICA Y TIPOGRAFÍA REFINADA DEL HEADER --- */
 @media (max-width: 992px) {
   .main-header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: 22px 16px;
     gap: 16px;
     background: var(--card-bg);
     border-radius: 20px;
@@ -173,8 +173,15 @@
   }
 
   .header-branding h1 {
-    font-size: 1.1rem;
-    line-height: 1.3;
+    font-size: 1.05rem;
+    line-height: 1.35;
+    letter-spacing: 0.2px;
+  }
+
+  .header-branding h2 {
+    font-size: 0.76rem;
+    margin-top: 4px;
+    opacity: 0.85;
   }
 
   .system-status-bar {
@@ -186,13 +193,12 @@
     width: 100%;
   }
 
-  /* El indicador de estado toma todo el ancho superior de forma destacada */
   .status-indicator {
     flex: 1;
     min-width: 100%;
     justify-content: center;
     padding: 14px 16px;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     border-radius: 16px;
     box-sizing: border-box;
   }
@@ -207,12 +213,11 @@
     border-radius: 14px;
   }
 
-  /* Botones de acción (menú hamburguesa, campana, hard refresh, apagado) grandes y alineados en fila inferior */
   .system-status-bar .btn-action {
-    width: 50px;
-    height: 50px;
+    width: 52px;
+    height: 52px;
     border-radius: 16px;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
 
   .btn-action.mobile-only {
