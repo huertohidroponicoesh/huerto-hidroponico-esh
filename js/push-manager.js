@@ -69,17 +69,18 @@ async function guardarDispositivoPersonalizado() {
     if (typeof firebase !== 'undefined' && firebase.messaging) {
       try {
         const messaging = firebase.messaging();
-        // Opcional: Si usas VAPID key pública de Firebase Cloud Messaging, colócala aquí:
-        // tokenDispositivo = await getToken(messaging, { vapidKey: 'TU_CLAVE_VAPID' });
         
-        // Si dependes del método estándar de Firebase SDK web:
+        // Si generaste una Clave VAPID en la consola de Firebase, puedes incluirla aquí:
+        // tokenDispositivo = await messaging.getToken({ vapidKey: 'TU_CLAVE_VAPID_PUBLICA' });
+        
+        // Solicitud estándar mediante el SDK web v8 de Firebase Messaging
         tokenDispositivo = await messaging.getToken();
       } catch (fcmErr) {
-        console.warn("⚠️ No se pudo obtener el token FCM nativo, usando respaldo local:", fcmErr);
+        console.warn("⚠️ No se pudo obtener el token FCM nativo del navegador, usando respaldo local:", fcmErr);
       }
     }
 
-    // Respaldo por si el navegador bloquea el Service Worker de FCM temporalmente
+    // Respaldo por si el navegador bloquea temporalmente el Service Worker de FCM
     if (!tokenDispositivo) {
       tokenDispositivo = localStorage.getItem("hidro_device_unique_token");
       if (!tokenDispositivo) {
@@ -103,7 +104,7 @@ async function guardarDispositivoPersonalizado() {
         permisoOtorgado: Notification.permission === 'granted',
         fechaRegistro: new Date().toISOString()
       });
-      console.log("☁️ Token real sincronizado en Firebase para Vercel.");
+      console.log("☁️ Token de dispositivo sincronizado en Firebase para Vercel.");
     }
 
     // 4. CONFIRMACIÓN CON TOAST
