@@ -1,5 +1,5 @@
 // =========================================================
-// FIREBASE MESSAGING SERVICE WORKER - HUERTO ESH
+// FIREBASE MESSAGING SERVICE WORKER - HUERTO ESH (FIXED v8)
 // =========================================================
 
 importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js');
@@ -17,7 +17,8 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-messaging.setBackgroundMessageHandler((payload) => {
+// 1. MANEJADOR OFICIAL EN SEGUNDO PLANO (MODERNO FIREBASE SDK v8)
+messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Mensaje recibido en segundo plano:', payload);
   
   const notificationTitle = payload.notification?.title || payload.data?.title || "🚨 Huerto ESH: Alerta del Sistema";
@@ -35,13 +36,37 @@ messaging.setBackgroundMessageHandler((payload) => {
     tag: notificationTag,
     renotify: true,
     data: {
-      url: payload.notification?.click_action || './index.html'
+      url: payload.notification?.click_action || payload.data?.url || './index.html'
     }
   };
 
   return self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
+// 2. RESPALDO NATIVO PARA EVENTOS PUSH DIRECTOS
+self.addEventListener('push', (event) => {
+  if (!event.data) return;
+  
+  try {
+    const data = event.data.json();
+    // Si Firebase SDK no procesó la notificación de fondo por ser evento directo
+    if (data && (data.title || data.notification?.title)) {
+      const title = data.title || data.notification?.title || "📢 Huerto ESH";
+      const options = {
+        body: data.body || data.notification?.body || "Nueva notificación disponible",
+        icon: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png',
+        badge: 'https://cdn-icons-png.flaticon.com/192/1892/1892751.png',
+        vibrate: [300, 100, 300],
+        tag: 'huerto-esh-direct-push'
+      };
+      event.waitUntil(self.registration.showNotification(title, options));
+    }
+  } catch (e) {
+    console.log("Notificación push nativa ya manejada por SDK.");
+  }
+});
+
+// 3. EVENTO DE CLIC EN LA NOTIFICACIÓN
 self.addEventListener('notificationclick', (event) => {
   console.log('[firebase-messaging-sw.js] Notificación clickeada:', event.notification);
   event.notification.close();
