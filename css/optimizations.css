@@ -1,8 +1,8 @@
 /* =========================================================
-   MÓDULO DE OPTIMIZACIÓN Y ANIMACIONES GLOBALES (OPTIMIZATIONS.CSS)
+   MÓDULO DE OPTIMIZACIÓN Y RENDIMIENTO - HUERTO ESH V3
    ========================================================= */
 
-/* Orbes ambientales flotantes */
+/* 1. Orbes ambientales con aceleración de GPU */
 .ambient-glow { 
   position: fixed; 
   border-radius: 50%; 
@@ -24,7 +24,7 @@
   100% { transform: translate(-35px, -25px) scale(0.92); }
 }
 
-/* Keyframes globales */
+/* 2. Animaciones globales fluidas */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -40,14 +40,10 @@
 }
 .plant-bounce { animation: plantBounce 3s infinite ease-in-out; }
 
-/* Aceleración por GPU y optimización de renderizado para elementos críticos */
+/* 3. Aceleración por GPU exclusiva para capas flotantes (Toasts y Modales) */
 .toast-container,
 .modal-content,
-#sidebar,
-.card, 
 .main-header, 
-.ags-sidebar, 
-.login-hex-card, 
 .reports-card-hud, 
 .calendar-hud-wrapper, 
 .scheduler-hud-card {
@@ -56,23 +52,23 @@
   backface-visibility: hidden;
 }
 
-/* Aislamiento de layout para contenedores principales (evita repintados globales innecesarios) */
+/* 4. Aislamiento de layout para evitar reflows globales en el DOM */
 .dashboard-grid,
 .tracker-section,
 .sensor-container {
   contain: layout style paint;
 }
 
-/* Optimización extrema para smartphones (Evita tirones, lag y sobrecarga de GPU móvil) */
+/* 5. Optimización para dispositivos móviles (Reduce carga gráfica en pantallas táctiles) */
 @media (max-width: 992px) {
-  .card, .main-header, .ags-sidebar, .login-hex-card, .reports-card-hud, .calendar-hud-wrapper, .scheduler-hud-card {
+  .card, .main-header, .login-hex-card, .reports-card-hud, .calendar-hud-wrapper, .scheduler-hud-card {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     background: var(--card-bg) !important;
   }
 }
 
-/* Respetar preferencias de reducción de movimiento del sistema */
+/* 6. Respetar preferencias de accesibilidad del sistema */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
