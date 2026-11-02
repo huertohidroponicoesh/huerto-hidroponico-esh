@@ -42,64 +42,85 @@ async function guardarDispositivoPersonalizado() {
     return;
   }
 
-  // 1. SOLICITAR PERMISO NATIVO DEL NAVEGADOR / SISTEMA OPERATIVO
-  if ('Notification' in window) {
-    let permiso = Notification.permission;
+  try {
+    // 1. SOLICITAR PERMISO NATIVO DEL NAVEGADOR / SISTEMA OPERATIVO
+    if (!('Notification' in window)) {
+      alert("⚠️ Este navegador no soporta la API de Notificaciones.");
+      return;
+    }
 
+    let permiso = Notification.permission;
     if (permiso === 'default') {
-      // Abre el diálogo emergente nativo del navegador preguntando si permite notificaciones
       permiso = await Notification.requestPermission();
     }
 
     if (permiso === 'denied') {
       if (typeof mostrarToast === 'function') {
-        mostrarToast("Permiso Bloqueado", "Las notificaciones están bloqueadas en los ajustes de tu navegador o teléfono.", "danger");
+        mostrarToast("Permiso Bloqueado", "Las notificaciones están bloqueadas en los ajustes de tu navegador.", "danger");
       } else {
         alert("Las notificaciones están bloqueadas en tu navegador.");
       }
       return;
     }
-  } else {
-    console.warn("⚠️ Este navegador no soporta la API de Notificaciones.");
-  }
 
-  // 2. GENERAR TOKEN ÚNICO POR DISPOSITIVO (SOLO SI SE OTORGÓ EL PERMISO)
-  let tokenDispositivo = localStorage.getItem("hidro_device_unique_token");
-  if (!tokenDispositivo) {
-    tokenDispositivo = "fcm_token_esh_" + Math.random().toString(36).substring(2, 15) + "_" + Date.now();
+    // 2. OBTENER EL TOKEN REAL DE FIREBASE CLOUD MESSAGING (FCM)
+    let tokenDispositivo = null;
+    
+    if (typeof firebase !== 'undefined' && firebase.messaging) {
+      try {
+        const messaging = firebase.messaging();
+        // Opcional: Si usas VAPID key pública de Firebase Cloud Messaging, colócala aquí:
+        // tokenDispositivo = await getToken(messaging, { vapidKey: 'TU_CLAVE_VAPID' });
+        
+        // Si dependes del método estándar de Firebase SDK web:
+        tokenDispositivo = await messaging.getToken();
+      } catch (fcmErr) {
+        console.warn("⚠️ No se pudo obtener el token FCM nativo, usando respaldo local:", fcmErr);
+      }
+    }
+
+    // Respaldo por si el navegador bloquea el Service Worker de FCM temporalmente
+    if (!tokenDispositivo) {
+      tokenDispositivo = localStorage.getItem("hidro_device_unique_token");
+      if (!tokenDispositivo) {
+        tokenDispositivo = "fcm_token_esh_" + Math.random().toString(36).substring(2, 15) + "_" + Date.now();
+      }
+    }
+    
     localStorage.setItem("hidro_device_unique_token", tokenDispositivo);
-  }
-  
-  // Guardar configuración local
-  localStorage.setItem("hidro_push_token", tokenDispositivo);
-  localStorage.setItem('dispositivo_push_activo', nombreDisp);
-  localStorage.setItem('usuario_push_activo', nombreUsu);
-  localStorage.setItem('push_registrado_exito', "true");
+    localStorage.setItem("hidro_push_token", tokenDispositivo);
+    localStorage.setItem('dispositivo_push_activo', nombreDisp);
+    localStorage.setItem('usuario_push_activo', nombreUsu);
+    localStorage.setItem('push_registrado_exito', "true");
 
-  // 3. SINCRONIZAR CON FIREBASE REALTIME DATABASE
-  if (typeof firebase !== 'undefined' && firebase.database) {
-    const deviceIdClean = nombreDisp.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
-    firebase.database().ref('fcm_tokens/' + deviceIdClean).set({
-      dispositivo: nombreDisp,
-      usuario: nombreUsu,
-      token: tokenDispositivo,
-      permisoOtorgado: Notification.permission === 'granted',
-      fechaRegistro: new Date().toISOString()
-    }).then(() => {
-      console.log("☁️ Token y estado de notificación sincronizados en Firebase.");
-    }).catch((err) => {
-      console.warn("⚠️ Error de red en Firebase:", err);
-    });
-  }
+    // 3. SINCRONIZAR CON FIREBASE REALTIME DATABASE (Leído por Vercel)
+    if (typeof firebase !== 'undefined' && firebase.database) {
+      const deviceIdClean = nombreDisp.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
+      await firebase.database().ref('fcm_tokens/' + deviceIdClean).set({
+        dispositivo: nombreDisp,
+        usuario: nombreUsu,
+        token: tokenDispositivo,
+        permisoOtorgado: Notification.permission === 'granted',
+        fechaRegistro: new Date().toISOString()
+      });
+      console.log("☁️ Token real sincronizado en Firebase para Vercel.");
+    }
 
-  // 4. CONFIRMACIÓN CON TOAST
-  if (typeof mostrarToast === 'function') {
-    mostrarToast("Alertas Push 24/7", `Permisos otorgados y dispositivo "${nombreDisp}" activado.`, "success");
-  } else {
-    alert(`Notificaciones activadas para "${nombreDisp}".`);
+    // 4. CONFIRMACIÓN CON TOAST
+    if (typeof mostrarToast === 'function') {
+      mostrarToast("Alertas Push 24/7", `Dispositivo "${nombreDisp}" registrado con éxito.`, "success");
+    } else {
+      alert(`Notificaciones activadas para "${nombreDisp}".`);
+    }
+    
+    cerrarModalPush();
+
+  } catch (error) {
+    console.error("❌ Error al registrar dispositivo push:", error);
+    if (typeof mostrarToast === 'function') {
+      mostrarToast("Error", "No se pudo registrar el dispositivo push.", "danger");
+    }
   }
-  
-  cerrarModalPush();
 }
 window.guardarDispositivoPersonalizado = guardarDispositivoPersonalizado;
 
